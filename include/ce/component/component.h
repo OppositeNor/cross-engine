@@ -94,6 +94,22 @@ public:
     Vec4& Rotation();
 
     /**
+     * @brief Set the rotation of the component in Euler angle.
+     * The rotation is ordered as pitch, yaw, roll.
+     * 
+     * @param p_rotation The rotation of the component.
+     */
+    void SetRotationEuler(const Vec4& p_rotation);
+
+    /**
+     * @brief Set the rotation of the component in Euler angle.
+     * The rotation is ordered as pitch, yaw, roll.
+     * 
+     * @param p_rotation The rotation of the component.
+     */
+    void SetRotationEuler(const Vec3& p_rotation);
+
+    /**
      * @brief Get the scale of the component.
      * 
      * @return const Vec3& The scale of the component.

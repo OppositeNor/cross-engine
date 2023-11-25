@@ -193,3 +193,21 @@ void Component::SetGlobalPosition(const Vec4& p_position)
     else
         Position() = parent->GetSubspaceMatrixInverse() * p_position;
 }
+
+void Component::SetRotationEuler(const Vec4& p_rotation)
+{
+    Rotation() = QuatProd(
+        Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+        Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+        Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)})
+    );
+}
+
+void Component::SetRotationEuler(const Vec3& p_rotation)
+{
+    Rotation() = QuatProd(
+        Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+        Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+        Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)})
+    );
+}

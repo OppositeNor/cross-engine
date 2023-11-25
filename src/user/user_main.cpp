@@ -39,7 +39,7 @@ public:
         glBindVertexArray(mesh->GetVAO());
         mesh->Position() = Vec4(0, 0, 10, 1.0f);
         auto time = glfwGetTime();
-        //mesh->SetRotation(Vec4(time, time, time, 1.0f));
+        mesh->SetRotationEuler(Vec4(time, time, time, 1.0f));
         GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
         GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 5.0f, 30.0f));
         GetShaderProgram()->Use();

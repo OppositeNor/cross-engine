@@ -375,3 +375,34 @@ FORCE_INLINE auto Lerp(Tr&& p_ratio, T1&& p_start, T2&& p_end)
     return std::forward<T1>(p_start) + std::forward<Tr>(p_ratio) 
         * (std::forward<T2>(p_end) - std::forward<T1>(p_start));
 }
+
+/**
+ * @brief Product of quaternions. The order of the quaternions is from right to left.
+ * The real part of the quaternion is the last element.
+ * 
+ * @param p_quat1 The first quaternion.
+ * @param p_quats The rest of the quaternions.
+ * @return Vec4 The product of the quaternions. 
+ */
+template <typename ...Args>
+FORCE_INLINE Vec4 QuatProd(const Vec4& p_quat1, Args&&... p_quats)
+{
+    return Mat4({
+        p_quat1[3], p_quat1[2], -p_quat1[1], p_quat1[0],
+        -p_quat1[2], p_quat1[3], p_quat1[0], p_quat1[1],
+        p_quat1[1], -p_quat1[0], p_quat1[3], p_quat1[2],
+        -p_quat1[0], -p_quat1[1], -p_quat1[2], p_quat1[3],
+    }) * QuatProd(std::forward<Args>(p_quats)...);
+}
+
+/**
+ * @brief Product of quaternions. The order of the quaternions is from right to left.
+ * The real part of the quaternion is the last element.
+ * 
+ * @param p_quat1 The first quaternion.
+ */
+template <>
+FORCE_INLINE Vec4 QuatProd(const Vec4& p_quat1)
+{
+    return p_quat1;
+}
