@@ -1,0 +1,11 @@
+set(CE_SOURCES
+    ${CE_SOURCES}
+    ${PROJECT_SOURCE_DIR}/include/ce/graphics/shader/a_shader.h
+    ${PROJECT_SOURCE_DIR}/include/ce/graphics/shader/vert_shader.h
+    ${PROJECT_SOURCE_DIR}/include/ce/graphics/shader/frag_shader.h
+    ${PROJECT_SOURCE_DIR}/include/ce/graphics/shader/shader_program.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/a_shader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/vert_shader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/frag_shader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shader_program.cpp
+    PARENT_SCOPE)
