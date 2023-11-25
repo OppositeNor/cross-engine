@@ -333,6 +333,14 @@ public:
     FORCE_INLINE static Matrix<float, 4, 4> RotEularPRY(const Vec4& p_rot) noexcept;
 
     /**
+     * @brief Get the rotation matrix with the order of pitch, roll, yaw.
+     * 
+     * @param p_rot The rotation angles, ordered by pitch, roll, yaw.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEularPRY(const Vec3& p_rot) noexcept;
+
+    /**
      * @brief Get the rotation matrix with the order of pitch, yaw, roll.
      * 
      * @param p_pitch The pitch angle.
@@ -349,6 +357,14 @@ public:
      * @return Matrix<float, 4, 4> The rotation matrix.
      */
     FORCE_INLINE static Matrix<float, 4, 4> RotEularPYR(const Vec4& p_rot) noexcept;
+
+    /**
+     * @brief Get the rotation matrix with the order of pitch, yaw, roll.
+     * 
+     * @param p_rot The rotation angles, ordered by pitch, yaw, roll.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEularPYR(const Vec3& p_rot) noexcept;
 
     /**
      * @brief Get the rotation matrix with the order of roll, pitch, yaw.
@@ -369,6 +385,14 @@ public:
     FORCE_INLINE static Matrix<float, 4, 4> RotEularRPY(const Vec4& p_rot) noexcept;
 
     /**
+     * @brief Get the rotation matrix with the order of roll, pitch, yaw.
+     * 
+     * @param p_rot The rotation angles, ordered by roll, pitch, yaw.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEularRPY(const Vec3& p_rot) noexcept;
+
+    /**
      * @brief Get the rotation matrix with the order of roll, yaw, pitch.
      * 
      * @param p_pitch The pitch angle.
@@ -385,6 +409,14 @@ public:
      * @return Matrix<float, 4, 4> The rotation matrix.
      */
     FORCE_INLINE static Matrix<float, 4, 4> RotEularRYP(const Vec4& p_rot) noexcept;
+
+    /**
+     * @brief Get the rotation matrix with the order of roll, yaw, pitch.
+     * 
+     * @param p_rot The rotation angles, ordered by roll, yaw, pitch.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEularRYP(const Vec3& p_rot) noexcept;
 
     /**
      * @brief Get the rotation matrix with the order of yaw, pitch, roll.
@@ -405,6 +437,14 @@ public:
     FORCE_INLINE static Matrix<float, 4, 4> RotEularYPR(const Vec4& p_rot) noexcept;
 
     /**
+     * @brief Get the rotation matrix with the order of yaw, pitch, roll.
+     * 
+     * @param p_rot The rotation angles, ordered by yaw, pitch, roll.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEularYPR(const Vec3& p_rot) noexcept;
+
+    /**
      * @brief Get the rotation matrix with the order of yaw, roll, pitch.
      * 
      * @param p_pitch The pitch angle.
@@ -423,6 +463,43 @@ public:
     FORCE_INLINE static Matrix<float, 4, 4> RotEularYRP(const Vec4& p_rot) noexcept;
 
     /**
+     * @brief Get the rotation matrix with the order of yaw, roll, pitch.
+     * 
+     * @param p_rot The rotation angles, ordered by yaw, roll, pitch.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEularYRP(const Vec3& p_rot) noexcept;
+
+    /**
+     * @brief Get the rotation matrix with the order of yaw, roll, pitch.
+     * 
+     * @param p_pitch The pitch angle.
+     * @param p_roll The roll angle.
+     * @param p_yaw The yaw angle.
+     * @param p_order The order of the eular rotation.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEular(float p_pitch, float p_roll, float p_yaw, EulerRotOrder p_order);
+
+    /**
+     * @brief Get the rotation matrix with the order of yaw, roll, pitch.
+     * 
+     * @param p_rot The rotation angles.
+     * @param p_order The order of the eular rotation.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEular(const Vec4& p_rot, EulerRotOrder p_order);
+
+    /**
+     * @brief Get the rotation matrix with the order of yaw, roll, pitch.
+     * 
+     * @param p_rot The rotation angles.
+     * @param p_order The order of the eular rotation.
+     * @return Matrix<float, 4, 4> The rotation matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> RotEular(const Vec3& p_rot, EulerRotOrder p_order);
+
+    /**
      * @brief Get the rotation matrix with the quaternion values.
      * 
      * @param p_quat The quaternion values. The first three elements should be the 
@@ -435,41 +512,86 @@ public:
      * @brief Get the model matrix with the order of scale, rotation, translation.
      * 
      * @param p_translation The translation of the transform.
+     * @param p_rotation The quaternion rotation of the transform.
      * @param p_scale The scale of the transform.
-     * @param p_rotation The rotation of the transform, ordered by pitch, roll, yaw.
      * @return Matrix<float, 4, 4> The model matrix.
      */
-    FORCE_INLINE static Matrix<float, 4, 4> Model(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale) noexcept;
+    FORCE_INLINE static Matrix<float, 4, 4> Model(
+        const Vec4& p_translation, 
+        const Vec4& p_rotation, 
+        const Vec4& p_scale) noexcept;
 
     /**
      * @brief Get the model matrix with the order of scale, rotation, translation.
      * 
      * @param p_translation The translation of the transform.
+     * @param p_rotation The Eular rotation of the transform.
      * @param p_scale The scale of the transform.
-     * @param p_rotation The rotation of the transform, ordered by pitch, roll, yaw.
      * @return Matrix<float, 4, 4> The model matrix.
      */
-    FORCE_INLINE static Matrix<float, 4, 4> Model(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale) noexcept;
+    FORCE_INLINE static Matrix<float, 4, 4> Model(
+        const Vec4& p_translation, 
+        const Vec4& p_rotation, 
+        const Vec4& p_scale,
+        EulerRotOrder p_order);
+
+    /**
+     * @brief Get the model matrix with the order of scale, rotation, translation.
+     * 
+     * @param p_translation The translation of the transform.
+     * @param p_rotation The Eular rotation of the transform.
+     * @param p_scale The scale of the transform.
+     * @param p_order The order of the eular rotation.
+     * @return Matrix<float, 4, 4> The model matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> Model(
+        const Vec3& p_translation, 
+        const Vec3& p_rotation, 
+        const Vec3& p_scale, 
+        EulerRotOrder p_order);
 
     /**
      * @brief Get the inverse model matrix with the order of scale, rotation, translation.
      * 
      * @param p_translation The translation of the transform.
      * @param p_scale The scale of the transform.
-     * @param p_rotation The rotation of the transform, ordered by pitch, roll, yaw.
+     * @param p_rotation The quaternion rotation of the transform.
      * @return Matrix<float, 4, 4> The model matrix.
      */
-    FORCE_INLINE static Matrix<float, 4, 4> ModelInv(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale) noexcept;
+    FORCE_INLINE static Matrix<float, 4, 4> ModelInv(
+        const Vec4& p_translation, 
+        const Vec4& p_rotation, 
+        const Vec4& p_scale) noexcept;
+        
+    /**
+     * @brief Get the inverse model matrix with the order of scale, rotation, translation.
+     * 
+     * @param p_translation The translation of the transform.
+     * @param p_rotation The Euler rotation of the transform.
+     * @param p_scale The scale of the transform.
+     * @param p_order The order of the eular rotation.
+     * @return Matrix<float, 4, 4> The model matrix.
+     */
+    FORCE_INLINE static Matrix<float, 4, 4> ModelInv(
+        const Vec4& p_translation, 
+        const Vec4& p_rotation, 
+        const Vec4& p_scale,
+        EulerRotOrder p_order);
 
     /**
      * @brief Get the inverse model matrix with the order of scale, rotation, translation.
      * 
      * @param p_translation The translation of the transform.
+     * @param p_rotation The Euler rotation of the transform.
      * @param p_scale The scale of the transform.
-     * @param p_rotation The rotation of the transform, ordered by pitch, roll, yaw.
+     * @param p_order The order of the eular rotation.
      * @return Matrix<float, 4, 4> The model matrix.
      */
-    FORCE_INLINE static Matrix<float, 4, 4> ModelInv(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale) noexcept;
+    FORCE_INLINE static Matrix<float, 4, 4> ModelInv(
+        const Vec3& p_translation, 
+        const Vec3& p_rotation, 
+        const Vec3& p_scale,
+        EulerRotOrder p_order);
 
     /**
      * @brief Get the view matrix with the order of rotation, translation.
@@ -478,7 +600,9 @@ public:
      * @param p_rotation The rotation of the transform, ordered by pitch, roll, yaw.
      * @return Matrix<float, 4, 4> The view matrix.
      */
-    FORCE_INLINE static Matrix<float, 4, 4> View(const Vec4& p_translation, const Vec4& p_rotation) noexcept;
+    FORCE_INLINE static Matrix<float, 4, 4> View(
+        const Vec4& p_translation, 
+        const Vec4& p_rotation) noexcept;
 
     FORCE_INLINE static Matrix<float, 4, 4> ProjOrtho(
         float p_right, 

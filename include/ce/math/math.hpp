@@ -228,6 +228,12 @@ FORCE_INLINE Mat4 Mat4::RotEularPRY(const Vec4& p_rot) noexcept
 }
 
 template<>
+FORCE_INLINE Mat4 Mat4::RotEularPRY(const Vec3& p_rot) noexcept
+{
+    return Yaw(p_rot[2]) * Roll(p_rot[1]) * Pitch(p_rot[0]);
+}
+
+template<>
 FORCE_INLINE Mat4 Mat4::RotEularPYR(float p_pitch, float p_roll, float p_yaw) noexcept
 {
     return Roll(p_roll) * Yaw(p_yaw) * Pitch(p_pitch);
@@ -235,6 +241,12 @@ FORCE_INLINE Mat4 Mat4::RotEularPYR(float p_pitch, float p_roll, float p_yaw) no
 
 template<>
 FORCE_INLINE Mat4 Mat4::RotEularPYR(const Vec4& p_rot) noexcept
+{
+    return Roll(p_rot[1]) * Yaw(p_rot[2]) * Pitch(p_rot[0]);
+}
+
+template<>
+FORCE_INLINE Mat4 Mat4::RotEularPYR(const Vec3& p_rot) noexcept
 {
     return Roll(p_rot[1]) * Yaw(p_rot[2]) * Pitch(p_rot[0]);
 }
@@ -252,6 +264,12 @@ FORCE_INLINE Mat4 Mat4::RotEularRPY(const Vec4& p_rot) noexcept
 }
 
 template<>
+FORCE_INLINE Mat4 Mat4::RotEularRPY(const Vec3& p_rot) noexcept
+{
+    return Roll(p_rot[1]) * Pitch(p_rot[0]) * Yaw(p_rot[2]);
+}
+
+template<>
 FORCE_INLINE Mat4 Mat4::RotEularRYP(float p_pitch, float p_roll, float p_yaw) noexcept
 {
     return Pitch(p_pitch) * Yaw(p_yaw) * Roll(p_roll);
@@ -259,6 +277,12 @@ FORCE_INLINE Mat4 Mat4::RotEularRYP(float p_pitch, float p_roll, float p_yaw) no
 
 template<>
 FORCE_INLINE Mat4 Mat4::RotEularRYP(const Vec4& p_rot) noexcept
+{
+    return Pitch(p_rot[0]) * Yaw(p_rot[2]) * Roll(p_rot[1]);
+}
+
+template<>
+FORCE_INLINE Mat4 Mat4::RotEularRYP(const Vec3& p_rot) noexcept
 {
     return Pitch(p_rot[0]) * Yaw(p_rot[2]) * Roll(p_rot[1]);
 }
@@ -276,6 +300,12 @@ FORCE_INLINE Mat4 Mat4::RotEularYPR(const Vec4& p_rot) noexcept
 }
 
 template<>
+FORCE_INLINE Mat4 Mat4::RotEularYPR(const Vec3& p_rot) noexcept
+{
+    return Roll(p_rot[1]) * Pitch(p_rot[0]) * Yaw(p_rot[2]);
+}
+
+template<>
 FORCE_INLINE Mat4 Mat4::RotEularYRP(float p_pitch, float p_roll, float p_yaw) noexcept
 {
     return Pitch(p_pitch) * Roll(p_roll) * Yaw(p_yaw);
@@ -285,6 +315,78 @@ template<>
 FORCE_INLINE Mat4 Mat4::RotEularYRP(const Vec4& p_rot) noexcept
 {
     return Pitch(p_rot[0]) * Roll(p_rot[1]) * Yaw(p_rot[2]);
+}
+
+template<>
+FORCE_INLINE Mat4 Mat4::RotEularYRP(const Vec3& p_rot) noexcept
+{
+    return Pitch(p_rot[0]) * Roll(p_rot[1]) * Yaw(p_rot[2]);
+}
+
+template<>
+FORCE_INLINE Mat4 Mat4::RotEular(float p_pitch, float p_roll, float p_yaw, EulerRotOrder p_order)
+{
+    switch (p_order)
+    {
+    case EulerRotOrder::EULAR_ROTATION_ORDER_PRY:
+        return RotEularPRY(p_pitch, p_roll, p_yaw);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_PYR:
+        return RotEularPYR(p_pitch, p_roll, p_yaw);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_RPY:
+        return RotEularRPY(p_pitch, p_roll, p_yaw);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_RYP:
+        return RotEularRYP(p_pitch, p_roll, p_yaw);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_YPR:
+        return RotEularYPR(p_pitch, p_roll, p_yaw);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_YRP:
+        return RotEularYRP(p_pitch, p_roll, p_yaw);
+    default:
+        throw std::invalid_argument("Invalid rotation order.");
+    }
+}
+
+template<>
+FORCE_INLINE Mat4 Mat4::RotEular(const Vec4& p_rot, EulerRotOrder p_order)
+{
+    switch (p_order)
+    {
+    case EulerRotOrder::EULAR_ROTATION_ORDER_PRY:
+        return RotEularPRY(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_PYR:
+        return RotEularPYR(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_RPY:
+        return RotEularRPY(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_RYP:
+        return RotEularRYP(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_YPR:
+        return RotEularYPR(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_YRP:
+        return RotEularYRP(p_rot);
+    default:
+        throw std::invalid_argument("Invalid rotation order.");
+    }
+}
+
+template<>
+FORCE_INLINE Mat4 Mat4::RotEular(const Vec3& p_rot, EulerRotOrder p_order)
+{
+    switch (p_order)
+    {
+    case EulerRotOrder::EULAR_ROTATION_ORDER_PRY:
+        return RotEularPRY(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_PYR:
+        return RotEularPYR(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_RPY:
+        return RotEularRPY(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_RYP:
+        return RotEularRYP(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_YPR:
+        return RotEularYPR(p_rot);
+    case EulerRotOrder::EULAR_ROTATION_ORDER_YRP:
+        return RotEularYRP(p_rot);
+    default:
+        throw std::invalid_argument("Invalid rotation order.");
+    }
 }
 
 template<>
@@ -310,11 +412,16 @@ FORCE_INLINE Mat4 Mat4::Model(const Vec4& p_translation, const Vec4& p_rotation,
 {
     return Trans(p_translation) * RotQuaternion(p_rotation) * Scale(p_scale);
 }
+template<>
+FORCE_INLINE Mat4 Mat4::Model(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale,EulerRotOrder p_order)
+{
+    return Trans(p_translation) * RotEular(p_rotation, p_order) * Scale(p_scale);
+}
 
 template<>
-FORCE_INLINE Mat4 Mat4::Model(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale) noexcept
+FORCE_INLINE Mat4 Mat4::Model(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale, EulerRotOrder p_order)
 {
-    return Trans(p_translation) * Roll(p_rotation[1]) * Yaw(p_rotation[2]) * Pitch(p_rotation[0]) * Scale(p_scale);
+    return Trans(p_translation) * RotEular(p_rotation, p_order) * Scale(p_scale);
 }
 
 template<>
@@ -325,15 +432,21 @@ FORCE_INLINE Mat4 Mat4::ModelInv(const Vec4& p_translation, const Vec4& p_rotati
 }
 
 template<>
-FORCE_INLINE Mat4 Mat4::ModelInv(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale) noexcept
+FORCE_INLINE Mat4 Mat4::ModelInv(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale, EulerRotOrder p_order)
 {
-    return Trans(p_translation) * Roll(p_rotation[1]) * Yaw(p_rotation[2]) * Pitch(p_rotation[0]) * Scale(p_scale);
+    return Trans(-1 * p_translation) * RotEular(-1 * p_rotation, -1 * p_order) * Scale(-1 * p_scale);
+}
+
+template<>
+FORCE_INLINE Mat4 Mat4::ModelInv(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale, EulerRotOrder p_order)
+{
+    return Trans(-1 * p_translation) * RotEular(-1 * p_rotation, -1 * p_order) * Scale(-1 * p_scale);
 }
 
 template<>
 FORCE_INLINE Mat4 Mat4::View(const Vec4& p_translation, const Vec4& p_rotation) noexcept
 {
-    return Trans(p_translation) * Roll(-p_rotation[1]) * Yaw(-p_rotation[2]) * Pitch(-p_rotation[0]);
+    return Trans(p_translation) * RotQuaternion(Vec4(-p_rotation[0], -p_rotation[1], -p_rotation[2], p_rotation[3]));
 }
 
 template<>

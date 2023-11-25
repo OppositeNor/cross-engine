@@ -27,4 +27,24 @@ inline constexpr bool has_times = false;
 template <typename dT1, typename dT2>
 inline constexpr bool has_times<dT1, dT2, std::void_t<decltype(std::declval<dT1>() * std::declval<dT2>())>> = true;
 
-#define TO_CONST(p_val, T) (const_cast<const decltype(std::remove_reference_t(p_val))>(p_val))
+enum class EulerRotOrder
+{
+    EULAR_ROTATION_ORDER_PRY = 1,
+    EULAR_ROTATION_ORDER_PYR = 2,
+    EULAR_ROTATION_ORDER_RPY = 3,
+    EULAR_ROTATION_ORDER_RYP = -2,
+    EULAR_ROTATION_ORDER_YPR = -3,
+    EULAR_ROTATION_ORDER_YRP = -1
+};
+
+template <typename T>
+FORCE_INLINE EulerRotOrder operator *(EulerRotOrder p_order, T&& p_value)
+{
+    return static_cast<EulerRotOrder>(static_cast<int>(p_order) * p_value);
+}
+
+template <typename T>
+FORCE_INLINE EulerRotOrder operator *(T&& p_value, EulerRotOrder p_order)
+{
+    return static_cast<EulerRotOrder>(static_cast<int>(p_order) * p_value);
+}
