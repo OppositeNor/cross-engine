@@ -235,9 +235,9 @@ void Component::SetRotationEuler(const Vec4& p_rotation, EulerRotOrder p_order)
         break;
     case EulerRotOrder::EULAR_ROTATION_ORDER_YRP:
         Rotation() = QuatProd(
-            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
             Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
-            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)})
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)})
         );
         break;
     default:
