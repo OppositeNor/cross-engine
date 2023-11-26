@@ -33,6 +33,16 @@ Triangle::Triangle(Triangle&& p_other) noexcept
     p_other.vertices[2] = nullptr;
 }
 
+Triangle::Triangle(const Vec4& p_v1, const Vec4& p_v2, const Vec4& p_v3)
+{
+    vertices[0] = new Vertex(p_v1);
+    vertices[1] = new Vertex(p_v2);
+    vertices[2] = new Vertex(p_v3);
+    vertices[0]->InsertNext(vertices[1]);
+    vertices[1]->InsertNext(vertices[2]);
+    vertices[2]->InsertNext(vertices[0]);
+}
+
 Triangle::~Triangle()
 {
     delete vertices[0];

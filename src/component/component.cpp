@@ -3,7 +3,7 @@
 
 
 Component::Component(Window* p_context)
-    : position(0.0f, 0.0f, 0.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f),
+    : position(0.0f, 0.0f, 0.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f),
         context(p_context)
 {
 
@@ -214,10 +214,7 @@ const Mat4& Component::GetModelMatrix()
 
 Vec4 Component::GetGlobalPosition() const
 {
-    if (parent == nullptr)
-        return GetPosition();
-    else
-        return parent->GetSubspaceMatrix() * GetPosition();
+    return GetSubspaceMatrix() * Vec4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void Component::SetGlobalPosition(const Vec4& p_position)

@@ -51,6 +51,7 @@ class UserWindow : public Window
 
     
     DynamicMesh* mesh = nullptr;
+    DynamicMesh* mesh2 = nullptr;
     PointLight* light = nullptr;
     UserCamera* camera = nullptr;
 
@@ -68,9 +69,29 @@ public:
         mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
-        light->Position() = Vec4(10, 10, 0.0f, 1.0f);
+        light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
+        light->Intensity() = 8.0f;
         camera = new UserCamera(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
+
+        mesh2 = new DynamicMesh(this);
+        // Box mesh
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(-1, -1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(1, 1, -1, 1), Vec4(1, 1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1)));
+        mesh2->Scale() = Vec4(1.5f, 1.5f, 1.5f);
+        light->AddChild(mesh2);
+        // mesh2->Position() = Vec4(5, 5, 5, 1.0f);
+        std::cout << mesh2->GetGlobalPosition() << std::endl;
 
         GetInputHandler()->AddInput("forward", GLFW_KEY_W);
         GetInputHandler()->AddInput("backward", GLFW_KEY_S);
@@ -90,7 +111,7 @@ public:
         mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
         mesh->Update(p_delta);
         camera->Update(p_delta);
-        glBindVertexArray(mesh->GetVAO());
+        light->Update(p_delta);
         auto time = glfwGetTime();
 
         if (rotate[0])
@@ -108,13 +129,21 @@ public:
         GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 10.0f, 40.0f));
         light->SetUniform();
         GetShaderProgram()->Use();
+
+        glBindVertexArray(mesh->GetVAO());
+        GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
         glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
+        glBindVertexArray(mesh2->GetVAO());
+        GetShaderProgram()->SetUniform("model", mesh2->GetSubspaceMatrix());
+        glDrawArrays(GL_TRIANGLES, 0, mesh2->GetVertexCount());
         glBindVertexArray(0);
     }
 
     virtual void OnClose() override
     {
         delete mesh;
+        delete camera;
+        delete mesh2;
         delete light;
     }
 };

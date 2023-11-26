@@ -31,6 +31,15 @@ public:
      * @param p_other The other triangle.
      */
     Triangle(Triangle&& p_other) noexcept;
+
+    /**
+     * @brief Construct a new Triangle object.
+     * 
+     * @param p_v1 The position of the first vertex.
+     * @param p_v2 The position of the second vertex.
+     * @param p_v3 The position of the third vertex.
+     */
+    Triangle(const Vec4& p_v1, const Vec4& p_v2, const Vec4& p_v3);
     virtual ~Triangle();
 
     /**

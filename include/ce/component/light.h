@@ -36,4 +36,18 @@ public:
      * 
      */
     virtual void SetUniform() = 0;
+
+    /**
+     * @brief Get the intensity of the light.
+     * 
+     * @return const float& The intensity of the light.
+     */
+    float& Intensity() { return intensity; }
+
+    /**
+     * @brief Get the intensity of the light.
+     * 
+     * @return const float& The intensity of the light.
+     */
+    const float& Intensity() const { return intensity; }
 };
