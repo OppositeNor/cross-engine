@@ -8,6 +8,7 @@
 #include <cmath>
 
 Vec4 new_rot = Vec4(0, 0, 0, 1.0f);
+Vector<bool, 3> rotate;
 
 class UserWindow : public Window
 {
@@ -31,15 +32,22 @@ public:
     virtual void Process(float p_delta) override
     {
         mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
+        mesh->Update(p_delta);
+        glBindVertexArray(mesh->GetVAO());
+        mesh->Position() = Vec4(0, 0, 10, 1.0f);
+        auto time = glfwGetTime();
+
+        if (rotate[0])
+            new_rot = EulerToQuat(Vec3(time, 0, 0), EulerRotOrder::PRY);
+        else if (rotate[1])
+            new_rot = EulerToQuat(Vec3(0, time, 0), EulerRotOrder::PRY);
+        else if (rotate[2])
+            new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
     }
 
     virtual void Draw() override
     {
-        mesh->Update(0.001f);
-        glBindVertexArray(mesh->GetVAO());
-        mesh->Position() = Vec4(0, 0, 10, 1.0f);
-        auto time = glfwGetTime();
-        mesh->SetRotationEuler(Vec4(time, time, time, 1.0f), EulerRotOrder::EULAR_ROTATION_ORDER_PRY);
+        
         GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
         GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 5.0f, 30.0f));
         GetShaderProgram()->Use();
@@ -52,6 +60,8 @@ public:
         delete mesh;
     }
 };
+
+
 #ifdef WIN32_MAIN
 int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR, int)
 #else
@@ -72,6 +82,23 @@ int main()
                 std::cout << ">";
                 std::string input;
                 std::cin >> input;
+                if (input == "EulerPitch")
+                {
+                    rotate = Vector<bool, 3>(true, false, false);
+                }
+                else if (input == "EulerYaw")
+                {
+                    rotate = Vector<bool, 3>(false, true, false);
+                }
+                else if (input == "EulerRoll")
+                {
+                    rotate = Vector<bool, 3>(false, false, true);
+                }
+                else
+                {
+                    rotate = Vector<bool, 3>(false, false, false);
+                }
+
                 if (input == "exit")
                     break;
                 else if (input[0] == 'x')

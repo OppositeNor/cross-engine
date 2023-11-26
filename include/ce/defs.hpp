@@ -29,12 +29,12 @@ inline constexpr bool has_times<dT1, dT2, std::void_t<decltype(std::declval<dT1>
 
 enum class EulerRotOrder
 {
-    EULAR_ROTATION_ORDER_PRY = 1,
-    EULAR_ROTATION_ORDER_PYR = 2,
-    EULAR_ROTATION_ORDER_RPY = 3,
-    EULAR_ROTATION_ORDER_RYP = -2,
-    EULAR_ROTATION_ORDER_YPR = -3,
-    EULAR_ROTATION_ORDER_YRP = -1
+    PRY = 1,
+    PYR = 2,
+    RPY = 3,
+    RYP = -2,
+    YPR = -3,
+    YRP = -1
 };
 
 template <typename T>

@@ -328,17 +328,17 @@ FORCE_INLINE Mat4 Mat4::RotEular(float p_pitch, float p_roll, float p_yaw, Euler
 {
     switch (p_order)
     {
-    case EulerRotOrder::EULAR_ROTATION_ORDER_PRY:
+    case EulerRotOrder::PRY:
         return RotEularPRY(p_pitch, p_roll, p_yaw);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_PYR:
+    case EulerRotOrder::PYR:
         return RotEularPYR(p_pitch, p_roll, p_yaw);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_RPY:
+    case EulerRotOrder::RPY:
         return RotEularRPY(p_pitch, p_roll, p_yaw);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_RYP:
+    case EulerRotOrder::RYP:
         return RotEularRYP(p_pitch, p_roll, p_yaw);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_YPR:
+    case EulerRotOrder::YPR:
         return RotEularYPR(p_pitch, p_roll, p_yaw);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_YRP:
+    case EulerRotOrder::YRP:
         return RotEularYRP(p_pitch, p_roll, p_yaw);
     default:
         throw std::invalid_argument("Invalid rotation order.");
@@ -350,17 +350,17 @@ FORCE_INLINE Mat4 Mat4::RotEular(const Vec4& p_rot, EulerRotOrder p_order)
 {
     switch (p_order)
     {
-    case EulerRotOrder::EULAR_ROTATION_ORDER_PRY:
+    case EulerRotOrder::PRY:
         return RotEularPRY(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_PYR:
+    case EulerRotOrder::PYR:
         return RotEularPYR(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_RPY:
+    case EulerRotOrder::RPY:
         return RotEularRPY(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_RYP:
+    case EulerRotOrder::RYP:
         return RotEularRYP(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_YPR:
+    case EulerRotOrder::YPR:
         return RotEularYPR(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_YRP:
+    case EulerRotOrder::YRP:
         return RotEularYRP(p_rot);
     default:
         throw std::invalid_argument("Invalid rotation order.");
@@ -372,17 +372,17 @@ FORCE_INLINE Mat4 Mat4::RotEular(const Vec3& p_rot, EulerRotOrder p_order)
 {
     switch (p_order)
     {
-    case EulerRotOrder::EULAR_ROTATION_ORDER_PRY:
+    case EulerRotOrder::PRY:
         return RotEularPRY(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_PYR:
+    case EulerRotOrder::PYR:
         return RotEularPYR(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_RPY:
+    case EulerRotOrder::RPY:
         return RotEularRPY(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_RYP:
+    case EulerRotOrder::RYP:
         return RotEularRYP(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_YPR:
+    case EulerRotOrder::YPR:
         return RotEularYPR(p_rot);
-    case EulerRotOrder::EULAR_ROTATION_ORDER_YRP:
+    case EulerRotOrder::YRP:
         return RotEularYRP(p_rot);
     default:
         throw std::invalid_argument("Invalid rotation order.");
@@ -514,8 +514,123 @@ FORCE_INLINE Vec4 QuatProd(const Vec4& p_quat1, Args&&... p_quats)
  * 
  * @param p_quat1 The first quaternion.
  */
-template <>
 FORCE_INLINE Vec4 QuatProd(const Vec4& p_quat1)
 {
     return p_quat1;
+}
+
+/**
+ * @brief Convert Euler angles to quaternion.
+ * 
+ * @param p_rotation The Euler angles.
+ * @param p_order The rotation order.
+ * @return Vec4 The result quaternion.
+ */
+FORCE_INLINE Vec4 EulerToQuat(const Vec4& p_rotation, EulerRotOrder p_order)
+{
+        switch (p_order)
+    {
+    case EulerRotOrder::PRY:
+        return QuatProd(
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)})
+        );
+        break;
+    case EulerRotOrder::PYR:
+        return QuatProd(
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)})
+        );
+        break;
+    case EulerRotOrder::RPY:
+        return QuatProd(
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)})
+        );
+        break;
+    case EulerRotOrder::RYP:
+        return QuatProd(
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)})
+        );
+        break;
+    case EulerRotOrder::YPR:
+        return QuatProd(
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)})
+        );
+        break;
+    case EulerRotOrder::YRP:
+        return QuatProd(
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)})
+        );
+        break;
+    default:
+        throw std::invalid_argument("Invalid rotation order.");
+    }
+}
+
+/**
+ * @brief Convert Euler angles to quaternion.
+ * 
+ * @param p_rotation The Euler angles.
+ * @param p_order The rotation order.
+ * @return Vec4 The result quaternion.
+ */
+FORCE_INLINE Vec4 EulerToQuat(const Vec3& p_rotation, EulerRotOrder p_order)
+{
+        switch (p_order)
+    {
+    case EulerRotOrder::PRY:
+        return QuatProd(
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)})
+        );
+        break;
+    case EulerRotOrder::PYR:
+        return QuatProd(
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)})
+        );
+        break;
+    case EulerRotOrder::RPY:
+        return QuatProd(
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)})
+        );
+        break;
+    case EulerRotOrder::RYP:
+        return QuatProd(
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)})
+        );
+        break;
+    case EulerRotOrder::YPR:
+        return QuatProd(
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)})
+        );
+        break;
+    case EulerRotOrder::YRP:
+        return QuatProd(
+            Vec4({0.0f, 0.0f, std::sin(p_rotation[2] / 2), std::cos(p_rotation[2] / 2)}),
+            Vec4({0.0f, std::sin(p_rotation[1] / 2), 0.0f, std::cos(p_rotation[1] / 2)}),
+            Vec4({std::sin(p_rotation[0] / 2), 0.0f, 0.0f, std::cos(p_rotation[0] / 2)})
+        );
+        break;
+    default:
+        throw std::invalid_argument("Invalid rotation order.");
+    }
 }
