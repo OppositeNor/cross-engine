@@ -1,6 +1,7 @@
 #include "ce/graphics/window.h"
 #include "ce/graphics/graphics.h"
 #include "ce/resource/resource.h"
+#include "ce/handlers/input_handler.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -12,6 +13,7 @@ Window::Window(const Vec2s& p_size, const std::string& p_title)
     : window_title(p_title), window_size(p_size)
 {
     window_thread = std::make_unique<std::thread>(&Window::ThreadFunc, this);
+    input_handler = std::make_unique<InputHandler>(this);
 }
 
 Window::Window(size_t p_width, size_t p_height, const std::string& p_title)

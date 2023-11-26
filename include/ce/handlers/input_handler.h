@@ -75,7 +75,12 @@ private:
     void SetInputStateReleased(int p_key);
 public:
 
-    InputHandler(Window* p_context);
+    /**
+     * @brief Construct a new Input Handler object
+     * 
+     * @param p_context The window that the input handler is attached to.
+     */
+    explicit InputHandler(Window* p_context);
     
     /**
      * @brief Get the input state of a key.

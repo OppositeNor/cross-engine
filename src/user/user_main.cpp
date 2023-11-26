@@ -4,12 +4,38 @@
 #include "ce/resource/resource.h"
 #include "ce/component/dynamic_mesh.h"
 #include "ce/component/camera.h"
+#include "ce/handlers/input_handler.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include <cmath>
 
 Vec4 new_rot = Vec4(0, 0, 0, 1.0f);
 Vector<bool, 3> rotate;
+
+class UserCamera : public Camera
+{
+public:
+    UserCamera(Window* p_context)
+        : Camera(p_context)
+    {}
+
+    virtual void Process(float p_delta) override
+    {
+        if (GetContext()->GetInputHandler()->GetInputState("forward") & InputHandler::InputState::Pressed)
+            Position() += Vec4(0, 0, 1, 0) * p_delta * 10;
+        if (GetContext()->GetInputHandler()->GetInputState("backward") & InputHandler::InputState::Pressed)
+            Position() += Vec4(0, 0, -1, 0) * p_delta * 10;
+        if (GetContext()->GetInputHandler()->GetInputState("left") & InputHandler::InputState::Pressed)
+            Position() += Vec4(-1, 0, 0, 0) * p_delta * 10;
+        if (GetContext()->GetInputHandler()->GetInputState("right") & InputHandler::InputState::Pressed)
+            Position() += Vec4(1, 0, 0, 0) * p_delta * 10;
+        if (GetContext()->GetInputHandler()->GetInputState("up") & InputHandler::InputState::Pressed)
+            Position() += Vec4(0, 1, 0, 0) * p_delta * 10;
+        if (GetContext()->GetInputHandler()->GetInputState("down") & InputHandler::InputState::Pressed)
+            Position() += Vec4(0, -1, 0, 0) * p_delta * 10;
+
+    }
+};
 
 class UserWindow : public Window
 {
@@ -19,11 +45,13 @@ class UserWindow : public Window
     
     DynamicMesh* mesh = nullptr;
     PointLight* light = nullptr;
-    Camera* camera = nullptr;
+    UserCamera* camera = nullptr;
+
 public:
     UserWindow(const std::string& title)
         : Window(1260, 720, title)
     {
+        
     }
 
     virtual void Ready() override
@@ -34,14 +62,22 @@ public:
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
         light->Position() = Vec4(10, 10, 0.0f, 1.0f);
-        camera = new Camera(this);
+        camera = new UserCamera(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
+
+        GetInputHandler()->AddInput("forward", GLFW_KEY_W);
+        GetInputHandler()->AddInput("backward", GLFW_KEY_S);
+        GetInputHandler()->AddInput("left", GLFW_KEY_A);
+        GetInputHandler()->AddInput("right", GLFW_KEY_D);
+        GetInputHandler()->AddInput("down", GLFW_KEY_Q);
+        GetInputHandler()->AddInput("up", GLFW_KEY_E);
     }
 
     virtual void Process(float p_delta) override
     {
         mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
         mesh->Update(p_delta);
+        camera->Update(p_delta);
         glBindVertexArray(mesh->GetVAO());
         auto time = glfwGetTime();
 

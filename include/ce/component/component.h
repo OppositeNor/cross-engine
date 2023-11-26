@@ -68,7 +68,7 @@ public:
      * 
      * @return const Vec3& The position of the component.
      */
-    const Vec4& GetPosition() const { return position; }
+    FORCE_INLINE const Vec4& GetPosition() const { return position; }
 
     /**
      * @brief Get the reference of the position of the component.
@@ -83,7 +83,7 @@ public:
      * 
      * @return const Vec3& The rotation of the component.
      */
-    Vec4 GetRotation() const { return rotation.Normalized(); }
+    FORCE_INLINE Vec4 GetRotation() const { return rotation.Normalized(); }
 
     /**
      * @brief Get the rotation of the component. The rotation
@@ -122,7 +122,7 @@ public:
      * 
      * @return const Vec3& The scale of the component.
      */
-    const Vec4& GetScale() const { return scale; }
+    FORCE_INLINE const Vec4& GetScale() const { return scale; }
 
     /**
      * @brief Get the scale of the component.
