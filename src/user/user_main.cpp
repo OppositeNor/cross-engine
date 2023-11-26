@@ -22,18 +22,25 @@ public:
     virtual void Process(float p_delta) override
     {
         if (GetContext()->GetInputHandler()->GetInputState("forward") & InputHandler::InputState::Pressed)
-            Position() += Vec4(0, 0, 1, 0) * p_delta * 10;
+            Position() += GetDirection() * p_delta * 10;
         if (GetContext()->GetInputHandler()->GetInputState("backward") & InputHandler::InputState::Pressed)
-            Position() += Vec4(0, 0, -1, 0) * p_delta * 10;
+            Position() += -1 * GetDirection() * p_delta * 10;
         if (GetContext()->GetInputHandler()->GetInputState("left") & InputHandler::InputState::Pressed)
-            Position() += Vec4(-1, 0, 0, 0) * p_delta * 10;
+            Position() += Vec4::Cross(Vec4::UP, GetDirection()).Normalized() * p_delta * 10;
         if (GetContext()->GetInputHandler()->GetInputState("right") & InputHandler::InputState::Pressed)
-            Position() += Vec4(1, 0, 0, 0) * p_delta * 10;
+            Position() += Vec4::Cross(GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
         if (GetContext()->GetInputHandler()->GetInputState("up") & InputHandler::InputState::Pressed)
-            Position() += Vec4(0, 1, 0, 0) * p_delta * 10;
+            Position() += Vec4::UP * p_delta * 10;
         if (GetContext()->GetInputHandler()->GetInputState("down") & InputHandler::InputState::Pressed)
-            Position() += Vec4(0, -1, 0, 0) * p_delta * 10;
-
+            Position() += -1 * Vec4::UP * p_delta * 10;
+        if (GetContext()->GetInputHandler()->GetInputState("rotate_x") & InputHandler::InputState::Pressed)
+            Rotate(Vec4::Cross(GetDirection(), Vec4::UP), p_delta * 1.5);
+        if (GetContext()->GetInputHandler()->GetInputState("rotate_-x") & InputHandler::InputState::Pressed)
+            Rotate(Vec4::Cross(Vec4::UP, GetDirection()), p_delta * 1.5);
+        if (GetContext()->GetInputHandler()->GetInputState("rotate_y") & InputHandler::InputState::Pressed)
+            Rotate(Vec4::UP, p_delta * 1.5);
+        if (GetContext()->GetInputHandler()->GetInputState("rotate_-y") & InputHandler::InputState::Pressed)
+            Rotate(-1 * Vec4::UP, p_delta * 1.5);
     }
 };
 
@@ -71,6 +78,11 @@ public:
         GetInputHandler()->AddInput("right", GLFW_KEY_D);
         GetInputHandler()->AddInput("down", GLFW_KEY_Q);
         GetInputHandler()->AddInput("up", GLFW_KEY_E);
+
+        GetInputHandler()->AddInput("rotate_x", GLFW_KEY_UP);
+        GetInputHandler()->AddInput("rotate_-x", GLFW_KEY_DOWN);
+        GetInputHandler()->AddInput("rotate_y", GLFW_KEY_LEFT);
+        GetInputHandler()->AddInput("rotate_-y", GLFW_KEY_RIGHT);
     }
 
     virtual void Process(float p_delta) override

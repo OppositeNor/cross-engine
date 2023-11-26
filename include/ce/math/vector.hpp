@@ -16,10 +16,13 @@ template <typename T, size_t N>
 class Vector : public MathTypeBase
 {
     T data[N];
-
 public:
     inline static constexpr size_t DIMENSION = N;
     inline static const Vector<T, N> ZERO = Vector<T, N>();
+    
+    static const Vector<T, N> UP;
+    static const Vector<T, N> RIGHT;
+    static const Vector<T, N> FRONT;
 
     Vector() noexcept
     {
@@ -316,3 +319,21 @@ FORCE_INLINE Vec4 Pos(float p_x, float p_y, float p_z)
 {
     return Vec4(p_x, p_y, p_z, 1);
 }
+
+template<>
+const Vec4 Vec4::UP = Vec4(0, 1, 0, 0);
+
+template<>
+const Vec3 Vec3::UP = Vec3(0, 1, 0);
+
+template<>
+const Vec4 Vec4::RIGHT = Vec4(1, 0, 0, 0);
+
+template<>
+const Vec3 Vec3::RIGHT = Vec3(1, 0, 0);
+
+template<>
+const Vec4 Vec4::FRONT = Vec4(0, 0, 1, 0);
+
+template<>
+const Vec3 Vec3::FRONT = Vec3(0, 0, 1);

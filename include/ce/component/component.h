@@ -155,6 +155,8 @@ public:
      */
     void Scale(Vec4 p_direction, float p_scale);
 
+    Vec4 GetDirection() const;
+
     /**
      * @brief Remove a child from this component.
      * 

@@ -118,13 +118,18 @@ void Component::Rotate(Vec4 p_direction, float p_angle)
     quat[0] = p_direction[0] * sin_half_angle;
     quat[1] = p_direction[1] * sin_half_angle;
     quat[2] = p_direction[2] * sin_half_angle;
-    Rotation() = QuatProd(quat, GetRotation());
+    Rotation() = QuatProd(quat, rotation);
 }
 
 void Component::Scale(Vec4 p_direction, float p_scale)
 {
     p_direction.Normalize();
     Scale() *= p_direction * p_scale;
+}
+
+Vec4 Component::GetDirection() const
+{
+    return (Mat4::RotQuaternion(rotation) * Vec4(0, 0, 1, 0)).Normalized();
 }
 
 void Component::SetSubspaceMatrixDirty()
