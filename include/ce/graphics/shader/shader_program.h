@@ -3,6 +3,7 @@
 #include <mutex>
 #include "ce/graphics/shader/a_shader.h"
 #include "ce/math/math.hpp"
+#include "ce/component/point_light.h"
 
 class ShaderProgram
 {
@@ -53,7 +54,15 @@ public:
      * @param p_name The name of the uniform.
      * @param p_mat4 The Mat4f to set the uniform to.
      */
-    void SetUniform(const std::string& p_name, const Mat4& p_mat4);
+    void SetUniform(const std::string& p_name, const Mat4& p_mat4) const;
+
+    /**
+     * @brief Set the uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_light The PointLight to set the uniform to.
+     */
+    void SetUniform(const std::string& p_name, const PointLight::Data& p_light) const;
 
     /**
      * @brief Compile the shader program.
@@ -75,5 +84,27 @@ public:
      * 
      */
     virtual ~ShaderProgram();
+    /**
+     * @brief Returns whether or not this shader program is usable.
+     * The shader program will be usable if it has been successfully
+     * compiled.
+     * 
+     * @return true The shader program is usable.
+     * @return false The shader program is not usable.
+     */
+    FORCE_INLINE bool IsUsable() const { return usable; }
 
+    /**
+     * @brief Get the vertex shader.
+     * 
+     * @return std::shared_ptr<AShader> The vertex shader.
+     */
+    FORCE_INLINE std::shared_ptr<AShader> GetVertShader() const { return vert_shader; }
+
+    /**
+     * @brief Get the fragment shader.
+     * 
+     * @return std::shared_ptr<AShader> The fragment shader.
+     */
+    FORCE_INLINE std::shared_ptr<AShader> GetFragShader() const { return frag_shader; }
 };

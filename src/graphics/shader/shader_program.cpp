@@ -31,12 +31,30 @@ ShaderProgram::ShaderProgram(ShaderProgram&& p_other) noexcept
     p_other.program_id = 0;
 }
 
-void ShaderProgram::SetUniform(const std::string& p_name, const Mat4& p_mat4)
+void ShaderProgram::SetUniform(const std::string& p_name, const Mat4& p_mat4) const
 {
     if (usable)
     {
         int location = glGetUniformLocation(program_id, p_name.c_str());
         glUniformMatrix4fv(location, 1, GL_FALSE, p_mat4.Transpose().GetRaw());
+    }
+}
+
+void ShaderProgram::SetUniform(const std::string& p_name, const PointLight::Data& p_light) const
+{
+    if (usable)
+    {
+        std::string temp = p_name + ".position";
+        int location = glGetUniformLocation(program_id, temp.c_str());
+        glUniform4f(location, p_light.position[0], p_light.position[1], p_light.position[2], p_light.position[3]);
+
+        temp = p_name + ".color";
+        location = glGetUniformLocation(program_id, temp.c_str());
+        glUniform4f(location, p_light.color[0], p_light.color[1], p_light.color[2], p_light.color[3]);
+
+        temp = p_name + ".intensity";
+        location = glGetUniformLocation(program_id, temp.c_str());
+        glUniform1f(location, p_light.intensity);
     }
 }
 

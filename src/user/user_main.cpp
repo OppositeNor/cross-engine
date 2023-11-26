@@ -17,6 +17,7 @@ class UserWindow : public Window
 
     
     DynamicMesh* mesh;
+    PointLight* light;
 public:
     UserWindow(const std::string& title)
         : Window(1260, 720, title)
@@ -27,6 +28,11 @@ public:
     {
         mesh = new DynamicMesh(this);
         mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
+        mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
+        mesh->Position() = Vec4(0, 0, 15, 1.0f);
+        light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
+        light->Position() = Vec4(10, 10, 0.0f, 1.0f);
+        
     }
 
     virtual void Process(float p_delta) override
@@ -34,7 +40,6 @@ public:
         mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
         mesh->Update(p_delta);
         glBindVertexArray(mesh->GetVAO());
-        mesh->Position() = Vec4(0, 0, 10, 1.0f);
         auto time = glfwGetTime();
 
         if (rotate[0])
@@ -47,9 +52,9 @@ public:
 
     virtual void Draw() override
     {
-        
         GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
         GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 5.0f, 30.0f));
+        light->SetUniform();
         GetShaderProgram()->Use();
         glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
         glBindVertexArray(0);
@@ -58,6 +63,7 @@ public:
     virtual void OnClose() override
     {
         delete mesh;
+        delete light;
     }
 };
 
@@ -83,40 +89,24 @@ int main()
                 std::string input;
                 std::cin >> input;
                 if (input == "EulerPitch")
-                {
                     rotate = Vector<bool, 3>(true, false, false);
-                }
                 else if (input == "EulerYaw")
-                {
                     rotate = Vector<bool, 3>(false, true, false);
-                }
                 else if (input == "EulerRoll")
-                {
                     rotate = Vector<bool, 3>(false, false, true);
-                }
                 else
-                {
                     rotate = Vector<bool, 3>(false, false, false);
-                }
 
                 if (input == "exit")
                     break;
                 else if (input[0] == 'x')
-                {
                     new_rot[0] = std::stof(input.substr(2));
-                }
                 else if (input[0] == 'y')
-                {
                     new_rot[1] = std::stof(input.substr(2));
-                }
                 else if (input[0] == 'z')
-                {
                     new_rot[2] = std::stof(input.substr(2));
-                }
                 else if (input[0] == 'w')
-                {
                     new_rot[3] = std::stof(input.substr(2));
-                }
             }
             catch(const std::exception& e)
             {

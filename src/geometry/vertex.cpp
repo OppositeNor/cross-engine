@@ -2,25 +2,23 @@
 
 
 Vertex::Vertex()
-    : position(Pos())
 {
-    
 }
 
 Vertex::Vertex(const Vec4& p_position)
-    : position(p_position)
+    : Vertex()
 {
-
+    position = p_position;
 }
 
 Vertex::Vertex(const Vertex& p_other)
     : position(p_other.position), 
-    prev(nullptr), next(nullptr)
+    prev(nullptr), next(nullptr), normal(p_other.normal)
 {}
 
 Vertex::Vertex(Vertex&& p_other) noexcept
     : position(p_other.position), 
-    prev(p_other.prev), next(p_other.next)
+    prev(p_other.prev), next(p_other.next), normal(p_other.normal)
 {
     p_other.prev = nullptr;
     p_other.next = nullptr;
@@ -118,21 +116,32 @@ Vertex* Vertex::RemoveNext()
     return temp;
 }
 
-float* Vertex::GetArray(float* p_buff, size_t p_buff_size) const
+float* Vertex::GetArray(float* p_buff, size_t p_buff_size, bool p_use_induced_normal) const
 {
     if (p_buff_size < ARRAY_SIZE)
         throw std::domain_error("The buffer size is too small.");
-    p_buff[0] = position[0];
-    p_buff[1] = position[1];
-    p_buff[2] = position[2];
-    p_buff[3] = position[3];
+    for (size_t i = 0; i < 4; ++i)
+        p_buff[i] = position[i];
+    
+    if (p_use_induced_normal)
+    {
+        Vec4 temp_normal = GetInducedNormal();
+        for (size_t i = 0; i < 4; ++i)
+            p_buff[i + 4] = temp_normal[i];
+    }
+    else
+    {
+        for (size_t i = 0; i < 4; ++i)
+            p_buff[i + 4] = normal[i];
+    }
+
     return p_buff;
 }
 
 Vec4 Vertex::GetInducedNormal() const
 {
     if (prev == nullptr || next == nullptr)
-        throw std::domain_error("prev or next is nullptr");
+        throw std::domain_error("The vertex is not fully connected.");
     auto prev_vec = prev->position - position;
     auto next_vec = next->position - position;
     return Vec4::Cross(prev_vec, next_vec).Normalize();

@@ -4,7 +4,8 @@
 
 AShader::~AShader()
 {
-    glDeleteShader(shader_id);
+    if (shader_id != 0)
+        glDeleteShader(shader_id);
 }
 
 

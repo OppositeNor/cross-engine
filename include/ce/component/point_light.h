@@ -3,16 +3,20 @@
 
 class PointLight : public ALight
 {
-protected:
+public:
     /**
      * @brief Data is a struct that is used for transfering data to
      * the shaders.
      */
     struct Data
     {
-        float position[3];
-        float color[3];
-    }data;
+        float position[4];
+        float color[4];
+        float intensity = 1.0f;
+    };
+protected:
+    struct Data data;
+
 public:
 
     /**
@@ -23,16 +27,23 @@ public:
     PointLight(Window* p_context);
 
     /**
-     * @brief Get the data of this light.
+     * @brief Constructor for PointLight.
      * 
-     * @return const Data& The data of this light.
+     * @param p_color The color of the light.
+     * @param p_context 
      */
-    virtual void* GetData() override;
+    PointLight(const Vec4& p_color, Window* p_context);
 
     /**
      * @brief Get the name of the uniform variable.
      * 
      * @return std::string The name of the uniform variable.
      */
-    virtual std::string UniformName() override { return "point_lights"; }
+    virtual std::string UniformName() const override { return "point_light"; }
+
+    /**
+     * @brief Set the uniform of the light's data.
+     * 
+     */
+    virtual void SetUniform() override;
 };

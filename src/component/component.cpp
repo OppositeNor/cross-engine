@@ -91,6 +91,7 @@ Vec4& Component::Position()
 
 Vec4& Component::Rotation()
 {
+    rotation.Normalize();
     SetSubspaceMatrixDirty();
     return rotation;
 }
@@ -183,7 +184,10 @@ const Mat4& Component::GetModelMatrix()
 
 Vec4 Component::GetGlobalPosition() const
 {
-    return GetSubspaceMatrix() * Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (parent == nullptr)
+        return GetPosition();
+    else
+        return parent->GetSubspaceMatrix() * GetPosition();
 }
 
 void Component::SetGlobalPosition(const Vec4& p_position)

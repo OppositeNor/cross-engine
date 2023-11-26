@@ -4,10 +4,11 @@ class Window;
 class ALight : public Component
 {
 protected:
-    Vec3 color;
+    Vec4 color;
+    float intensity = 2.0f;
 public:
     ALight(Window* p_context);
-    ALight(const Vec3& p_color, Window* p_context);
+    ALight(const Vec4& p_color, Window* p_context);
     virtual ~ALight();
 
     /**
@@ -15,25 +16,24 @@ public:
      * 
      * @return const Vec3& The color of the light.
      */
-    FORCE_INLINE const Vec3& GetColor() const { return color; }
+    FORCE_INLINE const Vec4& GetColor() const { return color; }
     /**
      * @brief Get the color of the light.
      * 
      * @return Vec3& The color of the light.
      */
-    FORCE_INLINE Vec3& GetColor() { return color; }
-
-    /**
-     * @brief Get the data of this light.
-     * 
-     * @return void* 
-     */
-    virtual void* GetData() = 0;
+    FORCE_INLINE Vec4& GetColor() { return color; }
 
     /**
      * @brief Get the name of the uniform variable.
      * 
      * @return std::string The name of the uniform variable.
      */
-    virtual std::string UniformName() = 0;
+    virtual std::string UniformName() const = 0;
+
+    /**
+     * @brief Set the uniform of the light's data.
+     * 
+     */
+    virtual void SetUniform() = 0;
 };

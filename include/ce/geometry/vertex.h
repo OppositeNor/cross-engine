@@ -11,6 +11,7 @@
 class Vertex
 {
     Vec4 position;
+    Vec4 normal;
 
     Vertex* prev = nullptr;
     Vertex* next = nullptr;
@@ -19,7 +20,7 @@ public:
     /**
      * @brief The count of elements in the vertex array.
      */
-    static constexpr size_t ARRAY_SIZE = 4;
+    static constexpr size_t ARRAY_SIZE = 8;
 
     /**
      * @brief Constructor for Vertex.
@@ -45,6 +46,20 @@ public:
      * @param p_other The other vertex.
      */
     Vertex(Vertex&& p_other) noexcept;
+
+    /**
+     * @brief Get the normal of the vertex.
+     * 
+     * @return const Vec4& The normal of the vertex.
+     */
+    const Vec4& GetNormal() const { return normal; }
+
+    /**
+     * @brief Get the normal of the vertex.
+     * 
+     * @return Vec4& The normal of the vertex.
+     */
+    Vec4& GetNormal() noexcept { return normal; }
 
     virtual ~Vertex();
 
@@ -137,13 +152,19 @@ public:
     Vertex* RemoveNext();
 
     /**
+     * @brief Reset the normal of the vertex to the induced normal.
+     * 
+     */
+    FORCE_INLINE void ResetNormal() { normal = GetInducedNormal(); }
+
+    /**
      * @brief Get the vertex array.
      * 
      * @param p_buff The buffer to store the vertex array.
      * @param p_buff_size The size of the buffer.
      * @return float* The pointer to the buffer.
      */
-    float* GetArray(float* p_buff, size_t p_buff_size) const;
+    float* GetArray(float* p_buff, size_t p_buff_size, bool p_use_incuded_normal = false) const;
 
     /**
      * @brief Get the normal based on the previous and the next vertex.

@@ -83,7 +83,7 @@ public:
      * 
      * @return const Vec3& The rotation of the component.
      */
-    const Vec4& GetRotation() const { return rotation; }
+    Vec4 GetRotation() const { return rotation.Normalized(); }
 
     /**
      * @brief Get the rotation of the component. The rotation

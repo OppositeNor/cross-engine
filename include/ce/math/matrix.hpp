@@ -624,4 +624,5 @@ public:
 
 template <size_t N>
 using Mat = Matrix<float, N, N>;
+using Mat3 = Mat<3>;
 using Mat4 = Mat<4>;
