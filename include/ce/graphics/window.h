@@ -29,6 +29,10 @@ protected:
     static void WindowFocused(void* p_glfw_context, int p_focused);
     void InitWindow();
     void UpdateWindowSize(const Vec2s& p_new_window_size);
+
+private:
+    static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
+
 public:
 
     /**

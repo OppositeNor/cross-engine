@@ -51,14 +51,13 @@ public:
             new_rot = EulerToQuat(Vec3(0, time, 0), EulerRotOrder::PRY);
         else if (rotate[2])
             new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
-        camera->Rotate(Vec4(0, 1, 0), p_delta * 0.5f);
     }
 
     virtual void Draw() override
     {
         GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
         GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(3.5f, -3.5f, 2.0f, -2.0f, 5.0f, 40.0f));
+        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 10.0f, 40.0f));
         light->SetUniform();
         GetShaderProgram()->Use();
         glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());

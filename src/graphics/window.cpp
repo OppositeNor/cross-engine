@@ -12,7 +12,6 @@ Window::Window(const Vec2s& p_size, const std::string& p_title)
     : window_title(p_title), window_size(p_size)
 {
     window_thread = std::make_unique<std::thread>(&Window::ThreadFunc, this);
-    //todo: handle exception.
 }
 
 Window::Window(size_t p_width, size_t p_height, const std::string& p_title)
@@ -47,6 +46,8 @@ void Window::InitWindow()
     glViewport(0, 0, window_size[0], window_size[1]);
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
+    glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));
     
     shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/vertex.glsl", 
                                        Resource::GetExeDirectory() + "/shaders/fragment.glsl");
@@ -102,4 +103,11 @@ void Window::WindowFocused(void* p_glfw_context, int p_focused)
     Window* window = context_window_finder[p_glfw_context];
     for (auto& listener : window->window_event_listeners)
         listener->OnWindowFocus(window, p_focused);
+}
+
+void Window::OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods)
+{
+    Window* window = context_window_finder[p_glfw_context];
+    for (auto& listener : window->window_event_listeners)
+        listener->OnKey(window, p_key, p_scancode, p_action, p_mods);
 }

@@ -22,6 +22,7 @@ add_subdirectory(src/component)
 add_subdirectory(src/geometry)
 add_subdirectory(src/graphics)
 add_subdirectory(src/resource)
+add_subdirectory(src/handlers)
 add_subdirectory(src/event_listener)
 
 add_subdirectory(shaders)
