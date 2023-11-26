@@ -132,6 +132,30 @@ public:
     Vec4& Scale();
 
     /**
+     * @brief Move the component in the direction.
+     * 
+     * @param p_direction The direction to move the component.
+     * @param p_distance The distance to move the component.
+     */
+    void Move(Vec4 p_direction, float p_distance);
+
+    /**
+     * @brief Rotate the component in the direction.
+     * 
+     * @param p_direction The direction to rotate the component.
+     * @param p_angle The angle to rotate the component.
+     */
+    void Rotate(Vec4 p_direction, float p_angle);
+
+    /**
+     * @brief Scale the component in the direction.
+     * 
+     * @param p_direction The direction to scale the component.
+     * @param p_scale The scale to scale the component.
+     */
+    void Scale(Vec4 p_direction, float p_scale);
+
+    /**
      * @brief Remove a child from this component.
      * 
      * @param p_child The child to be removed.

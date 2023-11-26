@@ -244,10 +244,19 @@ public:
     }
 
     template <typename T1>
-    FORCE_INLINE Vector<T, N> operator*= (T1&& p_scaler)
+    FORCE_INLINE auto operator*= (T1&& p_scaler)
+        -> std::enable_if_t<!std::is_base_of_v<MathTypeBase, std::remove_reference_t<T1>>, Vector<T, N>&>
     {
         for (size_t i = 0; i < N; ++i)
             data[i] *= std::forward<T1>(p_scaler);
+        return *this;
+    }
+
+    template <typename T1>
+    FORCE_INLINE Vector<T, N>& operator*= (const Vector<T1, N>& p_other)
+    {
+        for (size_t i = 0; i < N; ++i)
+            data[i] *= p_other[i];
         return *this;
     }
 

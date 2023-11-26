@@ -102,7 +102,9 @@ private:
      */
     template <typename T1, typename T2>
     inline static auto ExpectValuesEqual(const char* p_file, int p_line, T1&& val_1, T2&& val_2)
-        ->decltype((void)(val_1 == val_2), (void)(std::declval<std::ostream>() << val_1 << val_2), void())
+        ->std::enable_if_t<!std::is_convertible_v<std::remove_reference_t<T1>, std::string> &&
+                           !std::is_convertible_v<std::remove_reference_t<T2>, std::string>,
+                           decltype((void)(val_1 == val_2), (void)(std::declval<std::ostream>() << val_1 << val_2), void())>
     {
         std::stringstream ss;
         ss << "Expected to get value: " << val_2 << ", but get " << val_1 << " instead.";

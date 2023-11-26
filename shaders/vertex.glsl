@@ -7,11 +7,12 @@ out vec4 frag_position;
 out vec4 frag_normal;
 
 uniform mat4 model;
+uniform mat4 view;
 uniform mat4 proj;
 
 void main()
 {
-    gl_Position = proj * model * pos;
+    gl_Position = proj * model * view * pos;
     frag_normal = normal;
     frag_position = model * pos;
 }

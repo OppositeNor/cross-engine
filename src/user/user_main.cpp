@@ -3,6 +3,7 @@
 #include "ce/graphics/graphics.h"
 #include "ce/resource/resource.h"
 #include "ce/component/dynamic_mesh.h"
+#include "ce/component/camera.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include <cmath>
@@ -16,8 +17,9 @@ class UserWindow : public Window
     std::unique_ptr<Window> window2;
 
     
-    DynamicMesh* mesh;
-    PointLight* light;
+    DynamicMesh* mesh = nullptr;
+    PointLight* light = nullptr;
+    Camera* camera = nullptr;
 public:
     UserWindow(const std::string& title)
         : Window(1260, 720, title)
@@ -29,10 +31,11 @@ public:
         mesh = new DynamicMesh(this);
         mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
         mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
-        mesh->Position() = Vec4(0, 0, 15, 1.0f);
+        mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
         light->Position() = Vec4(10, 10, 0.0f, 1.0f);
-        
+        camera = new Camera(this);
+        camera->Position() = Vec4(0, 0, -20, 1.0f);
     }
 
     virtual void Process(float p_delta) override
@@ -48,12 +51,14 @@ public:
             new_rot = EulerToQuat(Vec3(0, time, 0), EulerRotOrder::PRY);
         else if (rotate[2])
             new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
+        camera->Rotate(Vec4(0, 1, 0), p_delta * 0.5f);
     }
 
     virtual void Draw() override
     {
         GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
-        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 5.0f, 30.0f));
+        GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
+        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(3.5f, -3.5f, 2.0f, -2.0f, 5.0f, 40.0f));
         light->SetUniform();
         GetShaderProgram()->Use();
         glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());

@@ -119,6 +119,20 @@ auto operator* (const Vector<Tv1, N>& p_vec1, const Vector<Tv2, N>& p_vec2)
     return result;
 }
 
+template <typename T, size_t M, size_t N>
+auto operator <<(std::ostream& p_os, const Matrix<T, M, N>& p_mat)
+    -> std::enable_if_t<std::convertible_to<Matrix<T, M, N>, std::string>, std::ostream&>
+{
+    return p_os << (std::string)p_mat;
+}
+
+template <typename T, size_t N>
+auto operator <<(std::ostream& p_os, const Vector<T, N>& p_vec)
+    -> std::enable_if_t<std::convertible_to<Vector<T, N>, std::string>, std::ostream&>
+{
+    return p_os << (std::string)p_vec;
+}
+
 template<>
 FORCE_INLINE Vec3 Vec3::Cross(const Vec3& p_vec1, const Vec3& p_vec2)
 {
@@ -434,19 +448,19 @@ FORCE_INLINE Mat4 Mat4::ModelInv(const Vec4& p_translation, const Vec4& p_rotati
 template<>
 FORCE_INLINE Mat4 Mat4::ModelInv(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale, EulerRotOrder p_order)
 {
-    return Trans(-1 * p_translation) * RotEular(-1 * p_rotation, -1 * p_order) * Scale(-1 * p_scale);
+    return Scale(-1 * p_scale) * RotEular(-1 * p_rotation, -1 * p_order) * Trans(-1 * p_translation);
 }
 
 template<>
 FORCE_INLINE Mat4 Mat4::ModelInv(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale, EulerRotOrder p_order)
 {
-    return Trans(-1 * p_translation) * RotEular(-1 * p_rotation, -1 * p_order) * Scale(-1 * p_scale);
+    return Scale(-1 * p_scale) * RotEular(-1 * p_rotation, -1 * p_order) * Trans(-1 * p_translation);
 }
 
 template<>
 FORCE_INLINE Mat4 Mat4::View(const Vec4& p_translation, const Vec4& p_rotation) noexcept
 {
-    return Trans(p_translation) * RotQuaternion(Vec4(-p_rotation[0], -p_rotation[1], -p_rotation[2], p_rotation[3]));
+    return RotQuaternion(Vec4(-p_rotation[0], -p_rotation[1], -p_rotation[2], p_rotation[3])) * Trans(-1 * p_translation);
 }
 
 template<>

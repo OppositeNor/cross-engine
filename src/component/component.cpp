@@ -3,7 +3,7 @@
 
 
 Component::Component(Window* p_context)
-    : position(0.0f, 0.0f, 0.0f), rotation(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f),
+    : position(0.0f, 0.0f, 0.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f),
         context(p_context)
 {
 
@@ -100,6 +100,31 @@ Vec4& Component::Scale()
 {
     SetSubspaceMatrixDirty();
     return scale;
+}
+
+void Component::Move(Vec4 p_direction, float p_distance)
+{
+    p_direction.Normalize();
+    Position() += p_direction * p_distance;
+}
+
+void Component::Rotate(Vec4 p_direction, float p_angle)
+{
+    p_direction.Normalize();
+    float half_angle = p_angle / 2.0f;
+    float sin_half_angle = std::sin(half_angle);
+    Vec4 quat;
+    quat[3] = std::cos(half_angle);
+    quat[0] = p_direction[0] * sin_half_angle;
+    quat[1] = p_direction[1] * sin_half_angle;
+    quat[2] = p_direction[2] * sin_half_angle;
+    Rotation() = QuatProd(quat, GetRotation());
+}
+
+void Component::Scale(Vec4 p_direction, float p_scale)
+{
+    p_direction.Normalize();
+    Scale() *= p_direction * p_scale;
 }
 
 void Component::SetSubspaceMatrixDirty()
