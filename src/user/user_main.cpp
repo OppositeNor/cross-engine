@@ -66,7 +66,7 @@ public:
     {
         mesh = new DynamicMesh(this);
         mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
-        mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
+        mesh->Scale() = Vec4(1.0f, 1.0f, 1.0f);
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
@@ -137,11 +137,11 @@ public:
         if (GetInputHandler()->GetInputState("light_move_up") & InputHandler::InputState::Pressed)
             light->Position() += Vec4::UP * p_delta * 10;
         if (GetInputHandler()->GetInputState("light_move_down") & InputHandler::InputState::Pressed)
-            light->Position() += -1 * Vec4::UP * p_delta * 10;
+            light->Position() -= Vec4::UP * p_delta * 10;
         if (GetInputHandler()->GetInputState("light_move_forward") & InputHandler::InputState::Pressed)
-            light->Position() += camera->GetDirection() * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::Cross(Vec4::UP, camera->GetDirection()), Vec4::UP) * p_delta * 10;
         if (GetInputHandler()->GetInputState("light_move_backward") & InputHandler::InputState::Pressed)
-            light->Position() += -1 * camera->GetDirection() * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(Vec4::UP, camera->GetDirection())) * p_delta * 10;
         
     }
 

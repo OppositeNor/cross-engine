@@ -239,7 +239,7 @@ public:
     }
 
     template <typename T1>
-    FORCE_INLINE Vector<T, N>& operator -=(const Vector<T1, N>& p_other) const
+    FORCE_INLINE Vector<T, N>& operator -=(const Vector<T1, N>& p_other)
     {
         for (size_t i = 0; i < N; ++i)
             data[i] -= p_other[i];
