@@ -76,18 +76,20 @@ public:
 
         mesh2 = new DynamicMesh(this);
         // Box mesh
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(-1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(1, 1, -1, 1), Vec4(1, 1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, -1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1), Vec4(-1, -1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(-1, -1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(-1, 1, 1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1)));
+        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1)));
+
+
         mesh2->Scale() = Vec4(1.5f, 1.5f, 1.5f);
         light->AddChild(mesh2);
         // mesh2->Position() = Vec4(5, 5, 5, 1.0f);
@@ -104,6 +106,13 @@ public:
         GetInputHandler()->AddInput("rotate_-x", GLFW_KEY_DOWN);
         GetInputHandler()->AddInput("rotate_y", GLFW_KEY_LEFT);
         GetInputHandler()->AddInput("rotate_-y", GLFW_KEY_RIGHT);
+
+        GetInputHandler()->AddInput("light_move_left", GLFW_KEY_J);
+        GetInputHandler()->AddInput("light_move_right", GLFW_KEY_L);
+        GetInputHandler()->AddInput("light_move_up", GLFW_KEY_O);
+        GetInputHandler()->AddInput("light_move_down", GLFW_KEY_U);
+        GetInputHandler()->AddInput("light_move_forward", GLFW_KEY_I);
+        GetInputHandler()->AddInput("light_move_backward", GLFW_KEY_K);
     }
 
     virtual void Process(float p_delta) override
@@ -120,6 +129,20 @@ public:
             new_rot = EulerToQuat(Vec3(0, time, 0), EulerRotOrder::PRY);
         else if (rotate[2])
             new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
+        
+        if (GetInputHandler()->GetInputState("light_move_left") & InputHandler::InputState::Pressed)
+            light->Position() += Vec4::Cross(Vec4::UP, camera->GetDirection()).Normalized() * p_delta * 10;
+        if (GetInputHandler()->GetInputState("light_move_right") & InputHandler::InputState::Pressed)
+            light->Position() += Vec4::Cross(camera->GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
+        if (GetInputHandler()->GetInputState("light_move_up") & InputHandler::InputState::Pressed)
+            light->Position() += Vec4::UP * p_delta * 10;
+        if (GetInputHandler()->GetInputState("light_move_down") & InputHandler::InputState::Pressed)
+            light->Position() += -1 * Vec4::UP * p_delta * 10;
+        if (GetInputHandler()->GetInputState("light_move_forward") & InputHandler::InputState::Pressed)
+            light->Position() += camera->GetDirection() * p_delta * 10;
+        if (GetInputHandler()->GetInputState("light_move_backward") & InputHandler::InputState::Pressed)
+            light->Position() += -1 * camera->GetDirection() * p_delta * 10;
+        
     }
 
     virtual void Draw() override

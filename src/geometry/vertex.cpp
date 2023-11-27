@@ -142,7 +142,7 @@ Vec4 Vertex::GetInducedNormal() const
 {
     if (prev == nullptr || next == nullptr)
         throw std::domain_error("The vertex is not fully connected.");
-    auto prev_vec = prev->position - position;
+    auto prev_vec = position - prev->position;
     auto next_vec = next->position - position;
-    return Vec4::Cross(prev_vec, next_vec).Normalize();
+    return Vec4::Cross(next_vec, prev_vec).Normalize();
 }

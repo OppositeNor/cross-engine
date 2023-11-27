@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <mutex>
 #include "ce/component/visual_mesh.h"
 #include "ce/geometry/triangle.h"
 #include "ce/graphics/window.h"
@@ -8,6 +9,7 @@ class DynamicMesh : public VisualMesh
 {
     std::vector<Triangle*> triangles;
     bool triangles_dirty = true;
+    std::mutex triangles_mutex;
 public:
 
     /**
