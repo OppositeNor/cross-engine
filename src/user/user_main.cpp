@@ -137,11 +137,11 @@ public:
         if (GetInputHandler()->GetInputState("light_move_up") & InputHandler::InputState::Pressed)
             light->Position() += Vec4::UP * p_delta * 10;
         if (GetInputHandler()->GetInputState("light_move_down") & InputHandler::InputState::Pressed)
-            light->Position() += -1 * Vec4::UP * p_delta * 10;
+            light->Position() -= Vec4::UP * p_delta * 10;
         if (GetInputHandler()->GetInputState("light_move_forward") & InputHandler::InputState::Pressed)
-            light->Position() += camera->GetDirection() * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(camera->GetDirection(), Vec4::UP)) * p_delta * 10;
         if (GetInputHandler()->GetInputState("light_move_backward") & InputHandler::InputState::Pressed)
-            light->Position() += -1 * camera->GetDirection() * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::Cross(camera->GetDirection(), Vec4::UP), Vec4::UP) * p_delta * 10;
         
     }
 
