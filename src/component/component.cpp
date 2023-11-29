@@ -9,17 +9,29 @@ Component::Component(Window* p_context)
 
 }
 
+Component::Component(const Component& p_other)
+{
+    position = p_other.position;
+    rotation = p_other.rotation;
+    scale = p_other.scale;
+    SetSubspaceMatrixDirty();
+
+    if (p_other.parent != nullptr)
+        p_other.parent->AddChild(this);
+    for (auto& child : p_other.children)
+        children.push_back(new Component(*child));
+    
+}
+
 Component::Component(Component&& p_other) noexcept
 {
     position = p_other.position;
     rotation = p_other.rotation;
     scale = p_other.scale;
-    subspace_matrix = p_other.subspace_matrix;
-    subspace_matrix_dirty = p_other.subspace_matrix_dirty;
-    subspace_matrix_inverse = p_other.subspace_matrix_inverse;
-    subspace_matrix_inverse_dirty = p_other.subspace_matrix_inverse_dirty;
+    SetSubspaceMatrixDirty();
 
-    parent = p_other.parent;
+    if (p_other.parent != nullptr)
+        p_other.parent->AddChild(this);
     p_other.parent = nullptr;
     children = std::move(p_other.children);
 
@@ -54,6 +66,11 @@ void Component::RemoveChild(Component* p_child)
 
 void Component::AddChild(Component* p_child)
 {
+    for (auto i : children)
+    {
+        if (i == p_child)
+            return;
+    }
     children.push_back(p_child);
     if (p_child->parent != nullptr)
         p_child->parent->RemoveChild(p_child);

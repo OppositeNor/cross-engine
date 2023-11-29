@@ -7,7 +7,7 @@
 #include "ce/math/math.hpp"
 #include "ce/event_listener/window_event_listener.h"
 #include "ce/graphics/shader/shader_program.h"
-class InputHandler;
+class InputManager;
 class Window
 {
 protected:
@@ -31,7 +31,6 @@ protected:
     void UpdateWindowSize(const Vec2s& p_new_window_size);
 
 private:
-    std::unique_ptr<InputHandler> input_handler;
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
 
 public:
@@ -149,18 +148,4 @@ public:
      * @return const ShaderProgram* The shader program.
      */
     FORCE_INLINE const ShaderProgram* GetShaderProgram() const { return shader_program; }
-
-    /**
-     * @brief Get the input handler.
-     * 
-     * @return InputHandler& The input handler.
-     */
-    FORCE_INLINE InputHandler* GetInputHandler() { return input_handler.get(); }
-
-    /**
-     * @brief Get the input handler.
-     * 
-     * @return InputHandler& The input handler.
-     */
-    FORCE_INLINE const InputHandler* GetInputHandler() const { return input_handler.get(); }
 };

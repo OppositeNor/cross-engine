@@ -2,7 +2,7 @@
 
 out vec4 FragColor;
 
-#define MAX_POINT_LIGHTS 16
+#define MAX_POINT_LIGHTS 4
 struct PointLight {
     vec4 position;
     vec4 color;

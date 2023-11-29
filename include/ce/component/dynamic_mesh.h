@@ -36,9 +36,9 @@ public:
     DynamicMesh(const std::string& p_file, Window* p_context);
 
     /**
-     * @brief Dynamic meshes cannot be copied.
+     * @brief Copy constructor for DynamicMesh.
      */
-    DynamicMesh(const DynamicMesh& p_other) = delete;
+    DynamicMesh(const DynamicMesh& p_other);
 
     /**
      * @brief Move constructor for DynamicMesh.

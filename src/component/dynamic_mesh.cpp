@@ -21,6 +21,13 @@ DynamicMesh::DynamicMesh(const std::string& p_file, Window* p_context)
     Resource::LoadTris(p_file, triangles);
 }
 
+DynamicMesh::DynamicMesh(const DynamicMesh& p_other)
+    : VisualMesh(p_other)
+{
+    for (auto i : p_other.triangles)
+        triangles.push_back(new Triangle(*i));
+}
+
 DynamicMesh::DynamicMesh(DynamicMesh&& p_other) noexcept
     : VisualMesh(std::move(p_other))
 {

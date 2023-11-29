@@ -36,6 +36,7 @@ private:
 
 public:
     Component(Window* p_context);
+    Component(const Component& p_other);
     Component(Component&& p_other) noexcept;
     virtual ~Component();
     

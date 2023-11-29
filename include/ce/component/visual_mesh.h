@@ -10,6 +10,9 @@ public:
     VisualMesh(Window* p_context);
     ~VisualMesh();
 
+    VisualMesh(const VisualMesh& p_other) 
+        : Component(p_other) {};
+
     VisualMesh(VisualMesh&& p_other) noexcept;
 
     /**

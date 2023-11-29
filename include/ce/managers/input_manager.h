@@ -5,14 +5,12 @@
 #include <vector>
 
 /**
- * @brief The input handler class.
- * @details Originally from KosEngine (MIT License Copyright (c) 2023 OppositeNor)
+ * @brief The input manager class.
  * @tparam KeyType The type of the event key type
  */
-class InputHandler
+class InputManager
     : public IWindowEventListener
 {
-    Window* context = nullptr;
 public:
     enum InputState
     {
@@ -50,48 +48,48 @@ public:
         Just = 0b0001
     };
 private:
-    /**
-     * @brief The key map, which maps the key code to the key event.
-     */
-    std::map<int, std::vector<std::string>> input_map;
 
-    /**
-     * @brief The key state map.
-     */
-    std::map<std::string, InputState> input_state_map;
+    using InputStateMap = std::map<std::string, InputState>;
+    std::map<int, std::vector<std::string>> input_map;
+    std::map <const Window*, InputStateMap> context_map;
 
     /**
      * @brief Set the key state to pressed.
      * If the key code is not in the input map, this function will do nothing.
+     * 
+     * @param p_context The context of the input.
      * @param p_key The key code.
      */
-    void SetInputStatePressed(int p_key);
+    void SetInputStatePressed(Window* p_context, int p_key);
 
     /**
      * @brief Set the key state to released.
      * If the key code is not in the input map, this function will do nothing.
+     * 
+     * @param p_context The context of the input.
      * @param p_key The key code.
      */
-    void SetInputStateReleased(int p_key);
+    void SetInputStateReleased(Window* p_context, int p_key);
 public:
 
     /**
-     * @brief Construct a new Input Handler object
+     * @brief Construct a new Input Manager object
      * 
-     * @param p_context The window that the input handler is attached to.
      */
-    explicit InputHandler(Window* p_context);
+    InputManager();
     
     /**
      * @brief Get the input state of a key.
      * 
+     * @param p_context The context of the input.
+     * @param p_context The context of the input.
      * @param p_key The key to get the state.
      * @return InputState The state of the key.
      */
-    InputState GetInputState(const std::string& p_key) const;
+    InputState GetInputState(const Window* p_context, const std::string& p_key) const;
 
     /**
-     * @brief Add a input to the input handler.
+     * @brief Add a input to the input manager.
      * 
      * @param input_name The name of the input.
      * @param p_key The key code of the input.
@@ -105,50 +103,50 @@ public:
 
     /**
      * @brief Update the input state.
+     * 
+     * @param p_context The context of the input.
      */
-    void UpdateInput();
+    void UpdateInput(Window* p_context);
 
     /**
      * @brief Is the input pressed.
      * 
+     * @param p_context The context of the input.
      * @param p_key The name of the input.
      * @return true The input is pressed.
      * @return false The input is not pressed.
      */
-    bool IsInputPressed(const std::string& p_key) const;
+    bool IsInputPressed(Window* p_context, const std::string& p_key) const;
 
     /**
      * @brief Is the input released.
      * 
+     * @param p_context The context of the input.
      * @param p_key The name of the input.
      * @return true The input is released.
      * @return false The input is not released.
      */
-    bool IsInputReleased(const std::string& p_key) const;
+    bool IsInputReleased(Window* p_context, const std::string& p_key) const;
 
     /**
      * @brief Is the input just pressed.
      * 
+     * @param p_context The context of the input.
      * @param p_key The name of the input.
      * @return true The input is just pressed.
      * @return false The input is not just pressed.
      */
-    bool IsInputJustPressed(const std::string& p_key) const;
+    bool IsInputJustPressed(Window* p_context, const std::string& p_key) const;
 
     /**
      * @brief Is the input just released.
      * 
+     * @param p_context The context of the input.
      * @param p_key The name of the input.
      * @return true The input is just released.
      * @return false The input is not just released.
      */
-    bool IsInputJustReleased(const std::string& p_key) const;
+    bool IsInputJustReleased(Window* p_context, const std::string& p_key) const;
     
-    /**
-     * @brief The key function called by the game.
-     * 
-     * @param p_key The key code that recieves the action.
-     * @param p_action The action of the key. This should be one of CG_PRESS, CG_RELEASE, CG_REPEAT.
-     */
     virtual void OnKey(Window* p_window, int p_key, int p_scancode, int p_action, int p_mods) override;
 };
