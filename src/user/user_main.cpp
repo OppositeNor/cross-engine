@@ -34,9 +34,15 @@ public:
         if (GetContext()->GetInputHandler()->GetInputState("down") & InputHandler::InputState::Pressed)
             Position() += -1 * Vec4::UP * p_delta * 10;
         if (GetContext()->GetInputHandler()->GetInputState("rotate_x") & InputHandler::InputState::Pressed)
-            Rotate(Vec4::Cross(GetDirection(), Vec4::UP), p_delta * 1.5);
+        {
+            if (GetDirection().Dot(Vec4::UP) < 0.99)
+                Rotate(Vec4::Cross(GetDirection(), Vec4::UP), p_delta * 1.5);
+        }
         if (GetContext()->GetInputHandler()->GetInputState("rotate_-x") & InputHandler::InputState::Pressed)
-            Rotate(Vec4::Cross(Vec4::UP, GetDirection()), p_delta * 1.5);
+        {
+            if (GetDirection().Dot(Vec4::UP) > -0.99)
+                Rotate(Vec4::Cross(Vec4::UP, GetDirection()), p_delta * 1.5);
+        }
         if (GetContext()->GetInputHandler()->GetInputState("rotate_y") & InputHandler::InputState::Pressed)
             Rotate(Vec4::UP, p_delta * 1.5);
         if (GetContext()->GetInputHandler()->GetInputState("rotate_-y") & InputHandler::InputState::Pressed)
@@ -67,6 +73,7 @@ public:
         mesh = new DynamicMesh(this);
         mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
         mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
+        // mesh->Scale() = Vec4(0.5f, 1.5f, 1.5f);
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
@@ -75,20 +82,25 @@ public:
         camera->Position() = Vec4(0, 0, -20, 1.0f);
 
         mesh2 = new DynamicMesh(this);
-        // Box mesh
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1), Vec4(-1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(-1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(-1, 1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1)));
-
+        // Box mesh clock wise
+        //front face
+        mesh2->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1)));
+        mesh2->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
+        //back face
+        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
+        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
+        //left face
+        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1)));
+        mesh2->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
+        //right face
+        mesh2->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
+        mesh2->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
+        //top face
+        mesh2->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1)));
+        mesh2->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, -1, 1)));
+        //bottom face
+        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
+        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
 
         mesh2->Scale() = Vec4(1.5f, 1.5f, 1.5f);
         light->AddChild(mesh2);
@@ -149,8 +161,12 @@ public:
     {
         GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
         GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 10.0f, 40.0f));
-        light->SetUniform();
+        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(3.5f, -3.5f, 2.0f, -2.0f, 5.0f, 40.0f));
+        GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        GetShaderProgram()->SetUniform("ambient_intensity", 0.05f);
+        GetShaderProgram()->SetUniform("camera_position", camera->GetGlobalPosition());
+        light->SetUniform(0);
+        GetShaderProgram()->SetUniform("point_light_count", 1);
         GetShaderProgram()->Use();
 
         glBindVertexArray(mesh->GetVAO());

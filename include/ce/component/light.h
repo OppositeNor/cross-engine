@@ -35,7 +35,7 @@ public:
      * @brief Set the uniform of the light's data.
      * 
      */
-    virtual void SetUniform() = 0;
+    virtual void SetUniform(size_t p_index) = 0;
 
     /**
      * @brief Get the intensity of the light.

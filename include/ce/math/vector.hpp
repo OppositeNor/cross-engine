@@ -208,6 +208,10 @@ public:
         return result.Normalize();
     }
 
+    FORCE_INLINE const float* GetRaw() const { return (float*)data; }
+
+    FORCE_INLINE float* GetRaw() { return (float*)data; }
+
     template <typename T1>
     FORCE_INLINE auto operator+(const Vector<T1, N>& p_other) const
         -> Vector<decltype(std::declval<T>() + std::declval<T1>()), N>

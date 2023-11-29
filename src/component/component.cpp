@@ -238,5 +238,6 @@ void Component::SetRotationEuler(const Vec3& p_rotation, EulerRotOrder p_order)
 Vec4 Component::GetRotationEuler() const
 {
     //todo
+    throw std::runtime_error("Not implemented");
     return Vec4();
 }

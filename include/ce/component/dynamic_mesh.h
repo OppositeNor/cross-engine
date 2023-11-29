@@ -65,7 +65,7 @@ public:
      * 
      * @return std::vector<Triangle*>& The triangles of this mesh.
      */
-    std::vector<Triangle*>& GetTriangles();
+    std::vector<Triangle*>& Triangles();
 
     /**
      * @brief Get the triangles of this mesh.

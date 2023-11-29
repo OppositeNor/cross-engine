@@ -45,5 +45,5 @@ public:
      * @brief Set the uniform of the light's data.
      * 
      */
-    virtual void SetUniform() override;
+    virtual void SetUniform(size_t p_index) override;
 };

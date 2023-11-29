@@ -33,7 +33,7 @@ DynamicMesh::~DynamicMesh()
         delete i;
 }
 
-std::vector<Triangle*>& DynamicMesh::GetTriangles()
+std::vector<Triangle*>& DynamicMesh::Triangles()
 {
     triangles_dirty = true;
     return triangles;

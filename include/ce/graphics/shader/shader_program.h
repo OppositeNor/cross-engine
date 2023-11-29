@@ -52,6 +52,22 @@ public:
      * @brief Set the uniform for the shader.
      * 
      * @param p_name The name of the uniform.
+     * @param p_float The float to set the uniform to.
+     */
+    void SetUniform(const std::string& p_name, float p_float) const;
+
+    /**
+     * @brief Set the uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_data The integer to set the uniform to.
+     */
+    void SetUniform(const std::string& p_name, int p_int) const;
+
+    /**
+     * @brief Set the uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
      * @param p_mat4 The Mat4f to set the uniform to.
      */
     void SetUniform(const std::string& p_name, const Mat4& p_mat4) const;
@@ -60,9 +76,9 @@ public:
      * @brief Set the uniform for the shader.
      * 
      * @param p_name The name of the uniform.
-     * @param p_light The PointLight to set the uniform to.
+     * @param p_vec4 The Vec4f to set the uniform to.
      */
-    void SetUniform(const std::string& p_name, const PointLight::Data& p_light) const;
+    void SetUniform(const std::string& p_name, const Vec4& p_vec4) const;
 
     /**
      * @brief Compile the shader program.
