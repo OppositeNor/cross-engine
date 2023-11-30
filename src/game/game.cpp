@@ -6,11 +6,6 @@
 
 Game* Game::instance = nullptr;
 
-void Init()
-{
-
-}
-
 Game::Game(Window*&& p_window)
 {
     main_window = std::unique_ptr<Window>(p_window);

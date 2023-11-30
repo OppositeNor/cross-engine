@@ -22,31 +22,31 @@ public:
 
     virtual void Process(float p_delta) override
     {
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "forward") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "forward") == InputManager::InputState::Pressed)
             Position() += GetDirection() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "backward") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "backward") == InputManager::InputState::Pressed)
             Position() += -1 * GetDirection() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "left") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "left") == InputManager::InputState::Pressed)
             Position() += Vec4::Cross(Vec4::UP, GetDirection()).Normalized() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "right") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "right") == InputManager::InputState::Pressed)
             Position() += Vec4::Cross(GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "up") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "up") == InputManager::InputState::Pressed)
             Position() += Vec4::UP * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "down") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "down") == InputManager::InputState::Pressed)
             Position() += -1 * Vec4::UP * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_x") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_x") == InputManager::InputState::Pressed)
         {
             if (GetDirection().Dot(Vec4::UP) < 0.99)
                 Rotate(Vec4::Cross(GetDirection(), Vec4::UP), p_delta * 1.5);
         }
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-x") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-x") == InputManager::InputState::Pressed)
         {
             if (GetDirection().Dot(Vec4::UP) > -0.99)
                 Rotate(Vec4::Cross(Vec4::UP, GetDirection()), p_delta * 1.5);
         }
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_y") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_y") == InputManager::InputState::Pressed)
             Rotate(Vec4::UP, p_delta * 1.5);
-        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-y") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-y") == InputManager::InputState::Pressed)
             Rotate(-1 * Vec4::UP, p_delta * 1.5);
     }
 };
@@ -147,17 +147,17 @@ public:
         else if (rotate[2])
             new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
         
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_left") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_left") == InputManager::InputState::Pressed)
             light->Position() += Vec4::Cross(Vec4::UP, camera->GetDirection()).Normalized() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_right") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_right") == InputManager::InputState::Pressed)
             light->Position() += Vec4::Cross(camera->GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_up") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_up") == InputManager::InputState::Pressed)
             light->Position() += Vec4::UP * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_down") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_down") == InputManager::InputState::Pressed)
             light->Position() -= Vec4::UP * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_forward") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_forward") == InputManager::InputState::Pressed)
             light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(camera->GetDirection(), Vec4::UP)) * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_backward") & InputManager::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
             light->Position() += Vec4::Cross(Vec4::Cross(camera->GetDirection(), Vec4::UP), Vec4::UP) * p_delta * 10;
         
     }

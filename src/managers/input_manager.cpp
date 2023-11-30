@@ -49,7 +49,7 @@ void InputManager::ClearInput()
     input_map.clear();
 }
 
-void InputManager::UpdateInput(Window* p_context)
+void InputManager::UpdateInput(const Window* p_context)
 {
     for (auto iter = context_map[p_context].begin(); iter != context_map[p_context].end(); ++iter)
     {

@@ -2,6 +2,7 @@
 #include "ce/graphics/graphics.h"
 #include "ce/resource/resource.h"
 #include "ce/managers/input_manager.h"
+#include "ce/game/game.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -79,6 +80,7 @@ void Window::ThreadFunc()
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             Process(delta);
             Draw();
+            Game::GetInstance()->GetInputManager()->UpdateInput(this);
             delta = glfwGetTime() - frame_start;
         }
         is_closed = true;

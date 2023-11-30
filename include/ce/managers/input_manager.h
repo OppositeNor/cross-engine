@@ -106,7 +106,7 @@ public:
      * 
      * @param p_context The context of the input.
      */
-    void UpdateInput(Window* p_context);
+    void UpdateInput(const Window* p_context);
 
     /**
      * @brief Is the input pressed.

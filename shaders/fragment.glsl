@@ -25,7 +25,7 @@ void main()
     vec4 temp_color = ambient_color * ambient_intensity;
     for (int i = 0; i < point_light_count; ++i)
     {
-        to_light = (point_light[i].position - frag_position);
+        to_light = point_light[i].position - frag_position;
         temp_color += point_light[i].color * (point_light[i].intensity / pow(to_light.length(), 2)) 
             * max(0, dot(normalize(to_light), frag_normal));
     }

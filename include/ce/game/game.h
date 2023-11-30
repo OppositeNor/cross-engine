@@ -52,6 +52,13 @@ public:
     static Game* GetInstance();
 
     /**
+     * @brief Get the main window.
+     * 
+     * @return Window* The main window.
+     */
+    FORCE_INLINE const Window* GetMainWindow() const { return main_window.get(); }
+
+    /**
      * @brief Destroy the Game object.
      */
     virtual ~Game();
@@ -76,6 +83,12 @@ public:
      * 
      */
     void Run();
+
+    /**
+     * @brief Called once when the game is ready.
+     * 
+     */
+    virtual void Ready() {};
 
     /**
      * @brief Called every frame.
