@@ -4,18 +4,13 @@
 class PointLight : public ALight
 {
 public:
-    /**
-     * @brief Data is a struct that is used for transfering data to
-     * the shaders.
-     */
-    struct Data
-    {
-        float position[4];
-        float color[4];
-        float intensity = 1.0f;
-    };
+
 protected:
-    struct Data data;
+    Vec4 diffuse_color;
+    float diffuse_intensity = 10.0f;
+    Vec4 specular_color;
+    float specular_intensity = 100.0f;
+    float specular_power = 100.0f;
 
 public:
 

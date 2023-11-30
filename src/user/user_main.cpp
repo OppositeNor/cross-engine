@@ -89,7 +89,6 @@ public:
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
-        light->Intensity() = 8.0f;
         camera = new UserCamera(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
 
@@ -138,7 +137,6 @@ public:
         box->Scale() = Vec4(1.5f, 1.5f, 1.5f);
         box2->Position() = Vec4(-5, 0, 5, 1.0f);
         light->AddChild(box);
-        std::cout << box->GetGlobalPosition() << std::endl;
 
         light2 = new PointLight(this);
     }
