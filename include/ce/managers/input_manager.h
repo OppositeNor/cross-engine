@@ -1,15 +1,16 @@
 #pragma once
 #include "ce/defs.hpp"
-#include "ce/event_listener/window_event_listener.h"
+#include "ce/event/i_event_listener.h"
 #include <map>
 #include <vector>
-
+class AEvent;
+class Window;
 /**
  * @brief The input manager class.
  * @tparam KeyType The type of the event key type
  */
 class InputManager
-    : public IWindowEventListener
+    : public IEventListener, public std::enable_shared_from_this<InputManager>
 {
 public:
     enum InputState
@@ -116,7 +117,7 @@ public:
      * @return true The input is pressed.
      * @return false The input is not pressed.
      */
-    bool IsInputPressed(Window* p_context, const std::string& p_key) const;
+    bool IsInputPressed(const Window* p_context, const std::string& p_key) const;
 
     /**
      * @brief Is the input released.
@@ -126,7 +127,7 @@ public:
      * @return true The input is released.
      * @return false The input is not released.
      */
-    bool IsInputReleased(Window* p_context, const std::string& p_key) const;
+    bool IsInputReleased(const Window* p_context, const std::string& p_key) const;
 
     /**
      * @brief Is the input just pressed.
@@ -136,7 +137,7 @@ public:
      * @return true The input is just pressed.
      * @return false The input is not just pressed.
      */
-    bool IsInputJustPressed(Window* p_context, const std::string& p_key) const;
+    bool IsInputJustPressed(const Window* p_context, const std::string& p_key) const;
 
     /**
      * @brief Is the input just released.
@@ -146,7 +147,7 @@ public:
      * @return true The input is just released.
      * @return false The input is not just released.
      */
-    bool IsInputJustReleased(Window* p_context, const std::string& p_key) const;
+    bool IsInputJustReleased(const Window* p_context, const std::string& p_key) const;
     
-    virtual void OnKey(Window* p_window, int p_key, int p_scancode, int p_action, int p_mods) override;
+    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override;
 };

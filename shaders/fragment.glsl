@@ -26,8 +26,9 @@ void main()
     for (int i = 0; i < point_light_count; ++i)
     {
         to_light = point_light[i].position - frag_position;
-        temp_color += point_light[i].color * (point_light[i].intensity / pow(to_light.length(), 2)) 
+        temp_color += point_light[i].color * (point_light[i].intensity / pow(length(to_light), 2)) 
             * max(0, dot(normalize(to_light), frag_normal));
     }
-    FragColor = vec4(temp_color.x, temp_color.y, temp_color.z, 1);
+    temp_color.w = 1.0;
+    FragColor = temp_color;
 }

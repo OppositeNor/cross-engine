@@ -1,5 +1,6 @@
 #include "ce/managers/input_manager.h"
 #include "ce/graphics/window.h"
+#include "ce/event/window_event.h"
 
 InputManager::InputManager()
 {
@@ -60,35 +61,38 @@ void InputManager::UpdateInput(const Window* p_context)
     }
 }
 
-bool InputManager::IsInputPressed(Window* p_context, const std::string& p_key) const
+bool InputManager::IsInputPressed(const Window* p_context, const std::string& p_key) const
 {
     return context_map.at(p_context).at(p_key) & InputState::Pressed;
 }
 
-bool InputManager::IsInputReleased(Window* p_context, const std::string& p_key) const
+bool InputManager::IsInputReleased(const Window* p_context, const std::string& p_key) const
 {
     return context_map.at(p_context).at(p_key) & InputState::Released;
 }
 
-bool InputManager::IsInputJustPressed(Window* p_context, const std::string& p_key) const
+bool InputManager::IsInputJustPressed(const Window* p_context, const std::string& p_key) const
 {
     return context_map.at(p_context).at(p_key) == InputState::JustPressed;
 }
 
-bool InputManager::IsInputJustReleased(Window* p_context, const std::string& p_key) const
+bool InputManager::IsInputJustReleased(const Window* p_context, const std::string& p_key) const
 {
     return context_map.at(p_context).at(p_key) == InputState::JustReleased;
 }
 
-void InputManager::OnKey(Window* p_window, int p_key, int p_scancode, int p_action, int p_mods)
+void InputManager::OnEvent(std::shared_ptr<AEvent> p_event)
 {
-    switch (p_action)
+    if (p_event->GetEventType() != EventType::OnKey)
+        return;
+    auto event = std::static_pointer_cast<OnKeyEvent>(p_event);
+    switch (event->action)
     {
     case RELEASE:
-        SetInputStateReleased(p_window, p_key);
+        SetInputStateReleased(event->window, event->key);
         break;
     case PRESS:
-        SetInputStatePressed(p_window, p_key);
+        SetInputStatePressed(event->window, event->key);
         break;
     default:
         break;

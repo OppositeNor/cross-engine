@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include "ce/math/math.hpp"
-#include "ce/event_listener/window_event_listener.h"
 #include "ce/graphics/shader/shader_program.h"
 class InputManager;
 class Window
@@ -18,7 +17,6 @@ protected:
     std::string window_title = "";
     HWND hwnd = nullptr;
     std::unique_ptr<std::thread> window_thread;
-    std::vector<IWindowEventListener*> window_event_listeners;
     bool is_closed = false;
     ShaderProgram* shader_program = nullptr;
     unsigned int vao = 0;
@@ -75,28 +73,6 @@ public:
      * @return HWND The window handle.
      */
     FORCE_INLINE HWND GetWindowHWND() { return hwnd; }
-
-    /**
-     * @brief Add a window event listener.
-     * 
-     * @param listener The listener to add.
-     */
-    FORCE_INLINE void AddWindowEventListener(IWindowEventListener* listener) 
-        { window_event_listeners.push_back(listener); }
-    
-    /**
-     * @brief Remove a window listener.
-     * 
-     * @param listener The listener to be removed.
-     */
-    FORCE_INLINE void RemoveWindowEventListener(IWindowEventListener* listener)
-    {
-        for (auto it = window_event_listeners.begin(); it != window_event_listeners.end(); ++it)
-        {
-            if (*it == listener)
-                window_event_listeners.erase(it);
-        }
-    }
 
     /**
      * @brief Get the size of the window.

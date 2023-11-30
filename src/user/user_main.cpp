@@ -5,6 +5,7 @@
 #include "ce/component/dynamic_mesh.h"
 #include "ce/component/camera.h"
 #include "ce/managers/input_manager.h"
+#include "ce/managers/event_manager.h"
 #include "ce/game/game.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -22,6 +23,7 @@ public:
 
     virtual void Process(float p_delta) override
     {
+        auto context = GetContext();
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "forward") == InputManager::InputState::Pressed)
             Position() += GetDirection() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "backward") == InputManager::InputState::Pressed)
@@ -51,27 +53,35 @@ public:
     }
 };
 
-class UserWindow : public Window
+class UserWindow : public Window, public IEventListener, public std::enable_shared_from_this<UserWindow>
 {
-    std::unique_ptr<Window> window1;
-    std::unique_ptr<Window> window2;
-
-    
+    std::shared_ptr<UserWindow> window2 = nullptr;
     DynamicMesh* mesh = nullptr;
-    DynamicMesh* mesh2 = nullptr;
+    DynamicMesh* box = nullptr;
+    DynamicMesh* box2 = nullptr;
     PointLight* light = nullptr;
     PointLight* light2 = nullptr;
     UserCamera* camera = nullptr;
+    std::string title;
 
+    
 public:
-    UserWindow(const std::string& title)
-        : Window(1260, 720, title)
+    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override {}
+
+    UserWindow(const std::string& p_title)
+        : Window(1260, 720, p_title)
     {
-        
+        title = p_title;
     }
 
     virtual void Ready() override
     {
+        if (title == "")
+            window2 = std::make_shared<UserWindow>("Window 2");
+        else
+            window2 = nullptr;
+        
+        Game::GetInstance()->GetEventManager()->AddEventListener(shared_from_this());
         mesh = new DynamicMesh(this);
         mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
         mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
@@ -83,62 +93,66 @@ public:
         camera = new UserCamera(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
 
-        mesh2 = new DynamicMesh(this);
+        box = new DynamicMesh(this);
         // Box mesh clock wise
         //front face
-        mesh2->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1)));
-        mesh2->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
         //back face
-        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
-        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
         //left face
-        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1)));
-        mesh2->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
         //right face
-        mesh2->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
-        mesh2->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
         //top face
-        mesh2->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1)));
-        mesh2->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, -1, 1)));
         //bottom face
-        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
-        mesh2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
 
-        mesh2->Scale() = Vec4(1.5f, 1.5f, 1.5f);
-        light->AddChild(mesh2);
-        // mesh2->Position() = Vec4(5, 5, 5, 1.0f);
-        std::cout << mesh2->GetGlobalPosition() << std::endl;
+        box2 = new DynamicMesh(this);
+        // Box mesh counter clock wise
+        //front face
+        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
+        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1)));
+        //back face
+        box2->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1)));
+        box2->Triangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
+        //left face
+        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
+        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1)));
+        //right face
+        box2->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1)));
+        box2->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
+        //top face
+        box2->Triangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(-1, 1, 1, 1), Vec4(1, 1, 1, 1)));
+        box2->Triangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
+        //bottom face
+        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1)));
+        box2->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1)));
+
+        box->Scale() = Vec4(1.5f, 1.5f, 1.5f);
+        box2->Position() = Vec4(-5, 0, 5, 1.0f);
+        light->AddChild(box);
+        std::cout << box->GetGlobalPosition() << std::endl;
 
         light2 = new PointLight(this);
-        
-
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("forward", GLFW_KEY_W);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("backward", GLFW_KEY_S);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("left", GLFW_KEY_A);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("right", GLFW_KEY_D);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("down", GLFW_KEY_Q);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("up", GLFW_KEY_E);
-
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_x", GLFW_KEY_UP);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-x", GLFW_KEY_DOWN);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_y", GLFW_KEY_LEFT);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-y", GLFW_KEY_RIGHT);
-
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_left", GLFW_KEY_J);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_right", GLFW_KEY_L);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_up", GLFW_KEY_O);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_down", GLFW_KEY_U);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_forward", GLFW_KEY_I);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", GLFW_KEY_K);
     }
 
     virtual void Process(float p_delta) override
     {
         mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
         mesh->Update(p_delta);
+        box2->Update(p_delta);
         camera->Update(p_delta);
         light->Update(p_delta);
+
         auto time = glfwGetTime();
+        box2->Position()[1] = std::sin(time) * 5;
 
         if (rotate[0])
             new_rot = EulerToQuat(Vec3(time, 0, 0), EulerRotOrder::PRY);
@@ -159,6 +173,11 @@ public:
             light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(camera->GetDirection(), Vec4::UP)) * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
             light->Position() += Vec4::Cross(Vec4::Cross(camera->GetDirection(), Vec4::UP), Vec4::UP) * p_delta * 10;
+        if (window2 != nullptr && window2->IsClosed())
+        {
+            window2.reset();
+            window2 = nullptr;
+        }
         
     }
 
@@ -177,9 +196,12 @@ public:
         glBindVertexArray(mesh->GetVAO());
         GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
         glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
-        glBindVertexArray(mesh2->GetVAO());
-        GetShaderProgram()->SetUniform("model", mesh2->GetSubspaceMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, mesh2->GetVertexCount());
+        glBindVertexArray(box->GetVAO());
+        GetShaderProgram()->SetUniform("model", box->GetSubspaceMatrix());
+        glDrawArrays(GL_TRIANGLES, 0, box->GetVertexCount());
+        glBindVertexArray(box2->GetVAO());
+        GetShaderProgram()->SetUniform("model", box2->GetSubspaceMatrix());
+        glDrawArrays(GL_TRIANGLES, 0, box2->GetVertexCount());
         glBindVertexArray(0);
     }
 
@@ -187,7 +209,7 @@ public:
     {
         delete mesh;
         delete camera;
-        delete mesh2;
+        delete box;
         delete light;
         delete light2;
     }
@@ -202,9 +224,31 @@ int main()
 {
     try
     {
-        Game::Init(new UserWindow(""));
+        
+        Game::Init(std::make_shared<UserWindow>(""));
+
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("forward", GLFW_KEY_W);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("backward", GLFW_KEY_S);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("left", GLFW_KEY_A);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("right", GLFW_KEY_D);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("down", GLFW_KEY_Q);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("up", GLFW_KEY_E);
+
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_x", GLFW_KEY_UP);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-x", GLFW_KEY_DOWN);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_y", GLFW_KEY_LEFT);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-y", GLFW_KEY_RIGHT);
+
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_left", GLFW_KEY_J);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_right", GLFW_KEY_L);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_up", GLFW_KEY_O);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_down", GLFW_KEY_U);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_forward", GLFW_KEY_I);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", GLFW_KEY_K);
 
         Game::GetInstance()->Run();
+
+        Game::GetInstance()->Terminate();
 #if 0
         try
         {

@@ -1,15 +1,22 @@
 #pragma once
 #include "ce/math/math.hpp"
 #include <memory>
+#include <mutex>
 
 class Window;
+class EventManager;
 class InputManager;
+class AEvent;
 class Game
 {
 protected:
-    std::unique_ptr<Window> main_window;
-    std::unique_ptr<InputManager> input_manager;
+    std::shared_ptr<Window> main_window;
+    std::shared_ptr<EventManager> event_manager;
+    std::shared_ptr<InputManager> input_manager;
+
+    static std::mutex initialize_mutex;
     Game(Window*&& p_window);
+    Game(std::shared_ptr<Window> p_window);
 
     static Game* instance;
 
@@ -20,6 +27,13 @@ public:
      * 
      */
     static void Init();
+    
+    /**
+     * @brief Initialize the game.
+     * 
+     * @param p_window The window to use.
+     */
+    static void Init(std::shared_ptr<Window> p_window);
 
     /**
      * @brief Initialize the game.
@@ -54,9 +68,9 @@ public:
     /**
      * @brief Get the main window.
      * 
-     * @return Window* The main window.
+     * @return std::shared_ptr<Window> The main window.
      */
-    FORCE_INLINE const Window* GetMainWindow() const { return main_window.get(); }
+    FORCE_INLINE const std::shared_ptr<Window> GetMainWindow() const { return main_window; }
 
     /**
      * @brief Destroy the Game object.
@@ -65,24 +79,58 @@ public:
 
 
     /**
-     * @brief Get the input handler.
+     * @brief Get the input manager.
      * 
-     * @return InputManager& The input handler.
+     * @return InputManager& The input manager.
      */
-    FORCE_INLINE InputManager* GetInputManager() { return input_manager.get(); }
+    FORCE_INLINE std::shared_ptr<InputManager> GetInputManager() { return input_manager; }
 
     /**
-     * @brief Get the input handler.
+     * @brief Get the input manager.
      * 
-     * @return InputManager& The input handler.
+     * @return InputManager& The input manager.
      */
-    FORCE_INLINE const InputManager* GetInputManager() const { return input_manager.get(); }
+    FORCE_INLINE const std::shared_ptr<InputManager> GetInputManager() const { return input_manager; }
+
+    /**
+     * @brief Get the event manager.
+     * 
+     * @return EventManager& The event manager.
+     */
+    FORCE_INLINE std::shared_ptr<EventManager> GetEventManager() { return event_manager; }
+
+    /**
+     * @brief Get the event manager.
+     * 
+     * @return EventManager& The event manager.
+     */
+    FORCE_INLINE const std::shared_ptr<EventManager> GetEventManager() const { return event_manager; }
+
+    /**
+     * @brief Update the input for the window.
+     * 
+     * @param p_context The context of the input.
+     */
+    void UpdateInput(Window* p_context);
+
+    /**
+     * @brief Dispatch an event.
+     * 
+     * @param p_event The event to be dispatched.
+     */
+    void DispatchEvent(std::shared_ptr<AEvent> p_event);
 
     /**
      * @brief Run the game.
      * 
      */
     void Run();
+
+    /**
+     * @brief Terminate the game.
+     * 
+     */
+    void Terminate();
 
     /**
      * @brief Called once when the game is ready.

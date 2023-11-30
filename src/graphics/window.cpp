@@ -2,6 +2,8 @@
 #include "ce/graphics/graphics.h"
 #include "ce/resource/resource.h"
 #include "ce/managers/input_manager.h"
+#include "ce/managers/event_manager.h"
+#include "ce/event/window_event.h"
 #include "ce/game/game.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -60,8 +62,7 @@ void Window::InitWindow()
 void Window::UpdateWindowSize(const Vec2s& p_new_window_size)
 {
     glViewport(0, 0, p_new_window_size[0], p_new_window_size[1]);
-    for (auto listener : window_event_listeners)
-        listener->OnWindowResize(this, window_size, p_new_window_size);
+    
     window_size = p_new_window_size;
 }
 
@@ -80,13 +81,12 @@ void Window::ThreadFunc()
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             Process(delta);
             Draw();
-            Game::GetInstance()->GetInputManager()->UpdateInput(this);
+            Game::GetInstance()->UpdateInput(this);
             delta = glfwGetTime() - frame_start;
         }
         is_closed = true;
         OnClose();
-        for (auto& listener : window_event_listeners)
-            listener->OnWindowClose(this);
+        Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
         Graphics::DestroyGLFWContex(glfw_context);
         delete shader_program;
     }
@@ -105,13 +105,11 @@ void Window::WindowResized(void* p_glfw_context, int p_width, int p_height)
 void Window::WindowFocused(void* p_glfw_context, int p_focused)
 {
     Window* window = context_window_finder[p_glfw_context];
-    for (auto& listener : window->window_event_listeners)
-        listener->OnWindowFocus(window, p_focused);
+    Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowFocusEvent>(window, p_focused));
 }
 
 void Window::OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods)
 {
     Window* window = context_window_finder[p_glfw_context];
-    for (auto& listener : window->window_event_listeners)
-        listener->OnKey(window, p_key, p_scancode, p_action, p_mods);
+    Game::GetInstance()->DispatchEvent(std::make_shared<OnKeyEvent>(window, p_key, p_scancode, p_action, p_mods));
 }

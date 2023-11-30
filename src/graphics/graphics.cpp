@@ -39,8 +39,7 @@ void* Graphics::CreateGLFWContext(size_t p_width, size_t p_height, const std::st
 
 void Graphics::DestroyGLFWContex(void* p_context)
 {
-    glfwMakeContextCurrent(reinterpret_cast<GLFWwindow*>(p_context));
-    glfwDestroyWindow(reinterpret_cast<GLFWwindow*>(p_context));
+    glfwDestroyWindow(static_cast<GLFWwindow*>(p_context));
 }
 
 unsigned int Graphics::GenerateVBO(unsigned int p_vao, float* p_vertices, size_t p_size)
