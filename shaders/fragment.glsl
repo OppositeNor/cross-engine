@@ -32,7 +32,7 @@ void main()
         temp_color += point_light[i].diffuse_color * (point_light[i].diffuse_intensity / pow(length(to_light), 2)) 
             * max(0, dot(normalize(to_light), frag_normal));
         temp_color += point_light[i].specular_color * (point_light[i].specular_intensity / pow(length(to_light), 2)) 
-            * pow(max(0, dot(normalize(to_light), frag_normal)), point_light[i].specular_power);
+            * pow(max(0, dot(normalize(normalize(to_light) + normalize(camera_position - frag_position)), frag_normal)), point_light[i].specular_power);
     }
     temp_color.w = 1.0;
     FragColor = temp_color;

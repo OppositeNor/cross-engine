@@ -185,7 +185,7 @@ public:
         GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
         GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(3.5f, -3.5f, 2.0f, -2.0f, 5.0f, 40.0f));
         GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        GetShaderProgram()->SetUniform("ambient_intensity", 0.05f);
+        GetShaderProgram()->SetUniform("ambient_intensity", 0.5f);
         GetShaderProgram()->SetUniform("camera_position", camera->GetGlobalPosition());
         light->SetUniform(0);
         GetShaderProgram()->SetUniform("point_light_count", 1);
