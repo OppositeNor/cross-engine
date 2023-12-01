@@ -134,6 +134,8 @@ void Resource::LoadTris(const std::string& p_path, std::vector<Triangle*>& p_res
             }
             current_tri->GetVertex(j)->SetPosition(temp);
         }
+        for (size_t j = 0; j < 3; ++j)
+            current_tri->GetVertex(j)->ResetNormal();
         p_result.push_back(current_tri);
         ++p;
     }
@@ -144,6 +146,46 @@ std::vector<Triangle*> Resource::LoadTris(const std::string& p_path)
     std::vector<Triangle*> result;
     LoadTris(p_path, result);
     return std::move(result);
+}
+
+void Resource::LoadTrisWithNormal(const std::string& p_path, std::vector<Triangle*>& p_result)
+{
+    size_t file_size;
+    std::unique_ptr<byte_t[]> data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    byte_t* p = data.get();
+    byte_t buff[256];
+    GetWord(p, buff, 256);
+    size_t tri_count = (size_t)std::atoi(buff);
+    MovePToNextSpace(&p, data.get() + file_size);
+    ++p;
+    
+    Vec4f temp_pos = Pos();
+    Vec4f temp_normal = Vec4f();
+    for (size_t i = 0; i < tri_count; ++i)
+    {
+        Triangle* current_tri = new Triangle;
+        for (size_t j = 0; j < 3; ++j)
+        {
+            for (size_t k = 0; k < 3; ++k)
+            {
+                GetWord(p, buff, 256);
+                temp_pos[k] = std::atof(buff);
+                MovePToNextSpace(&p, data.get() + file_size);
+                ++p;
+            }
+            for (size_t k = 0; k < 3; ++k)
+            {
+                GetWord(p, buff, 256);
+                temp_normal[k] = std::atof(buff);
+                MovePToNextSpace(&p, data.get() + file_size);
+                ++p;
+            }
+            current_tri->GetVertex(j)->Position() = temp_pos;
+            current_tri->GetVertex(j)->Normal() = temp_normal;
+        }
+        p_result.push_back(current_tri);
+        ++p;
+    }
 }
 
 float* Resource::CreateModelVertexArray(const std::initializer_list<Triangle*>& p_triangles, float* p_buffer, size_t p_buffer_size)

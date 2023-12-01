@@ -13,6 +13,6 @@ uniform mat4 proj;
 void main()
 {
     gl_Position = proj * view * model * pos;
-    frag_normal = normalize(mat4(transpose(inverse(mat3(model)))) * normal);
+    frag_normal = mat4(transpose(inverse(mat3(model)))) * normal;
     frag_position = model * pos;
 }

@@ -116,14 +116,14 @@ Vertex* Vertex::RemoveNext()
     return temp;
 }
 
-float* Vertex::GetArray(float* p_buff, size_t p_buff_size, bool p_use_induced_normal) const
+float* Vertex::GetArray(float* p_buff, size_t p_buff_size) const
 {
     if (p_buff_size < ARRAY_SIZE)
         throw std::domain_error("The buffer size is too small.");
     for (size_t i = 0; i < 4; ++i)
         p_buff[i] = position[i];
     
-    if (p_use_induced_normal)
+    if (normal == Vec4())
     {
         Vec4 temp_normal = GetInducedNormal();
         for (size_t i = 0; i < 4; ++i)

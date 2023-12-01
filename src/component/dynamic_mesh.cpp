@@ -76,3 +76,10 @@ void DynamicMesh::LoadTriangles(const std::string& p_file)
         delete i;
     Resource::LoadTris(p_file, triangles);
 }
+
+void DynamicMesh::LoadTrisWithNormal(const std::string& p_file)
+{
+    for (auto i : triangles)
+        delete i;
+    Resource::LoadTrisWithNormal(p_file, triangles);
+}

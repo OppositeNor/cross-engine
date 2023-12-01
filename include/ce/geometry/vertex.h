@@ -52,14 +52,21 @@ public:
      * 
      * @return const Vec4& The normal of the vertex.
      */
-    const Vec4& GetNormal() const { return normal; }
+    FORCE_INLINE const Vec4& GetNormal() const noexcept { return normal; }
 
     /**
      * @brief Get the normal of the vertex.
      * 
      * @return Vec4& The normal of the vertex.
      */
-    Vec4& GetNormal() noexcept { return normal; }
+    FORCE_INLINE Vec4& Normal() noexcept { return normal; }
+
+    /**
+     * @brief Set the normal of the vertex.
+     * 
+     * @param p_normal The normal of the vertex.
+     */
+    FORCE_INLINE void SetNormal(const Vec4& p_normal) noexcept { normal = p_normal; }
 
     virtual ~Vertex();
 
@@ -68,20 +75,20 @@ public:
      * 
      * @return const Vec4& The position of the vertex.
      */
-    const Vec4& GetPosition() const { return position; }
+    FORCE_INLINE const Vec4& GetPosition() const noexcept { return position; }
 
     /**
      * @brief Get the position of the vertex.
      * 
      * @return const Vec4& The position of the vertex.
      */
-    Vec4& GetPosition() noexcept { return position; }
+    FORCE_INLINE Vec4& Position() noexcept { return position; }
     /**
      * @brief Set the position of the vertex.
      * 
      * @param p_position The position of the vertex.
      */
-    void SetPosition(const Vec4& p_position) noexcept { position = p_position; }
+    FORCE_INLINE void SetPosition(const Vec4& p_position) noexcept { position = p_position; }
 
     /**
      * @brief Get the previous vertex.
@@ -164,7 +171,7 @@ public:
      * @param p_buff_size The size of the buffer.
      * @return float* The pointer to the buffer.
      */
-    float* GetArray(float* p_buff, size_t p_buff_size, bool p_use_incuded_normal = false) const;
+    float* GetArray(float* p_buff, size_t p_buff_size) const;
 
     /**
      * @brief Get the normal based on the previous and the next vertex.

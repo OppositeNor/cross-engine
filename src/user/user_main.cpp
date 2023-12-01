@@ -83,7 +83,10 @@ public:
         
         Game::GetInstance()->GetEventManager()->AddEventListener(shared_from_this());
         mesh = new DynamicMesh(this);
-        mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
+        if (title == "")
+            mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
+        else
+            mesh->LoadTrisWithNormal(Resource::GetExeDirectory() + "/teapot_bezier0.norm");
         mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
         // mesh->Scale() = Vec4(0.5f, 1.5f, 1.5f);
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
@@ -185,7 +188,7 @@ public:
         GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
         GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(3.5f, -3.5f, 2.0f, -2.0f, 5.0f, 40.0f));
         GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        GetShaderProgram()->SetUniform("ambient_intensity", 0.5f);
+        GetShaderProgram()->SetUniform("ambient_intensity", 0.7f);
         GetShaderProgram()->SetUniform("camera_position", camera->GetGlobalPosition());
         light->SetUniform(0);
         GetShaderProgram()->SetUniform("point_light_count", 1);

@@ -10,7 +10,7 @@ protected:
     float diffuse_intensity = 20.0f;
     Vec4 specular_color;
     float specular_intensity = 50.0f;
-    float specular_power = 100.0f;
+    float specular_power = 200.0f;
 
 public:
 

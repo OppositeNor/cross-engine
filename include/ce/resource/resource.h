@@ -70,6 +70,14 @@ public:
     static std::vector<Triangle*> LoadTris(const std::string& p_path);
 
     /**
+     * @brief Load the triangles from a tris with normal file.
+     * 
+     * @param p_path The path of the tris with normal file.
+     * @return std::vector<Triangle*> The result triangles. The triangles will be pushed back to this vector.
+     */
+    static void LoadTrisWithNormal(const std::string& p_path, std::vector<Triangle*>& p_result);
+
+    /**
      * @brief Create triangle vertices array.
      * 
      * @param p_triangles The triangles to get the vertices array from.

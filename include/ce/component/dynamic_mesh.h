@@ -82,6 +82,13 @@ public:
     void LoadTriangles(const std::string& p_file);
 
     /**
+     * @brief Load the triangles from a file.
+     * 
+     * @param p_file The file to load the triangles from.
+     */
+    void LoadTrisWithNormal(const std::string& p_file);
+
+    /**
      * @brief Get the vertex count of this mesh.
      * 
      * @return size_t The vertex count of this mesh.

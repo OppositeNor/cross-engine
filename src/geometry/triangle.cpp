@@ -55,6 +55,6 @@ float* Triangle::GetVertexArray(float* p_buff, size_t p_buff_size) const
     if (p_buff_size < TRIANGLE_ARRAY_SIZE)
         throw std::domain_error("The buffer size is too small.");
     for (size_t i = 0; i < 3; ++i)
-        vertices[i]->GetArray(p_buff + i * Vertex::ARRAY_SIZE, Vertex::ARRAY_SIZE, true);
+        vertices[i]->GetArray(p_buff + i * Vertex::ARRAY_SIZE, Vertex::ARRAY_SIZE);
     return p_buff;
 }
