@@ -50,7 +50,7 @@ void Window::InitWindow()
     hwnd = glfwGetWin32Window((GLFWwindow*)(glfw_context));
     glViewport(0, 0, window_size[0], window_size[1]);
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));
     

@@ -79,14 +79,14 @@ public:
      * 
      * @param p_file The file to load the triangles from.
      */
-    void LoadTriangles(const std::string& p_file);
+    virtual void LoadTriangles(const std::string& p_file) override;
 
     /**
      * @brief Load the triangles from a file.
      * 
      * @param p_file The file to load the triangles from.
      */
-    void LoadTrisWithNormal(const std::string& p_file);
+    virtual void LoadTrisWithNormal(const std::string& p_file) override;
 
     /**
      * @brief Get the vertex count of this mesh.

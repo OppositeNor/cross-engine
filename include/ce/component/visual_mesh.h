@@ -35,4 +35,24 @@ public:
      * @return size_t The vertex count of this mesh.
      */
     virtual size_t GetVertexCount() const = 0;
+
+    /**
+     * @brief Load the triangles from a file.
+     * 
+     * @param p_file The file to load the triangles from.
+     */
+    virtual void LoadTriangles(const std::string& p_file) = 0;
+
+    /**
+     * @brief Load the triangles from a file.
+     * 
+     * @param p_file The file to load the triangles from.
+     */
+    virtual void LoadTrisWithNormal(const std::string& p_file) = 0;
+
+    /**
+     * @brief Draw the mesh.
+     * 
+     */
+    virtual void Draw() override;
 };

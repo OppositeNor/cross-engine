@@ -258,3 +258,11 @@ Vec4 Component::GetRotationEuler() const
     throw std::runtime_error("Not implemented");
     return Vec4();
 }
+
+void Component::Draw()
+{
+    if (!visible)
+        return;
+    for (auto& child : children)
+        child->Draw();
+}

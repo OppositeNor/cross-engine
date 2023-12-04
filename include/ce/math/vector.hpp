@@ -164,6 +164,13 @@ public:
      */
     FORCE_INLINE static Vector<float, 4> Cross(const Vector<float, 4>& p_vec1, const Vector<float, 4>& p_vec2);
 
+    template <typename T1>
+    FORCE_INLINE static auto Dot(const Vector<T, N>& p_vec1, const Vector<T1, N>& p_vec2)
+        -> decltype(std::declval<T>() * std::declval<T1>())
+    {
+        return p_vec1.Dot(p_vec2);
+    }
+
     /**
      * @brief The length of the vector.
      * 

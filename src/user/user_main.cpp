@@ -53,7 +53,7 @@ public:
     }
 };
 
-class UserWindow : public Window, public IEventListener, public std::enable_shared_from_this<UserWindow>
+class UserWindow : public Window, public IEventListener
 {
     std::shared_ptr<UserWindow> window2 = nullptr;
     DynamicMesh* mesh = nullptr;
@@ -66,7 +66,8 @@ class UserWindow : public Window, public IEventListener, public std::enable_shar
 
     
 public:
-    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override {}
+    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override {
+    }
 
     UserWindow(const std::string& p_title)
         : Window(1260, 720, p_title)
@@ -77,11 +78,13 @@ public:
     virtual void Ready() override
     {
         if (title == "")
+        {
             window2 = std::make_shared<UserWindow>("Window 2");
+            Game::GetInstance()->GetEventManager()->AddEventListener(window2);
+        }
         else
             window2 = nullptr;
         
-        Game::GetInstance()->GetEventManager()->AddEventListener(shared_from_this());
         mesh = new DynamicMesh(this);
         if (title == "")
             mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
@@ -90,7 +93,7 @@ public:
         mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
         // mesh->Scale() = Vec4(0.5f, 1.5f, 1.5f);
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
-        light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
+        light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 20, this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
         camera = new UserCamera(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
@@ -184,7 +187,7 @@ public:
 
     virtual void Draw() override
     {
-        GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
+        GetShaderProgram()->Use();
         GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
         GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(3.5f, -3.5f, 2.0f, -2.0f, 5.0f, 40.0f));
         GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -192,17 +195,10 @@ public:
         GetShaderProgram()->SetUniform("camera_position", camera->GetGlobalPosition());
         light->SetUniform(0);
         GetShaderProgram()->SetUniform("point_light_count", 1);
-        GetShaderProgram()->Use();
 
-        glBindVertexArray(mesh->GetVAO());
-        GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
-        glBindVertexArray(box->GetVAO());
-        GetShaderProgram()->SetUniform("model", box->GetSubspaceMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, box->GetVertexCount());
-        glBindVertexArray(box2->GetVAO());
-        GetShaderProgram()->SetUniform("model", box2->GetSubspaceMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, box2->GetVertexCount());
+        mesh->Draw();
+        box->Draw();
+        box2->Draw();
         glBindVertexArray(0);
     }
 
@@ -225,8 +221,8 @@ int main()
 {
     try
     {
-        
         Game::Init(std::make_shared<UserWindow>(""));
+        
 
         Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("forward", GLFW_KEY_W);
         Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("backward", GLFW_KEY_S);

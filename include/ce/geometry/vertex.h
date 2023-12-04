@@ -179,4 +179,12 @@ public:
      * @return Vec4 The normal.
      */
     Vec4 GetInducedNormal() const;
+
+    /**
+     * @brief Is the vertex a ear.
+     * 
+     * @return true The vertex is a ear.
+     * @return false The vertex is not a ear.
+     */
+    bool IsEar() const;
 };

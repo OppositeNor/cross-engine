@@ -7,10 +7,10 @@ public:
 
 protected:
     Vec4 diffuse_color;
-    float diffuse_intensity = 20.0f;
+    float diffuse_intensity = 10.0f;
     Vec4 specular_color;
-    float specular_intensity = 50.0f;
-    float specular_power = 200.0f;
+    float specular_intensity = 20.0f;
+    float specular_concent = 200.0f;
 
 public:
 
@@ -25,9 +25,10 @@ public:
      * @brief Constructor for PointLight.
      * 
      * @param p_color The color of the light.
+     * @param p_intensity The intensity of the light.
      * @param p_context 
      */
-    PointLight(const Vec4& p_color, Window* p_context);
+    PointLight(const Vec4& p_color, float p_intensity, Window* p_context);
 
     /**
      * @brief Get the name of the uniform variable.

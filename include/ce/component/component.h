@@ -34,6 +34,8 @@ private:
     void UpdateSubspaceMatrix() const;
     void UpdateSubspaceMatrixInverse() const;
 
+    bool visible = true;
+
 public:
     Component(Window* p_context);
     Component(const Component& p_other);
@@ -227,4 +229,25 @@ public:
      * @return const Window* The context of this mesh.
      */
     const Window* GetContext() const { return context; }
+
+    /**
+     * @brief Is the component visible.
+     * 
+     * @return true The component is visible.
+     * @return false The component is not visible. 
+     */
+    FORCE_INLINE bool IsVisible() const { return visible; }
+
+    /**
+     * @brief Set the visibility of the component.
+     * 
+     * @param p_visible The visibility of the component.
+     */
+    FORCE_INLINE void SetVisible(bool p_visible) { visible = p_visible; }
+
+    /**
+     * @brief Draw the component.
+     * The parent function must be called when overriding this function.
+     */
+    virtual void Draw();
 };

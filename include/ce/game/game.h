@@ -7,6 +7,7 @@ class Window;
 class EventManager;
 class InputManager;
 class AEvent;
+
 class Game
 {
 protected:
@@ -64,6 +65,13 @@ public:
      * 
      */
     static Game* GetInstance();
+
+    /**
+     * @brief Get the main window.
+     * 
+     * @return std::shared_ptr<Window> The main window.
+     */
+    FORCE_INLINE std::shared_ptr<Window> GetMainWindow() { return main_window; }
 
     /**
      * @brief Get the main window.

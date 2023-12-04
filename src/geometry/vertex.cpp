@@ -146,3 +146,24 @@ Vec4 Vertex::GetInducedNormal() const
     auto next_vec = next->position - position;
     return Vec4::Cross(next_vec, prev_vec).Normalize();
 }
+
+bool Vertex::IsEar() const
+{
+    if (prev == nullptr || next == nullptr)
+        throw std::domain_error("The vertex is not fully connected.");
+    auto prev_vec = position - prev->position;
+    auto next_vec = next->position - position;
+    auto normal = Vec4::Cross(next_vec, prev_vec).Normalize();
+    auto prev_vertex = prev->prev;
+    while (prev_vertex != next)
+    {
+        if (prev_vertex == nullptr)
+            throw std::domain_error("The vertex is not fully connected.");
+        auto prev_vertex_vec = prev_vertex->position - prev->position;
+        auto next_vertex_vec = next->position - prev_vertex->position;
+        if (Vec4::Dot(normal, Vec4::Cross(prev_vertex_vec, next_vertex_vec)) < 0)
+            return false;
+        prev_vertex = prev_vertex->prev;
+    }
+    return true;
+}

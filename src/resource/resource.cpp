@@ -120,6 +120,7 @@ void Resource::LoadTris(const std::string& p_path, std::vector<Triangle*>& p_res
     ++p;
     
     Vec4f temp = Pos();
+    p_result.reserve(tri_count);
     for (size_t i = 0; i < tri_count; ++i)
     {
         Triangle* current_tri = new Triangle;
@@ -161,6 +162,7 @@ void Resource::LoadTrisWithNormal(const std::string& p_path, std::vector<Triangl
     
     Vec4f temp_pos = Pos();
     Vec4f temp_normal = Vec4f();
+    p_result.reserve(tri_count);
     for (size_t i = 0; i < tri_count; ++i)
     {
         Triangle* current_tri = new Triangle;
