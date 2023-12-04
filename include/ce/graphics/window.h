@@ -6,8 +6,9 @@
 #include <map>
 #include "ce/math/math.hpp"
 #include "ce/graphics/shader/shader_program.h"
+#include "ce/event/i_event_listener.h"
 class InputManager;
-class Window
+class Window : public IEventListener
 {
 protected:
     void* glfw_context = nullptr;
@@ -124,4 +125,11 @@ public:
      * @return const ShaderProgram* The shader program.
      */
     FORCE_INLINE const ShaderProgram* GetShaderProgram() const { return shader_program; }
+
+    /**
+     * @brief Called when an event is dispatched.
+     * 
+     * @param p_event The event that was dispatched.
+     */
+    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override {}
 };

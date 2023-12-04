@@ -1,6 +1,8 @@
 #include "ce/component/visual_mesh.h"
-#include "glad/glad.h"
 #include "ce/graphics/window.h"
+#include "ce/geometry/triangle.h"
+#include "ce/resource/resource.h"
+#include <glad/glad.h>
 
 VisualMesh::VisualMesh(Window* p_context)
     : Component(p_context)
@@ -30,4 +32,19 @@ void VisualMesh::Draw()
     glBindVertexArray(vao);
     GetContext()->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
     glDrawArrays(GL_TRIANGLES, 0, GetVertexCount());
+}
+
+void VisualMesh::UpdateVAO(const std::vector<Triangle*>& p_triangles)
+{
+    auto vertex_count = GetVertexCount();
+    std::unique_ptr<float[]> vertices = std::unique_ptr<float[]>(new float[vertex_count * Vertex::ARRAY_SIZE]);
+    Resource::CreateModelVertexArray(p_triangles, vertices.get(), vertex_count * Vertex::ARRAY_SIZE);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * Vertex::ARRAY_SIZE * sizeof(float), vertices.get(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(4 * sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
 }

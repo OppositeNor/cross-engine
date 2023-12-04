@@ -3,6 +3,7 @@
 #include "ce/graphics/graphics.h"
 #include "ce/resource/resource.h"
 #include "ce/component/dynamic_mesh.h"
+#include "ce/component/static_mesh.h"
 #include "ce/component/camera.h"
 #include "ce/managers/input_manager.h"
 #include "ce/managers/event_manager.h"
@@ -53,10 +54,10 @@ public:
     }
 };
 
-class UserWindow : public Window, public IEventListener
+class UserWindow : public Window
 {
     std::shared_ptr<UserWindow> window2 = nullptr;
-    DynamicMesh* mesh = nullptr;
+    VisualMesh* mesh = nullptr;
     DynamicMesh* box = nullptr;
     DynamicMesh* box2 = nullptr;
     PointLight* light = nullptr;
@@ -85,7 +86,7 @@ public:
         else
             window2 = nullptr;
         
-        mesh = new DynamicMesh(this);
+        mesh = new StaticMesh(this);
         if (title == "")
             mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
         else

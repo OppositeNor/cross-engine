@@ -28,14 +28,6 @@ public:
     DynamicMesh(std::vector<Triangle*>&& p_triangles, Window* p_context);
 
     /**
-     * @brief Construct a new mesh.
-     * 
-     * @param p_file The file to load the mesh from.
-     * @param p_context The context to load the mesh in.
-     */
-    DynamicMesh(const std::string& p_file, Window* p_context);
-
-    /**
      * @brief Copy constructor for DynamicMesh.
      */
     DynamicMesh(const DynamicMesh& p_other);

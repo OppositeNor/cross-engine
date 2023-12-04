@@ -1,11 +1,13 @@
 #pragma once
 #include "ce/component/component.h"
 
+class Triangle;
 class VisualMesh : public Component
 {
 protected:
     unsigned int vao = 0;
     unsigned int vbo = 0;
+    void UpdateVAO(const std::vector<Triangle*>& p_triangles);
 public:
     VisualMesh(Window* p_context);
     ~VisualMesh();
