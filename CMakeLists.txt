@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(CrossroadEngine C CXX)
+project(Cross C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -55,18 +55,18 @@ add_executable(CrossroadEngineUnitTest
     ${CE_SOURCES}
     ${CE_TEST_SOURCES})
     
-add_executable(CrossroadEngineApplication
+add_executable(Application
     ${CE_USER_SOURCES}
     ${CE_SOURCES}
 )
 
-add_custom_command(TARGET CrossroadEngineApplication POST_BUILD
+add_custom_command(TARGET Application POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:glfw3dll> $<TARGET_FILE_DIR:CrossroadEngineApplication>
+    $<TARGET_FILE:glfw3dll> $<TARGET_FILE_DIR:Application>
 )
 
 target_link_libraries(CrossroadEngineUnitTest PUBLIC
     ${libs})
 
-target_link_libraries(CrossroadEngineApplication PUBLIC
+target_link_libraries(Application PUBLIC
     ${libs})

@@ -62,6 +62,30 @@ public:
     static void LoadTris(const std::string& p_path, std::vector<Triangle*>& p_result);
 
     /**
+     * @brief Load the triangles from a tris with normal file.
+     * 
+     * @param p_path The path of the tris with normal file.
+     * @return std::vector<Triangle*> The result triangles. The triangles will be pushed back to this vector.
+     */
+    static void LoadTrisWithNormal(const std::string& p_path, std::vector<Triangle*>& p_result);
+
+    /**
+     * @brief Load the triangles from a model file.
+     * 
+     * @param p_path The path of the model file.
+     * @param p_result The result triangles. The triangles will be pushed back to this vector.
+     */
+    static void LoadModel(const std::string& p_path, std::vector<Triangle*>& p_result);
+
+    /**
+     * @brief Load the triangles from a obj file.
+     * 
+     * @param p_path The path of the obj file.
+     * @param p_result The result triangles. The triangles will be pushed back to this vector.
+     */
+    static void LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p_result);
+
+    /**
      * @brief Load the triangles from a Tris file.
      * 
      * @param p_path The path of the tris file.
@@ -73,9 +97,25 @@ public:
      * @brief Load the triangles from a tris with normal file.
      * 
      * @param p_path The path of the tris with normal file.
-     * @return std::vector<Triangle*> The result triangles. The triangles will be pushed back to this vector.
+     * @return The result triangles. The triangles will be pushed back to this vector.
      */
-    static void LoadTrisWithNormal(const std::string& p_path, std::vector<Triangle*>& p_result);
+    static std::vector<Triangle*> LoadTrisWithNormal(const std::string& p_path);
+
+    /**
+     * @brief Load the triangles from a model file.
+     * 
+     * @param p_path The path of the model file.
+     * @return The result triangles. The triangles will be pushed back to this vector.
+     */
+    static std::vector<Triangle*> LoadModel(const std::string& p_path);
+
+    /**
+     * @brief Load the triangles from a obj file.
+     * 
+     * @param p_path The path of the obj file.
+     * @return The result triangles. The triangles will be pushed back to this vector.
+     */
+    static std::vector<Triangle*> LoadObjModel(const std::string& p_path);
 
     /**
      * @brief Create triangle vertices array.

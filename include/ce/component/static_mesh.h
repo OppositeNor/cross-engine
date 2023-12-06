@@ -20,6 +20,13 @@ public:
     virtual size_t GetVertexCount() const override { return vertex_count;}
 
     /**
+     * @brief Load the triangles.
+     * 
+     * @param p_triangles The triangles to load.
+     */
+    virtual void LoadTriangles(std::vector<Triangle*>&& p_triangles) override;
+
+    /**
      * @brief Load the triangles from a file.
      * 
      * @param p_file The file to load the triangles from.

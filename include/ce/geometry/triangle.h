@@ -26,6 +26,24 @@ public:
     Triangle(const Triangle& p_other);
 
     /**
+     * @brief Construct a new Triangle object.
+     * 
+     * @param p_v1 The first vertex.
+     * @param p_v2 The second vertex.
+     * @param p_v3 The third vertex.
+     */
+    Triangle(const Vertex& p_v1, const Vertex& p_v2, const Vertex& p_v3);
+
+    /**
+     * @brief Construct a new Triangle object.
+     * 
+     * @param p_v1 The first vertex.
+     * @param p_v2 The second vertex.
+     * @param p_v3 The third vertex.
+     */
+    Triangle(Vertex*&& p_v1, Vertex*&& p_v2, Vertex*&& p_v3) noexcept;
+
+    /**
      * @brief Move constructor.
      * 
      * @param p_other The other triangle.

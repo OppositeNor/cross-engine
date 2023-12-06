@@ -20,6 +20,17 @@ StaticMesh::StaticMesh(std::vector<Triangle*>&& p_triangles, Window* p_context)
     }
 }
 
+void StaticMesh::LoadTriangles(std::vector<Triangle*>&& p_triangles)
+{
+    vertex_count = p_triangles.size() * 3;
+    UpdateVAO(p_triangles);
+    for (auto& i : p_triangles)
+    {
+        delete i;
+        i = nullptr;
+    }
+}
+
 void StaticMesh::LoadTriangles(const std::string& p_file)
 {
     std::vector<Triangle*> triangles;

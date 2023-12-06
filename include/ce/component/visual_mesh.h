@@ -39,6 +39,13 @@ public:
     virtual size_t GetVertexCount() const = 0;
 
     /**
+     * @brief Load the triangles.
+     * 
+     * @param p_triangles The triangles to load.
+     */
+    virtual void LoadTriangles(std::vector<Triangle*>&& p_triangles) = 0;
+
+    /**
      * @brief Load the triangles from a file.
      * 
      * @param p_file The file to load the triangles from.

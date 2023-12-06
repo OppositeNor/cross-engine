@@ -12,6 +12,7 @@ class Vertex
 {
     Vec4 position;
     Vec4 normal;
+    Vec2 uv;
 
     Vertex* prev = nullptr;
     Vertex* next = nullptr;
@@ -20,12 +21,22 @@ public:
     /**
      * @brief The count of elements in the vertex array.
      */
-    static constexpr size_t ARRAY_SIZE = 8;
+    static constexpr size_t ARRAY_SIZE = 10;
 
     /**
      * @brief Constructor for Vertex.
      */
     Vertex();
+
+    /**
+     * @brief Constructor for Vertex.
+     * 
+     * @param p_position The position of the vertex.
+     * @param p_normal The normal of the vertex.
+     * @param p_uv The uv of the vertex.
+     */
+    Vertex(const Vec4& p_position, const Vec4& p_normal, const Vec2& p_uv);
+
     /**
      * @brief Constructor for Vertex.
      * 
@@ -89,6 +100,27 @@ public:
      * @param p_position The position of the vertex.
      */
     FORCE_INLINE void SetPosition(const Vec4& p_position) noexcept { position = p_position; }
+
+    /**
+     * @brief Get the uv of the vertex.
+     * 
+     * @return const Vec2& The uv of the vertex.
+     */
+    FORCE_INLINE const Vec2& GetUV() const noexcept { return uv; }
+
+    /**
+     * @brief Get the uv of the vertex.
+     * 
+     * @return Vec2& The uv of the vertex.
+     */
+    FORCE_INLINE Vec2& UV() noexcept { return uv; }
+
+    /**
+     * @brief Set the uv of the vertex.
+     * 
+     * @param p_uv The uv of the vertex.
+     */
+    FORCE_INLINE void SetUV(const Vec2& p_uv) noexcept { uv = p_uv; }
 
     /**
      * @brief Get the previous vertex.

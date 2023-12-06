@@ -1,24 +1,34 @@
 #include "ce/geometry/vertex.h"
 
 
-Vertex::Vertex()
+
+Vertex::Vertex(const Vec4& p_position, const Vec4& p_normal, const Vec2& p_uv)
+    : position(p_position), normal(p_normal), uv(p_uv)
 {
+
 }
 
 Vertex::Vertex(const Vec4& p_position)
-    : Vertex()
+    : Vertex(p_position, Vec4(), Vec2())
 {
     position = p_position;
 }
 
+Vertex::Vertex()
+    : Vertex(Vec4(), Vec4(), Vec2())
+{
+}
+
 Vertex::Vertex(const Vertex& p_other)
     : position(p_other.position), 
-    prev(nullptr), next(nullptr), normal(p_other.normal)
-{}
+    prev(nullptr), next(nullptr), normal(p_other.normal), uv(p_other.uv)
+{
+    
+}
 
 Vertex::Vertex(Vertex&& p_other) noexcept
     : position(p_other.position), 
-    prev(p_other.prev), next(p_other.next), normal(p_other.normal)
+    prev(p_other.prev), next(p_other.next), normal(p_other.normal), uv(p_other.uv)
 {
     p_other.prev = nullptr;
     p_other.next = nullptr;
@@ -134,7 +144,8 @@ float* Vertex::GetArray(float* p_buff, size_t p_buff_size) const
         for (size_t i = 0; i < 4; ++i)
             p_buff[i + 4] = normal[i];
     }
-
+    for (size_t i = 0; i < 2; ++i)
+        p_buff[i + 8] = uv[i];
     return p_buff;
 }
 
@@ -154,16 +165,13 @@ bool Vertex::IsEar() const
     auto prev_vec = position - prev->position;
     auto next_vec = next->position - position;
     auto normal = Vec4::Cross(next_vec, prev_vec).Normalize();
-    auto prev_vertex = prev->prev;
-    while (prev_vertex != next)
+    auto current_vertex = next->next;
+    while (current_vertex != prev)
     {
-        if (prev_vertex == nullptr)
-            throw std::domain_error("The vertex is not fully connected.");
-        auto prev_vertex_vec = prev_vertex->position - prev->position;
-        auto next_vertex_vec = next->position - prev_vertex->position;
-        if (Vec4::Dot(normal, Vec4::Cross(prev_vertex_vec, next_vertex_vec)) < 0)
+        auto current_vec = current_vertex->position - position;
+        if (Vec4::Dot(normal, Vec4::Cross(current_vec, prev_vec)) < 0)
             return false;
-        prev_vertex = prev_vertex->prev;
+        current_vertex = current_vertex->next;
     }
     return true;
 }

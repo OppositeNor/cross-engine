@@ -88,11 +88,10 @@ public:
         
         mesh = new StaticMesh(this);
         if (title == "")
-            mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
+            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/monkey.obj"));
         else
-            mesh->LoadTrisWithNormal(Resource::GetExeDirectory() + "/teapot_bezier0.norm");
-        mesh->Scale() = Vec4(1.5f, 1.5f, 1.5f);
-        // mesh->Scale() = Vec4(0.5f, 1.5f, 1.5f);
+            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/teapot_bezier2.norm"));
+        mesh->Scale() = Vec4(1.5, 1.5, 1.5);
         mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 20, this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
@@ -190,7 +189,7 @@ public:
     {
         GetShaderProgram()->Use();
         GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(3.5f, -3.5f, 2.0f, -2.0f, 5.0f, 40.0f));
+        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 40.0f));
         GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
         GetShaderProgram()->SetUniform("ambient_intensity", 0.7f);
         GetShaderProgram()->SetUniform("camera_position", camera->GetGlobalPosition());

@@ -1,13 +1,23 @@
 #include "ce/resource/resource.h"
-#include "ce/geometry/triangle.h"
+#include "ce/geometry/polygon.h"
 #include <fstream>
 #include <windows.h>
+
+static FORCE_INLINE bool IsAlpha(byte_t p_char)
+{
+    return (p_char >= 'a' && p_char <= 'z') || (p_char >= 'A' && p_char <= 'Z');
+}
+
+static FORCE_INLINE bool IsDigit(byte_t p_char)
+{
+    return (p_char >= '0' && p_char <= '9') || p_char == '.' || p_char == '-';
+}
 
 static byte_t* GetWord(byte_t* p_start, byte_t* buff, size_t buff_size)
 {
     for (size_t i = 0; i < buff_size; ++i)
     {
-        if (p_start[i] == '\n' || p_start[i] == ' ' || p_start[i] == '\t' || p_start[i] == '\0')
+        if (!(IsAlpha(p_start[i]) || IsDigit(p_start[i]) || p_start[i] == '_'))
         {
             buff[i] = '\0';
             return buff;
@@ -18,7 +28,22 @@ static byte_t* GetWord(byte_t* p_start, byte_t* buff, size_t buff_size)
     return buff;
 }
 
-static void MovePToNextSpace(byte_t** p, byte_t* p_end)
+static byte_t* GetLine(byte_t* p_start, byte_t* buff, size_t buff_size)
+{
+    for (size_t i = 0; i < buff_size; ++i)
+    {
+        if (p_start[i] == '\n' || p_start[i] == '\0')
+        {
+            buff[i] = '\0';
+            return buff;
+        }
+        buff[i] = p_start[i];
+    }
+    buff[buff_size - 1] = '\0';
+    return buff;
+}
+
+static byte_t* MovePToNextSpace(byte_t** p, byte_t* p_end)
 {
     while (**p != '\n' && **p != ' ' && **p != '\t' && **p != '\0')
     { 
@@ -26,6 +51,29 @@ static void MovePToNextSpace(byte_t** p, byte_t* p_end)
             throw std::out_of_range("Out of range.");
         ++(*p);
     }
+    return *p;
+}
+
+static byte_t* MovePToNextWord(byte_t** p, byte_t* p_end)
+{
+    while (IsAlpha(**p) || IsDigit(**p) || **p == '_')
+    {
+        if (*p >= p_end)
+            throw std::out_of_range("Out of range.");
+        ++(*p);
+    }
+    return *p;
+}
+
+static byte_t* MovePToNextLine(byte_t** p, byte_t* p_end)
+{
+    while (**p != '\n' && **p != '\0')
+    { 
+        if (*p >= p_end)
+            throw std::out_of_range("Out of range.");
+        ++(*p);
+    }
+    return *p;
 }
 
 std::string Resource::GetExeDirectory()
@@ -149,6 +197,27 @@ std::vector<Triangle*> Resource::LoadTris(const std::string& p_path)
     return std::move(result);
 }
 
+std::vector<Triangle*> Resource::LoadTrisWithNormal(const std::string& p_path)
+{
+    std::vector<Triangle*> result;
+    LoadTrisWithNormal(p_path, result);
+    return std::move(result);
+}
+
+std::vector<Triangle*> Resource::LoadModel(const std::string& p_path)
+{
+    std::vector<Triangle*> result;
+    LoadModel(p_path, result);
+    return std::move(result);
+}
+
+std::vector<Triangle*> Resource::LoadObjModel(const std::string& p_path)
+{
+    std::vector<Triangle*> result;
+    LoadObjModel(p_path, result);
+    return std::move(result);
+}
+
 void Resource::LoadTrisWithNormal(const std::string& p_path, std::vector<Triangle*>& p_result)
 {
     size_t file_size;
@@ -206,4 +275,100 @@ float* Resource::CreateModelVertexArray(const std::vector<Triangle*>& p_triangle
     for (size_t i = 0; i < p_triangles.size(); ++i)
         (*(p_triangles.begin() + i))->GetVertexArray(p_buffer + i * Triangle::TRIANGLE_ARRAY_SIZE, Triangle::TRIANGLE_ARRAY_SIZE);
     return p_buffer;
+}
+
+void Resource::LoadModel(const std::string& p_path, std::vector<Triangle*>& p_result)
+{
+    std::string ext = p_path.substr(p_path.find_last_of('.') + 1);
+    if (ext == "tris")
+        LoadTris(p_path, p_result);
+    else if (ext == "norm")
+        LoadTrisWithNormal(p_path, p_result);
+    else if (ext == "obj")
+        LoadObjModel(p_path, p_result);
+}
+
+void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p_result)
+{
+    size_t file_size;
+    std::unique_ptr<byte_t[]> data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    byte_t* p = data.get();
+
+    std::vector<Vec4> positions;
+    std::vector<Vec4> normals;
+    std::vector<Vec2> tex_coords;
+    std::vector<Triangle*> triangles;
+    byte_t line_buff[1024];
+    byte_t word_buff[256];
+    size_t counter = 0;
+    while (p < data.get() + file_size) {
+        GetLine(p, line_buff, 1024);
+        auto *pp = line_buff;
+        if (pp[0] == 'v' && pp[1] == ' ')
+        {
+            pp += 2;
+            Vec4 pos = Pos();
+            for (size_t i = 0; i < 3; ++i)
+            {
+                GetWord(pp, word_buff, 256);
+                pos[i] = std::atof(word_buff);
+                MovePToNextSpace(&pp, line_buff + 1024);
+                ++pp;
+            }
+            positions.push_back(pos);
+        }
+        else if (pp[0] == 'v' && pp[1] == 't')
+        {
+            pp += 3;
+            Vec2 tex_coord;
+            for (size_t i = 0; i < 2; ++i)
+            {
+                GetWord(pp, word_buff, 256);
+                tex_coord[i] = std::atof(word_buff);
+                MovePToNextSpace(&pp, line_buff + 1024);
+                ++pp;
+            }
+            tex_coords.push_back(tex_coord);
+        }
+        else if (pp[0] == 'v' && pp[1] == 'n')
+        {
+            pp += 3;
+            Vec4 norm = Vec4();
+            for (size_t i = 0; i < 3; ++i)
+            {
+                GetWord(pp, word_buff, 256);
+                norm[i] = std::atof(word_buff);
+                MovePToNextSpace(&pp, line_buff + 1024);
+                ++pp;
+            }
+            normals.push_back(norm);
+        }
+        else if (pp[0] == 'f' && pp[1] == ' ')
+        {
+            ++pp;
+            PolygonN poly;
+            while (*pp != '\0')
+            {
+                ++pp;
+                Vertex* vert = new Vertex;
+                vert->Position() = positions[atoi(GetWord(pp, word_buff, 256)) - 1];
+                MovePToNextWord(&pp, line_buff + 1024);
+                ++pp;
+                vert->UV() = tex_coords[atoi(GetWord(pp, word_buff, 256)) - 1];
+                MovePToNextWord(&pp, line_buff + 1024);
+                ++pp;
+                vert->Normal() = normals[atoi(GetWord(pp, word_buff, 256)) - 1];
+                MovePToNextWord(&pp, line_buff + 1024);
+                poly.AddVertex(poly.GetVertexCount(), vert);
+            }
+            std::vector<Triangle*> temp_triangles;
+            poly.Triangulate(temp_triangles);
+            for (size_t i = 0; i < temp_triangles.size(); ++i)
+            {
+                p_result.push_back(temp_triangles[i]);
+            }
+        }
+        MovePToNextLine(&p, data.get() + file_size);
+        ++p;
+    }
 }

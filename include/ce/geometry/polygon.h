@@ -3,15 +3,16 @@
 
 #include <vector>
 
-class Polygon : public AGeometry
+class PolygonN : public AGeometry
 {
     std::vector<Vertex*> vertices;
 public:
-    Polygon(std::initializer_list<Vertex*>&& p_vertices);
-    virtual ~Polygon() override;
+    PolygonN();
+    PolygonN(std::initializer_list<Vertex*>&& p_vertices);
+    virtual ~PolygonN() override;
 
     /**
-     * @brief Get the number of vertices in the polygon.
+     * @brief Get the number of vertices in the PolygonN.
      * 
      * @return size_t The number of vertices.
      */
@@ -26,14 +27,14 @@ public:
     FORCE_INLINE const Vertex* GetVertex(size_t p_index) const { return vertices[p_index]; }
 
     /**
-     * @brief Add a vertex to the polygon.
+     * @brief Add a vertex to the PolygonN.
      * 
      * @param p_vertex The vertex to be added.
      */
     void AddVertex(size_t p_index, Vertex* p_vertex);
 
     /**
-     * @brief Triangulate the polygon.
+     * @brief Triangulate the PolygonN.
      * 
      * @param p_triangles The triangles to be filled.
      */

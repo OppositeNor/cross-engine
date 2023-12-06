@@ -3,6 +3,12 @@
 #include "ce/graphics/graphics.h"
 #include "glad/glad.h"
 
+void DynamicMesh::SetTrianglesDirty(bool p_dirty)
+{
+    std::lock_guard<std::mutex> lock(triangles_mutex);
+    triangles_dirty = p_dirty;
+}
+
 DynamicMesh::DynamicMesh(Window* p_context)
     : VisualMesh(p_context)
 {
@@ -54,11 +60,20 @@ void DynamicMesh::Update(float p_delta)
     }
 }
 
+void DynamicMesh::LoadTriangles(std::vector<Triangle*>&& p_triangles)
+{
+    for (auto i : triangles)
+        delete i;
+    triangles = std::move(p_triangles);
+    SetTrianglesDirty(true);
+}
+
 void DynamicMesh::LoadTriangles(const std::string& p_file)
 {
     for (auto i : triangles)
         delete i;
     Resource::LoadTris(p_file, triangles);
+    SetTrianglesDirty(true);
 }
 
 void DynamicMesh::LoadTrisWithNormal(const std::string& p_file)
@@ -66,4 +81,5 @@ void DynamicMesh::LoadTrisWithNormal(const std::string& p_file)
     for (auto i : triangles)
         delete i;
     Resource::LoadTrisWithNormal(p_file, triangles);
+    SetTrianglesDirty(true);
 }

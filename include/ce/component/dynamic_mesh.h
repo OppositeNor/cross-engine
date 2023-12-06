@@ -10,6 +10,9 @@ class DynamicMesh : public VisualMesh
     std::vector<Triangle*> triangles;
     bool triangles_dirty = true;
     std::mutex triangles_mutex;
+
+protected:
+    void SetTrianglesDirty(bool p_dirty);
 public:
 
     /**
@@ -65,6 +68,13 @@ public:
      * @return const std::vector<Triangle*>& The triangles of this mesh.
      */
     const std::vector<Triangle*>& GetTriangles() const { return triangles; }
+
+    /**
+     * @brief Load the triangles.
+     * 
+     * @param p_triangles The triangles to load.
+     */
+    virtual void LoadTriangles(std::vector<Triangle*>&& p_triangles) override;
 
     /**
      * @brief Load the triangles from a file.
