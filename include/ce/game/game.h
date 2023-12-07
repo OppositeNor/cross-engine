@@ -78,7 +78,7 @@ public:
      * 
      * @return std::shared_ptr<Window> The main window.
      */
-    FORCE_INLINE const std::shared_ptr<Window> GetMainWindow() const { return main_window; }
+    FORCE_INLINE const std::shared_ptr<Window>& GetMainWindow() const { return main_window; }
 
     /**
      * @brief Destroy the Game object.

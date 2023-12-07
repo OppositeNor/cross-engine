@@ -7,7 +7,7 @@ InputManager::InputManager()
 }
 
 
-void InputManager::SetInputStatePressed(Window* p_context, int p_key)
+void InputManager::SetInputStatePressed(Window* p_context, Input p_key)
 {
     
     auto key = input_map.find(p_key);
@@ -20,7 +20,7 @@ void InputManager::SetInputStatePressed(Window* p_context, int p_key)
     }
 }
 
-void InputManager::SetInputStateReleased(Window* p_context, int p_key)
+void InputManager::SetInputStateReleased(Window* p_context, Input p_key)
 {
     auto key = input_map.find(p_key);
     if (key == input_map.end())
@@ -40,7 +40,7 @@ InputManager::InputState InputManager::GetInputState(const Window* p_context, co
     return context_map.at(p_context).at(p_key);
 }
 
-void InputManager::AddInput(const std::string& input_name, int p_key)
+void InputManager::AddInput(const std::string& input_name, Input p_key)
 {
     input_map[p_key].push_back(input_name);
 }
@@ -86,13 +86,13 @@ void InputManager::OnEvent(std::shared_ptr<AEvent> p_event)
     if (p_event->GetEventType() != EventType::OnKey)
         return;
     auto event = std::static_pointer_cast<OnKeyEvent>(p_event);
-    switch (event->action)
+    switch ((InputAction)event->action)
     {
-    case RELEASE:
-        SetInputStateReleased(event->window, event->key);
+    case InputAction::RELEASE:
+        SetInputStateReleased(event->window, (Input)(event->key));
         break;
-    case PRESS:
-        SetInputStatePressed(event->window, event->key);
+    case InputAction::PRESS:
+        SetInputStatePressed(event->window, (Input)(event->key));
         break;
     default:
         break;

@@ -1,3 +1,7 @@
+extern "C" {
+    __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+}
+
 #include "ce/geometry/triangle.h"
 #include "ce/graphics/window.h"
 #include "ce/graphics/graphics.h"
@@ -88,11 +92,13 @@ public:
         
         mesh = new StaticMesh(this);
         if (title == "")
+        {
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/monkey.obj"));
+            mesh->Position() = Vec4(0, 1.5, 0, 1);
+        }
         else
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/teapot_bezier2.norm"));
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
-        mesh->Position() = Vec4(0, 0, 0, 1.0f);
         light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 20, this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
         camera = new UserCamera(this);
@@ -120,28 +126,19 @@ public:
         box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
 
         box2 = new DynamicMesh(this);
-        // Box mesh counter clock wise
-        //front face
-        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
-        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1)));
-        //back face
-        box2->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1)));
-        box2->Triangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
-        //left face
-        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
-        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1)));
-        //right face
-        box2->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1)));
-        box2->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
-        //top face
-        box2->Triangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(-1, 1, 1, 1), Vec4(1, 1, 1, 1)));
-        box2->Triangles().push_back(new Triangle(Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
-        //bottom face
-        box2->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1)));
-        box2->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1)));
+        
+        box2->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(-1, 0, 1, 1), Vec4(1, 0, 1, 1)));
+        box2->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(1, 0, 1, 1), Vec4(1, 0, -1, 1)));
+        box2->Triangles()[0]->GetVertex(0)->UV() = Vec2(1, 1);
+        box2->Triangles()[0]->GetVertex(1)->UV() = Vec2(1, 0);
+        box2->Triangles()[0]->GetVertex(2)->UV() = Vec2(0, 0);
+        box2->Triangles()[1]->GetVertex(0)->UV() = Vec2(1, 1);
+        box2->Triangles()[1]->GetVertex(1)->UV() = Vec2(0, 0);
+        box2->Triangles()[1]->GetVertex(2)->UV() = Vec2(0, 1);
 
         box->Scale() = Vec4(1.5f, 1.5f, 1.5f);
-        box2->Position() = Vec4(-5, 0, 5, 1.0f);
+        box2->Position() = Vec4(0, 0, 0, 1.0f);
+        box2->Scale() = Vec4(50, 1, 50);
         light->AddChild(box);
 
         light2 = new PointLight(this);
@@ -156,7 +153,6 @@ public:
         light->Update(p_delta);
 
         auto time = glfwGetTime();
-        box2->Position()[1] = std::sin(time) * 5;
 
         if (rotate[0])
             new_rot = EulerToQuat(Vec3(time, 0, 0), EulerRotOrder::PRY);
@@ -189,7 +185,7 @@ public:
     {
         GetShaderProgram()->Use();
         GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 40.0f));
+        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 100.0f));
         GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
         GetShaderProgram()->SetUniform("ambient_intensity", 0.7f);
         GetShaderProgram()->SetUniform("camera_position", camera->GetGlobalPosition());
@@ -224,28 +220,26 @@ int main()
         Game::Init(std::make_shared<UserWindow>(""));
         
 
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("forward", GLFW_KEY_W);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("backward", GLFW_KEY_S);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("left", GLFW_KEY_A);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("right", GLFW_KEY_D);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("down", GLFW_KEY_Q);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("up", GLFW_KEY_E);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("forward", Input::KEY_W);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("backward", Input::KEY_S);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("left", Input::KEY_A);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("right", Input::KEY_D);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("down", Input::KEY_Q);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("up", Input::KEY_E);
 
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_x", GLFW_KEY_UP);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-x", GLFW_KEY_DOWN);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_y", GLFW_KEY_LEFT);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-y", GLFW_KEY_RIGHT);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_x", Input::KEY_UP);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-x", Input::KEY_DOWN);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_y", Input::KEY_LEFT);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-y", Input::KEY_RIGHT);
 
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_left", GLFW_KEY_J);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_right", GLFW_KEY_L);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_up", GLFW_KEY_O);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_down", GLFW_KEY_U);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_forward", GLFW_KEY_I);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", GLFW_KEY_K);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_left", Input::KEY_J);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_right", Input::KEY_L);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_up", Input::KEY_O);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_down", Input::KEY_U);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_forward", Input::KEY_I);
+        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", Input::KEY_K);
 
         Game::GetInstance()->Run();
-
-        Game::GetInstance()->Terminate();
 #if 0
         try
         {

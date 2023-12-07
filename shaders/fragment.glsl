@@ -21,6 +21,9 @@ uniform vec4 camera_position;
 
 in vec4 frag_position;
 in vec4 frag_normal;
+in vec2 frag_texture_uv;
+
+uniform sampler2D ftexture;
 
 void main()
 {
@@ -38,5 +41,5 @@ void main()
             point_light[i].specular_power);
     }
     temp_color.w = 1.0;
-    FragColor = temp_color;
+    FragColor = temp_color * texture(ftexture, frag_texture_uv);
 }

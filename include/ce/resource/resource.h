@@ -118,6 +118,31 @@ public:
     static std::vector<Triangle*> LoadObjModel(const std::string& p_path);
 
     /**
+     * @brief Get the size of an image.
+     * 
+     * @param p_path The path to the image.
+     * @param p_width The width of the image.
+     * @param p_height The height of the image.
+     * @param p_channels The number of channels of the image.
+     */
+    static void GetImageSize(const std::string& p_path, size_t& p_width, size_t& p_height, size_t& p_channels);
+
+    /**
+     * @brief Load an image.
+     * 
+     * @param p_path The path to the image.
+     * @param p_buffer The buffer to load the image to. If the buffer is nullptr, a new buffer will be allocated
+     * and you must free it manually.
+     * @param p_buffer_size The size of the buffer.
+     * @param p_width This will be set to the width of the image.
+     * @param p_height This will be set to the height of the image.
+     * @param p_channels This will be set to the number of channels of the image.
+     * @return byte_t* The buffer.
+     */
+    static ubyte_t* LoadTextureImage(const std::string& p_path, ubyte_t* p_buffer, size_t p_buffer_size,
+        size_t& p_width, size_t& p_height, size_t& p_channels);
+
+    /**
      * @brief Create triangle vertices array.
      * 
      * @param p_triangles The triangles to get the vertices array from.

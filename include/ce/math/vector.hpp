@@ -59,6 +59,18 @@ public:
     }
 
     /**
+     * @brief Construct or for Vector.
+     * 
+     * @param p_x The x component.
+     * @param p_y The y component.
+     */
+    Vector(const T& p_x, const T& p_y)
+        : data{p_x, p_y}
+    {
+        static_assert(N >= 2, "The vector dimension is less than 2");
+    }
+
+    /**
      * @brief Construct a new Vector object.
      * 
      * @param p_list The initializer list.

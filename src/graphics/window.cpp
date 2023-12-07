@@ -5,10 +5,13 @@
 #include "ce/managers/event_manager.h"
 #include "ce/event/window_event.h"
 #include "ce/game/game.h"
+#include "ce/graphics/texture/static_texture.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include "GLFW/glfw3native.h"
+#ifdef _WIN32
+    #define GLFW_EXPOSE_NATIVE_WIN32
+    #include "GLFW/glfw3native.h"
+#endif
 
 std::map<void*, Window*> Window::context_window_finder;
 
@@ -33,6 +36,14 @@ Window::~Window()
         window_thread->join();
 }
 
+void Window::SetClearColor(const Vec4& p_clear_color)
+{
+    if (std::this_thread::get_id() != window_thread->get_id())
+        throw std::runtime_error("Cannot set clear color from another thread.");
+    clear_color = p_clear_color;
+    glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
+}
+
 void Window::InitWindow()
 {
     Graphics::InitGraphics();
@@ -46,17 +57,21 @@ void Window::InitWindow()
     }
     glfwSetFramebufferSizeCallback((GLFWwindow*)(glfw_context), (GLFWframebuffersizefun)(WindowResized));
     glfwSetWindowFocusCallback((GLFWwindow*)(glfw_context), (GLFWwindowfocusfun)(WindowFocused));
-    
+
+#ifdef _WIN32
     hwnd = glfwGetWin32Window((GLFWwindow*)(glfw_context));
+#endif
     glViewport(0, 0, window_size[0], window_size[1]);
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    SetClearColor(Vec4(0.2f, 0.2f, 0.2f, 1.0f));
 
     glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));
     
     shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/vertex.glsl", 
                                        Resource::GetExeDirectory() + "/shaders/fragment.glsl");
     shader_program->Compile();
+    
+    default_texture = std::shared_ptr<ATexture>(new StaticTexture(Resource::GetExeDirectory() + "/default.png"));
 }
 
 void Window::UpdateWindowSize(const Vec2s& p_new_window_size)
@@ -81,6 +96,9 @@ void Window::ThreadFunc()
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             Process(delta);
             Draw();
+            auto error = glGetError();
+            if (error != GL_NO_ERROR)
+                throw std::runtime_error("OpenGL error: " + std::to_string(error));
             Game::GetInstance()->UpdateInput(this);
             delta = glfwGetTime() - frame_start;
         }
@@ -89,6 +107,7 @@ void Window::ThreadFunc()
         Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
         Graphics::DestroyGLFWContex(glfw_context);
         delete shader_program;
+        default_texture.reset();
     }
     catch (const std::exception& e){
         std::cout << "Application throwed an error: " << e.what() << std::endl;

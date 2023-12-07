@@ -1,13 +1,16 @@
 #pragma once
 #include <thread>
 #include <memory>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <vector>
 #include <map>
 #include "ce/math/math.hpp"
 #include "ce/graphics/shader/shader_program.h"
 #include "ce/event/i_event_listener.h"
 class InputManager;
+class ATexture;
 class Window : public IEventListener
 {
 protected:
@@ -16,12 +19,17 @@ protected:
 
     Vec2s window_size;
     std::string window_title = "";
+
+    std::shared_ptr<ATexture> default_texture;
+#ifdef _WIN32
     HWND hwnd = nullptr;
+#endif
     std::unique_ptr<std::thread> window_thread;
     bool is_closed = false;
     ShaderProgram* shader_program = nullptr;
     unsigned int vao = 0;
     
+    Vec4 clear_color = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
     void ThreadFunc();
     static void WindowResized(void* p_glfw_context, int p_width, int p_height);
@@ -57,6 +65,8 @@ public:
      */
     Window();
 
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultTexture() const noexcept { return default_texture; }
+
     /**
      * @brief Destroy the Window object
      */
@@ -69,11 +79,27 @@ public:
      */
     FORCE_INLINE std::thread::id GetThreadId() const noexcept { return window_thread->get_id(); }
 
+#ifdef _WIN32
     /**
      * @brief Get the window handle.
      * @return HWND The window handle.
      */
     FORCE_INLINE HWND GetWindowHWND() { return hwnd; }
+#endif
+
+    /**
+     * @brief Get the window's clear color.
+     * 
+     * @return Vec4 The clear color.
+     */
+    FORCE_INLINE Vec4 GetClearColor() const noexcept { return clear_color; }
+
+    /**
+     * @brief Set the window's clear color.
+     * 
+     * @param p_clear_color The clear color.
+     */
+    void SetClearColor(const Vec4& p_clear_color);
 
     /**
      * @brief Get the size of the window.

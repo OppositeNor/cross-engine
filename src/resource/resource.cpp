@@ -2,6 +2,10 @@
 #include "ce/geometry/polygon.h"
 #include <fstream>
 #include <windows.h>
+#include <functional>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 static FORCE_INLINE bool IsAlpha(byte_t p_char)
 {
@@ -159,7 +163,7 @@ byte_t* Resource::LoadFile(const std::string& p_path, byte_t* p_buffer, size_t p
 void Resource::LoadTris(const std::string& p_path, std::vector<Triangle*>& p_result)
 {
     size_t file_size;
-    std::unique_ptr<byte_t[]> data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    auto data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
     byte_t* p = data.get();
     byte_t buff[256];
     GetWord(p, buff, 256);
@@ -218,10 +222,36 @@ std::vector<Triangle*> Resource::LoadObjModel(const std::string& p_path)
     return std::move(result);
 }
 
+void Resource::GetImageSize(const std::string& p_path, size_t& p_width, size_t& p_height, size_t& p_channels)
+{
+    int width, height, channels;
+    stbi_info(p_path.c_str(), &width, &height, &channels);
+    p_width = width;
+    p_height = height;
+    p_channels = channels;
+}
+
+ubyte_t* Resource::LoadTextureImage(const std::string& p_path, ubyte_t* p_buffer, size_t p_buffer_size,
+        size_t& p_width, size_t& p_height, size_t& p_channels)
+{
+    auto result = std::unique_ptr<ubyte_t[], std::function<decltype(stbi_image_free)>>(
+            stbi_load(p_path.c_str(), (int*)&p_width, (int*)&p_height, (int*)&p_channels, 0), stbi_image_free);
+    if (result.get() == nullptr)
+        throw std::runtime_error("Failed to load image.");
+    
+    if (p_buffer == nullptr)
+        p_buffer = new ubyte_t[p_width * p_height * p_channels];
+    else if (p_buffer_size < p_width * p_height * p_channels)
+        throw std::out_of_range("The buffer size is too small.");
+    
+    memcpy(p_buffer, result.get(), p_width * p_height * p_channels);
+    return p_buffer;
+}
+
 void Resource::LoadTrisWithNormal(const std::string& p_path, std::vector<Triangle*>& p_result)
 {
     size_t file_size;
-    std::unique_ptr<byte_t[]> data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    auto data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
     byte_t* p = data.get();
     byte_t buff[256];
     GetWord(p, buff, 256);
@@ -291,7 +321,7 @@ void Resource::LoadModel(const std::string& p_path, std::vector<Triangle*>& p_re
 void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p_result)
 {
     size_t file_size;
-    std::unique_ptr<byte_t[]> data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    auto data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
     byte_t* p = data.get();
 
     std::vector<Vec4> positions;

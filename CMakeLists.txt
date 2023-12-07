@@ -30,7 +30,8 @@ add_subdirectory(shaders)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/dependencies/glfw/windows/64/include
-    ${PROJECT_SOURCE_DIR}/dependencies/glad/include)
+    ${PROJECT_SOURCE_DIR}/dependencies/glad/include
+    ${PROJECT_SOURCE_DIR}/dependencies/stb)
 
 add_library(glfw3dll SHARED IMPORTED)
 set_property(TARGET glfw3dll PROPERTY IMPORTED_IMPLIB ${PROJECT_SOURCE_DIR}/dependencies/glfw/windows/64/lib-vc2022/glfw3dll.lib)

@@ -21,6 +21,7 @@ void Graphics::InitGraphics()
 
             initialized = true;
         }
+        
     }
 }
 

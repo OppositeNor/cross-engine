@@ -90,6 +90,7 @@ void Game::Run()
         Process(delta);
         delta = (float)glfwGetTime() - frame_start;
     }
+    Game::GetInstance()->Terminate();
 }
 
 void Game::Terminate()
