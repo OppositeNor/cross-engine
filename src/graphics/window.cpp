@@ -6,6 +6,7 @@
 #include "ce/event/window_event.h"
 #include "ce/game/game.h"
 #include "ce/graphics/texture/static_texture.h"
+#include "ce/component/camera.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #ifdef _WIN32
@@ -31,9 +32,7 @@ Window::Window()
 
 Window::~Window()
 {
-    is_closed = true;
-    if (window_thread->joinable())
-        window_thread->join();
+    Close();
 }
 
 void Window::SetClearColor(const Vec4& p_clear_color)
@@ -72,6 +71,9 @@ void Window::InitWindow()
     shader_program->Compile();
     
     default_texture = std::shared_ptr<ATexture>(new StaticTexture(Resource::GetExeDirectory() + "/default.png"));
+    base_component = std::make_shared<Component>(this);
+
+    proj_matrix = Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 100.0f);
 }
 
 void Window::UpdateWindowSize(const Vec2s& p_new_window_size)
@@ -88,13 +90,14 @@ void Window::ThreadFunc()
         Ready();
         float frame_start;
         float delta = 0.01;
-        while (!glfwWindowShouldClose((GLFWwindow*)glfw_context) && !is_closed)
+        while (!glfwWindowShouldClose((GLFWwindow*)glfw_context) && !should_close)
         {
             frame_start = glfwGetTime();
             glfwSwapBuffers((GLFWwindow*)glfw_context);
             glfwPollEvents();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             Process(delta);
+            base_component->Update(delta);
             Draw();
             auto error = glGetError();
             if (error != GL_NO_ERROR)
@@ -102,12 +105,13 @@ void Window::ThreadFunc()
             Game::GetInstance()->UpdateInput(this);
             delta = glfwGetTime() - frame_start;
         }
-        is_closed = true;
         OnClose();
         Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
         Graphics::DestroyGLFWContex(glfw_context);
         delete shader_program;
+        base_component.reset();
         default_texture.reset();
+        is_closed = true;
     }
     catch (const std::exception& e){
         std::cout << "Application throwed an error: " << e.what() << std::endl;
@@ -131,4 +135,21 @@ void Window::OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action
 {
     Window* window = context_window_finder[p_glfw_context];
     Game::GetInstance()->DispatchEvent(std::make_shared<OnKeyEvent>(window, p_key, p_scancode, p_action, p_mods));
+}
+
+void Window::Draw()
+{
+    shader_program->Use();
+    shader_program->SetUniform("proj", proj_matrix);
+    if (using_camera == nullptr)
+    {
+        shader_program->SetUniform("view", Mat4());
+        GetShaderProgram()->SetUniform("camera_position", Vec4());
+    }
+    else
+    {
+        shader_program->SetUniform("view", using_camera->GetViewMatrix());
+        GetShaderProgram()->SetUniform("camera_position", using_camera->GetGlobalPosition());
+    }
+    base_component->Draw();
 }

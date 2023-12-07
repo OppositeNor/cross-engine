@@ -11,6 +11,8 @@
 #include "ce/event/i_event_listener.h"
 class InputManager;
 class ATexture;
+class Component;
+class Camera;
 class Window : public IEventListener
 {
 protected:
@@ -26,6 +28,7 @@ protected:
 #endif
     std::unique_ptr<std::thread> window_thread;
     bool is_closed = false;
+    bool should_close = false;
     ShaderProgram* shader_program = nullptr;
     unsigned int vao = 0;
     
@@ -37,10 +40,72 @@ protected:
     void InitWindow();
     void UpdateWindowSize(const Vec2s& p_new_window_size);
 
+    std::shared_ptr<Component> base_component;
+    std::shared_ptr<Camera> using_camera;
+
+    Mat4 proj_matrix;
+
 private:
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
 
 public:
+
+    /**
+     * @brief Get the GLFW context.
+     * 
+     * @return void* The GLFW context.
+     */
+    FORCE_INLINE void* GetGLFWContext() noexcept { return glfw_context; }
+
+    /**
+     * @brief Get the GLFW context.
+     * 
+     * @return void* The GLFW context.
+     */
+    FORCE_INLINE const void* GetGLFWContext() const noexcept { return glfw_context; }
+
+
+    /**
+     * @brief Get the base component.
+     * 
+     * @return Component* The base component.
+     */
+    FORCE_INLINE std::shared_ptr<Component> GetBaseComponent() { return base_component; }
+
+    /**
+     * @brief Get the base component.
+     *
+     * @return const Component* The base component.
+     */
+    FORCE_INLINE const std::shared_ptr<Component> GetBaseComponent() const { return base_component; }
+
+    /**
+     * @brief Get the camera that is being used.
+     * 
+     * @return std::shared_ptr<Camera> The camera that is being used.
+     */
+    FORCE_INLINE std::shared_ptr<Camera> GetUsingCamera() { return using_camera; }
+
+    /**
+     * @brief Get the camera that is being used.
+     * 
+     * @return const std::shared_ptr<Camera>& The camera that is being used.
+     */
+    FORCE_INLINE const std::shared_ptr<Camera>& GetUsingCamera() const { return using_camera; }
+
+    /**
+     * @brief Set the camera that is being used.
+     * 
+     * @param p_camera The camera that is being used.
+     */
+    FORCE_INLINE void SetUsingCamera(std::shared_ptr<Camera> p_camera) { using_camera = p_camera; }
+
+    /**
+     * @brief Get the projection matrix.
+     * 
+     * @return const Mat4& The projection matrix.
+     */
+    FORCE_INLINE const Mat4& GetProjMatrix() const { return proj_matrix; }
 
     /**
      * @brief Constructor for window.
@@ -111,9 +176,35 @@ public:
     /**
      * @brief Is the window closed.
      * 
-     * @return bool True if the window is closed, false otherwise. 
+     * @return true if the window is closed
+     * @return false if the window is not closed 
      */
     FORCE_INLINE bool IsClosed() const { return is_closed; }
+
+    /**
+     * @brief Should the window be closed.
+     * 
+     * @detials When the window should close, it is not closed yet. It hasn't finish the closing process.
+     * 
+     * @return true if the window should be closed
+     * @return false if the window should not be closed
+     */
+    FORCE_INLINE bool ShouldClose() const { return should_close; }
+
+    /**
+     * @brief Close the window.
+     * 
+     */
+    FORCE_INLINE void Close() { 
+        should_close = true; Join(); }
+
+    /**
+     * @brief Join the window thread.
+     * 
+     */
+    FORCE_INLINE void Join() 
+    { if (window_thread->joinable())
+        window_thread->join(); }
 
     /**
      * @brief Called once when the window runs.
@@ -136,7 +227,7 @@ public:
     /**
      * @brief Draw the window. This is called after the process function.
      */
-    virtual void Draw() {}
+    virtual void Draw();
 
     /**
      * @brief Get the shader program.

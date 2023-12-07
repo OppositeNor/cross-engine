@@ -4,6 +4,8 @@
 #include "ce/resource/resource.h"
 #include "ce/graphics/texture/texture.h"
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+std::mutex test_mutex;
 
 VisualMesh::VisualMesh(Window* p_context)
     : Component(p_context)

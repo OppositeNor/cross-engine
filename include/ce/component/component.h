@@ -8,8 +8,10 @@ class Window;
  * @brief A Component is anything that can existed in the game.
  */
 class Component
+    : public std::enable_shared_from_this<Component>
 {
 private:
+    using WPComponent = std::weak_ptr<Component>;
     Window* context = nullptr;
 
     Vec4 position;
@@ -28,8 +30,8 @@ private:
     void SetChildrenSubspaceMatrixInverseDirty();
 
 
-    Component* parent = nullptr;
-    std::vector<Component*> children;
+    WPComponent parent;
+    std::vector<WPComponent> children;
 
     void UpdateSubspaceMatrix() const;
     void UpdateSubspaceMatrixInverse() const;
@@ -172,21 +174,21 @@ public:
      * 
      * @param p_child The child to be added.
      */
-    void AddChild(Component* p_child);
+    void AddChild(WPComponent p_child);
 
     /**
      * @brief Get the parent of this component.
      * 
-     * @return Component* The parent of this component.
+     * @return WPComponent The parent of this component.
      */
-    const Component* GetParent() const { return parent; }
+    const WPComponent GetParent() const { return parent; }
 
     /**
      * @brief Get the children of this component.
      * 
      * @return const std::vector<Component*>& The children of this component.
      */
-    const std::vector<Component*>& GetChildren() const { return children; }
+    const std::vector<WPComponent>& GetChildren() const { return children; }
 
     /**
      * @brief Get the subspace matrix of this component.

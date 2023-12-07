@@ -60,13 +60,11 @@ public:
 
 class UserWindow : public Window
 {
-    std::shared_ptr<UserWindow> window2 = nullptr;
-    VisualMesh* mesh = nullptr;
-    DynamicMesh* box = nullptr;
-    DynamicMesh* box2 = nullptr;
-    PointLight* light = nullptr;
-    PointLight* light2 = nullptr;
-    UserCamera* camera = nullptr;
+    std::shared_ptr<UserWindow> window2;
+    std::shared_ptr<VisualMesh> mesh;
+    std::shared_ptr<DynamicMesh> box;
+    std::shared_ptr<DynamicMesh> box2;
+    std::shared_ptr<PointLight> light;
     std::string title;
 
     
@@ -90,7 +88,7 @@ public:
         else
             window2 = nullptr;
         
-        mesh = new StaticMesh(this);
+        mesh = std::make_shared<StaticMesh>(this);
         if (title == "")
         {
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/monkey.obj"));
@@ -99,12 +97,16 @@ public:
         else
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/teapot_bezier2.norm"));
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
-        light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 20, this);
+        GetBaseComponent()->AddChild(mesh);
+        
+        light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 20, this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
-        camera = new UserCamera(this);
+        auto camera = std::make_shared<UserCamera>(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
+        GetBaseComponent()->AddChild(camera);
+        SetUsingCamera(camera);
 
-        box = new DynamicMesh(this);
+        box = std::make_shared<DynamicMesh>(this);
         // Box mesh clock wise
         //front face
         box->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1)));
@@ -125,32 +127,30 @@ public:
         box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
         box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
 
-        box2 = new DynamicMesh(this);
+        light->AddChild(box);
+
+        box2 = std::make_shared<DynamicMesh>(this);
         
         box2->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(-1, 0, 1, 1), Vec4(1, 0, 1, 1)));
         box2->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(1, 0, 1, 1), Vec4(1, 0, -1, 1)));
-        box2->Triangles()[0]->GetVertex(0)->UV() = Vec2(1, 1);
-        box2->Triangles()[0]->GetVertex(1)->UV() = Vec2(1, 0);
-        box2->Triangles()[0]->GetVertex(2)->UV() = Vec2(0, 0);
-        box2->Triangles()[1]->GetVertex(0)->UV() = Vec2(1, 1);
-        box2->Triangles()[1]->GetVertex(1)->UV() = Vec2(0, 0);
-        box2->Triangles()[1]->GetVertex(2)->UV() = Vec2(0, 1);
+        box2->Triangles()[0]->GetVertex(0)->UV() = Vec2(0, 1);
+        box2->Triangles()[0]->GetVertex(1)->UV() = Vec2(0, 0);
+        box2->Triangles()[0]->GetVertex(2)->UV() = Vec2(1, 0);
+        box2->Triangles()[1]->GetVertex(0)->UV() = Vec2(0, 1);
+        box2->Triangles()[1]->GetVertex(1)->UV() = Vec2(1, 0);
+        box2->Triangles()[1]->GetVertex(2)->UV() = Vec2(1, 1);
+        GetBaseComponent()->AddChild(box2);
 
         box->Scale() = Vec4(1.5f, 1.5f, 1.5f);
         box2->Position() = Vec4(0, 0, 0, 1.0f);
         box2->Scale() = Vec4(50, 1, 50);
         light->AddChild(box);
-
-        light2 = new PointLight(this);
+        GetBaseComponent()->AddChild(light);
     }
 
     virtual void Process(float p_delta) override
     {
         mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
-        mesh->Update(p_delta);
-        box2->Update(p_delta);
-        camera->Update(p_delta);
-        light->Update(p_delta);
 
         auto time = glfwGetTime();
 
@@ -162,17 +162,17 @@ public:
             new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
         
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_left") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, camera->GetDirection()).Normalized() * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::UP, GetUsingCamera()->GetDirection()).Normalized() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_right") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(camera->GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
+            light->Position() += Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_up") == InputManager::InputState::Pressed)
             light->Position() += Vec4::UP * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_down") == InputManager::InputState::Pressed)
             light->Position() -= Vec4::UP * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_forward") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(camera->GetDirection(), Vec4::UP)) * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP)) * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::Cross(camera->GetDirection(), Vec4::UP), Vec4::UP) * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP), Vec4::UP) * p_delta * 10;
         if (window2 != nullptr && window2->IsClosed())
         {
             window2.reset();
@@ -183,28 +183,24 @@ public:
 
     virtual void Draw() override
     {
-        GetShaderProgram()->Use();
-        GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 100.0f));
+        Window::Draw();
         GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
         GetShaderProgram()->SetUniform("ambient_intensity", 0.7f);
-        GetShaderProgram()->SetUniform("camera_position", camera->GetGlobalPosition());
         light->SetUniform(0);
         GetShaderProgram()->SetUniform("point_light_count", 1);
-
-        mesh->Draw();
-        box->Draw();
-        box2->Draw();
         glBindVertexArray(0);
     }
 
     virtual void OnClose() override
     {
-        delete mesh;
-        delete camera;
-        delete box;
-        delete light;
-        delete light2;
+        mesh.reset();
+        light.reset();
+        box2.reset();
+        box.reset();
+        if (window2 != nullptr)
+        {
+            window2->Close();
+        }
     }
 };
 
@@ -218,7 +214,6 @@ int main()
     try
     {
         Game::Init(std::make_shared<UserWindow>(""));
-        
 
         Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("forward", Input::KEY_W);
         Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("backward", Input::KEY_S);

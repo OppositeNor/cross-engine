@@ -15,7 +15,7 @@ Vertex::Vertex(const Vec4& p_position)
 }
 
 Vertex::Vertex()
-    : Vertex(Vec4(), Vec4(), Vec2())
+    : Vertex(Pos())
 {
 }
 

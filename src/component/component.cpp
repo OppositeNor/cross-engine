@@ -16,10 +16,8 @@ Component::Component(const Component& p_other)
     scale = p_other.scale;
     SetSubspaceMatrixDirty();
 
-    if (p_other.parent != nullptr)
-        p_other.parent->AddChild(this);
-    for (auto& child : p_other.children)
-        children.push_back(new Component(*child));
+    if (!p_other.parent.expired())
+        p_other.parent.lock()->AddChild(shared_from_this());
     
 }
 
@@ -30,9 +28,9 @@ Component::Component(Component&& p_other) noexcept
     scale = p_other.scale;
     SetSubspaceMatrixDirty();
 
-    if (p_other.parent != nullptr)
-        p_other.parent->AddChild(this);
-    p_other.parent = nullptr;
+    if (!p_other.parent.expired())
+        p_other.parent.lock()->AddChild(shared_from_this());
+    p_other.parent.reset();
     children = std::move(p_other.children);
 
     context = p_other.context;
@@ -48,34 +46,39 @@ void Component::Update(float p_delta)
 {
     Process(p_delta);
     for (auto& child : children)
-        child->Update(p_delta);
+    {
+        if (child.expired())
+            continue;
+        child.lock()->Update(p_delta);
+    }
 }
 
 void Component::RemoveChild(Component* p_child)
 {
     for (auto it = children.begin(); it != children.end(); ++it)
     {
-        if (*it == p_child)
+        if ((*it).lock().get() == p_child)
         {
             children.erase(it);
             break;
         }
     }
-    p_child->parent = nullptr;
+    p_child->parent.reset();
 }
 
-void Component::AddChild(Component* p_child)
+void Component::AddChild(WPComponent p_child)
 {
     for (auto i : children)
     {
-        if (i == p_child)
+        if (i.lock().get() == p_child.lock().get())
             return;
     }
     children.push_back(p_child);
-    if (p_child->parent != nullptr)
-        p_child->parent->RemoveChild(p_child);
-    p_child->SetSubspaceMatrixDirty();
-    p_child->parent = this;
+    auto child = p_child.lock();
+    if (!child->parent.expired())
+        child->parent.lock()->RemoveChild(child.get());
+    child->SetSubspaceMatrixDirty();
+    child->parent = shared_from_this();
 }
 
 const Mat4& Component::GetSubspaceMatrix() const
@@ -175,16 +178,17 @@ void Component::SetChildrenSubspaceMatrixDirty()
 {
     for (auto& child : children)
     {
-        if (!child->subspace_matrix_dirty)
+        auto temp_child = child.lock();
+        if (!temp_child->subspace_matrix_dirty)
         {
-            std::lock_guard<std::mutex> lock(child->subspace_matrix_mutex);
-            if (!child->subspace_matrix_dirty)
+            std::lock_guard<std::mutex> lock(temp_child->subspace_matrix_mutex);
+            if (!temp_child->subspace_matrix_dirty)
             {
-                child->subspace_matrix_dirty = true;
-                child->SetChildrenSubspaceMatrixDirty();
+                temp_child->subspace_matrix_dirty = true;
+                temp_child->SetChildrenSubspaceMatrixDirty();
             }
         }
-        child->SetChildrenSubspaceMatrixDirty();
+        temp_child->SetChildrenSubspaceMatrixDirty();
     }
 }
 
@@ -192,35 +196,36 @@ void Component::SetChildrenSubspaceMatrixInverseDirty()
 {
     for (auto& child : children)
     {
-        if (!child->subspace_matrix_inverse_dirty)
+        auto temp_child = child.lock();
+        if (!temp_child->subspace_matrix_inverse_dirty)
         {
-            std::lock_guard<std::mutex> lock(child->subspace_matrix_inverse_mutex);
-            if (!child->subspace_matrix_inverse_dirty)
+            std::lock_guard<std::mutex> lock(temp_child->subspace_matrix_inverse_mutex);
+            if (!temp_child->subspace_matrix_inverse_dirty)
             {
-                child->subspace_matrix_inverse_dirty = true;
-                child->SetChildrenSubspaceMatrixInverseDirty();
+                temp_child->subspace_matrix_inverse_dirty = true;
+                temp_child->SetChildrenSubspaceMatrixInverseDirty();
             }
         }
-        child->SetChildrenSubspaceMatrixInverseDirty();
+        temp_child->SetChildrenSubspaceMatrixInverseDirty();
     }
 
 }
 
 void Component::UpdateSubspaceMatrix() const
 {
-    if (parent == nullptr)
+    if (parent.expired())
         subspace_matrix = Mat4::Model(position, rotation, scale);
     else
-        subspace_matrix = parent->GetSubspaceMatrix() * Mat4::Model(position, rotation, scale);
+        subspace_matrix = parent.lock()->GetSubspaceMatrix() * Mat4::Model(position, rotation, scale);
     subspace_matrix_dirty = false;
 }
 
 void Component::UpdateSubspaceMatrixInverse() const
 {
-    if (parent == nullptr)
+    if (parent.expired())
         subspace_matrix_inverse = Mat4::ModelInv(position, rotation, scale);
     else
-        subspace_matrix_inverse = Mat4::ModelInv(position, rotation, scale) * parent->GetSubspaceMatrixInverse();
+        subspace_matrix_inverse = Mat4::ModelInv(position, rotation, scale) * parent.lock()->GetSubspaceMatrixInverse();
     subspace_matrix_inverse_dirty = false;
 }
 
@@ -236,10 +241,10 @@ Vec4 Component::GetGlobalPosition() const
 
 void Component::SetGlobalPosition(const Vec4& p_position)
 {
-    if (parent == nullptr)
+    if (parent.expired())
         Position() = p_position;
     else
-        Position() = parent->GetSubspaceMatrixInverse() * p_position;
+        Position() = parent.lock()->GetSubspaceMatrixInverse() * p_position;
 }
 
 void Component::SetRotationEuler(const Vec4& p_rotation, EulerRotOrder p_order)
@@ -264,5 +269,9 @@ void Component::Draw()
     if (!visible)
         return;
     for (auto& child : children)
-        child->Draw();
+    {
+        if (child.expired())
+            continue;
+        child.lock()->Draw();
+    }
 }
