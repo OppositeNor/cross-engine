@@ -237,7 +237,7 @@ ubyte_t* Resource::LoadTextureImage(const std::string& p_path, ubyte_t* p_buffer
     auto result = std::unique_ptr<ubyte_t[], std::function<decltype(stbi_image_free)>>(
             stbi_load(p_path.c_str(), (int*)&p_width, (int*)&p_height, (int*)&p_channels, 0), stbi_image_free);
     if (result.get() == nullptr)
-        throw std::runtime_error("Failed to load image.");
+        throw std::runtime_error("Failed to load image at path: " + p_path + ".");
     
     if (p_buffer == nullptr)
         p_buffer = new ubyte_t[p_width * p_height * p_channels];

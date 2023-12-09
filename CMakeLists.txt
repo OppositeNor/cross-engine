@@ -27,6 +27,7 @@ add_subdirectory(src/managers)
 add_subdirectory(src/event)
 
 add_subdirectory(shaders)
+add_subdirectory(textures)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/dependencies/glfw/windows/64/include

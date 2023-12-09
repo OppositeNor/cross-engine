@@ -7,6 +7,7 @@
 #include "ce/game/game.h"
 #include "ce/graphics/texture/static_texture.h"
 #include "ce/component/camera.h"
+#include "ce/component/skybox.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #ifdef _WIN32
@@ -69,11 +70,21 @@ void Window::InitWindow()
     shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/vertex.glsl", 
                                        Resource::GetExeDirectory() + "/shaders/fragment.glsl");
     shader_program->Compile();
+    skybox_shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/skybox_vertex.glsl", 
+                                              Resource::GetExeDirectory() + "/shaders/skybox_fragment.glsl");
+    skybox_shader_program->Compile();
     
-    default_texture = std::shared_ptr<ATexture>(new StaticTexture(Resource::GetExeDirectory() + "/default.png"));
+    default_texture = std::shared_ptr<ATexture>(new StaticTexture(Resource::GetExeDirectory() + "/textures/default.png"));
     base_component = std::make_shared<Component>(this);
 
-    proj_matrix = Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 100.0f);
+    proj_matrix = Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 1000.0f);
+
+    skybox = new Skybox(this, {Resource::GetExeDirectory() + "/textures/skybox/default/right.jpg",
+                               Resource::GetExeDirectory() + "/textures/skybox/default/left.jpg",
+                               Resource::GetExeDirectory() + "/textures/skybox/default/top.jpg",
+                               Resource::GetExeDirectory() + "/textures/skybox/default/bottom.jpg",
+                               Resource::GetExeDirectory() + "/textures/skybox/default/front.jpg",
+                               Resource::GetExeDirectory() + "/textures/skybox/default/back.jpg"});
 }
 
 void Window::UpdateWindowSize(const Vec2s& p_new_window_size)
@@ -109,6 +120,7 @@ void Window::ThreadFunc()
         Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
         Graphics::DestroyGLFWContex(glfw_context);
         delete shader_program;
+        delete skybox_shader_program;
         base_component.reset();
         default_texture.reset();
         is_closed = true;
@@ -139,6 +151,16 @@ void Window::OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action
 
 void Window::Draw()
 {
+    if (skybox != nullptr)
+    {
+        skybox_shader_program->Use();
+        skybox_shader_program->SetUniform("proj", proj_matrix);
+        if (using_camera == nullptr)
+            skybox_shader_program->SetUniform("view", Mat4());
+        else
+            skybox_shader_program->SetUniform("view", using_camera->GetViewMatrix());
+        skybox->Draw();
+    }
     shader_program->Use();
     shader_program->SetUniform("proj", proj_matrix);
     if (using_camera == nullptr)
@@ -150,6 +172,12 @@ void Window::Draw()
     {
         shader_program->SetUniform("view", using_camera->GetViewMatrix());
         GetShaderProgram()->SetUniform("camera_position", using_camera->GetGlobalPosition());
+    }
+    if (skybox != nullptr)
+    {
+        shader_program->SetUniform("skybox", 1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->GetTextureCube());
     }
     base_component->Draw();
 }

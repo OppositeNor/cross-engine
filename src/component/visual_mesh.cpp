@@ -10,6 +10,8 @@ std::mutex test_mutex;
 VisualMesh::VisualMesh(Window* p_context)
     : Component(p_context)
 {
+    if (p_context->GetThreadId() != std::this_thread::get_id())
+        throw std::runtime_error("VisualMesh must be created on the same thread as the Window");
     glGenBuffers(1, &vbo);
     glGenVertexArrays(1, &vao);
 }
@@ -32,17 +34,22 @@ VisualMesh::VisualMesh(VisualMesh&& p_other) noexcept
 
 void VisualMesh::Draw()
 {
+    if (GetContext()->GetThreadId() != std::this_thread::get_id())
+        throw std::runtime_error("Skybox must be drawn on the main thread.");
+    
     glBindVertexArray(vao);
     GetContext()->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
     if (texture)
-        texture->BindTexture();
+        texture->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
     else
-        GetContext()->GetDefaultTexture()->BindTexture();
+        GetContext()->GetDefaultTexture()->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
     glDrawArrays(GL_TRIANGLES, 0, GetVertexCount());
 }
 
 void VisualMesh::UpdateVAO(const std::vector<Triangle*>& p_triangles)
 {
+    if (GetContext()->GetThreadId() != std::this_thread::get_id())
+        throw std::runtime_error("VAO must be updated on the same thread as the Window.");
     auto vertex_count = GetVertexCount();
     std::unique_ptr<float[]> vertices = std::unique_ptr<float[]>(new float[vertex_count * Vertex::ARRAY_SIZE]);
     Resource::CreateModelVertexArray(p_triangles, vertices.get(), vertex_count * Vertex::ARRAY_SIZE);

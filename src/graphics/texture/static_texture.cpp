@@ -1,5 +1,6 @@
 #include "ce/graphics/texture/static_texture.h"
 #include "ce/resource/resource.h"
+#include "ce/graphics/shader/shader_program.h"
 #include <glad/glad.h>
 
 void StaticTexture::CreateTexture()
@@ -133,8 +134,9 @@ void StaticTexture::LoadTexture(ubyte_t* p_data, size_t p_width, size_t p_height
         glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void StaticTexture::BindTexture() const
+void StaticTexture::BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name, size_t p_index) const
 {
-    glActiveTexture(GL_TEXTURE0);
+    shader_program->SetUniform(p_uniform_name, (int)p_index);
+    glActiveTexture(GL_TEXTURE0 + p_index);
     glBindTexture(GL_TEXTURE_2D, texture);
 }

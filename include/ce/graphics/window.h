@@ -9,10 +9,12 @@
 #include "ce/math/math.hpp"
 #include "ce/graphics/shader/shader_program.h"
 #include "ce/event/i_event_listener.h"
+
 class InputManager;
 class ATexture;
 class Component;
 class Camera;
+class Skybox;
 class Window : public IEventListener
 {
 protected:
@@ -23,6 +25,7 @@ protected:
     std::string window_title = "";
 
     std::shared_ptr<ATexture> default_texture;
+
 #ifdef _WIN32
     HWND hwnd = nullptr;
 #endif
@@ -30,6 +33,9 @@ protected:
     bool is_closed = false;
     bool should_close = false;
     ShaderProgram* shader_program = nullptr;
+    ShaderProgram* skybox_shader_program = nullptr;
+    Skybox* skybox = nullptr;
+
     unsigned int vao = 0;
     
     Vec4 clear_color = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -49,13 +55,6 @@ private:
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
 
 public:
-
-    /**
-     * @brief Get the GLFW context.
-     * 
-     * @return void* The GLFW context.
-     */
-    FORCE_INLINE void* GetGLFWContext() noexcept { return glfw_context; }
 
     /**
      * @brief Get the GLFW context.
@@ -242,6 +241,20 @@ public:
      * @return const ShaderProgram* The shader program.
      */
     FORCE_INLINE const ShaderProgram* GetShaderProgram() const { return shader_program; }
+
+    /**
+     * @brief Get the skybox shader program.
+     * 
+     * @return ShaderProgram* The skybox shader program.
+     */
+    FORCE_INLINE ShaderProgram* GetSkyboxShaderProgram() { return skybox_shader_program; }
+
+    /**
+     * @brief Get the skybox shader program.
+     * 
+     * @return const ShaderProgram* The skybox shader program.
+     */
+    FORCE_INLINE const ShaderProgram* GetSkyboxShaderProgram() const { return skybox_shader_program; }
 
     /**
      * @brief Called when an event is dispatched.

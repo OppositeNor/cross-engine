@@ -25,12 +25,15 @@ in vec2 frag_texture_uv;
 
 uniform sampler2D ftexture;
 
+uniform samplerCube skybox;
+
 void main()
 {
     vec4 to_light;
     vec4 temp_color;
     vec4 temp_normal = normalize(frag_normal);
     temp_color = ambient_color * ambient_intensity;
+    temp_color += texture(skybox, vec3(reflect(normalize(frag_position - camera_position), temp_normal)));
     for (int i = 0; i < point_light_count; ++i)
     {
         to_light = point_light[i].position - frag_position;

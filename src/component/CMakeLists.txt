@@ -1,3 +1,4 @@
+
 set(CE_SOURCES
     ${CE_SOURCES}
     ${PROJECT_SOURCE_DIR}/include/ce/component/component.h
@@ -7,6 +8,7 @@ set(CE_SOURCES
     ${PROJECT_SOURCE_DIR}/include/ce/component/camera.h
     ${PROJECT_SOURCE_DIR}/include/ce/component/light.h
     ${PROJECT_SOURCE_DIR}/include/ce/component/point_light.h
+    ${PROJECT_SOURCE_DIR}/include/ce/component/skybox.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/component.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/visual_mesh.cpp
@@ -15,4 +17,5 @@ set(CE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/light.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/point_light.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/skybox.cpp
     PARENT_SCOPE)

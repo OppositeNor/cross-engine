@@ -188,7 +188,7 @@ public:
     {
         Window::Draw();
         GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        GetShaderProgram()->SetUniform("ambient_intensity", 0.7f);
+        GetShaderProgram()->SetUniform("ambient_intensity", 0.0f);
         light->SetUniform(0);
         GetShaderProgram()->SetUniform("point_light_count", 1);
         glBindVertexArray(0);

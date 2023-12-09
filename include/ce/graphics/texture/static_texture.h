@@ -1,6 +1,7 @@
 #pragma once
 #include "ce/graphics/texture/texture.h"
 
+class ShaderProgram;
 class StaticTexture : public ATexture
 {
 private:
@@ -28,7 +29,7 @@ public:
     /**
      * @brief Bind the texture.
      */
-    virtual void BindTexture() const override;
+    virtual void BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name, size_t p_index) const override;
 
     virtual ~StaticTexture() override;
 };

@@ -37,6 +37,8 @@ struct TextureConfig
     TextureFilterMode filter_mode_mag = TextureFilterMode::LINEAR;
     bool mipmap = true;
 };
+
+class ShaderProgram;
 class ATexture
 {
 protected:
@@ -91,5 +93,5 @@ public:
      * @brief Bind the texture.
      * 
      */
-    virtual void BindTexture() const = 0;
+    virtual void BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name, size_t p_index) const = 0;
 };
