@@ -327,7 +327,6 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
     std::vector<Vec4> positions;
     std::vector<Vec4> normals;
     std::vector<Vec2> tex_coords;
-    std::vector<Triangle*> triangles;
     byte_t line_buff[1024];
     byte_t word_buff[256];
     size_t counter = 0;
@@ -381,13 +380,18 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
             {
                 ++pp;
                 Vertex* vert = new Vertex;
-                vert->Position() = positions[atoi(GetWord(pp, word_buff, 256)) - 1];
+                if (std::atoi(GetWord(pp, word_buff, 256)) - 1 >= positions.size())
+                    throw std::runtime_error("Invalid obj file.");
+                vert->Position() = positions[std::atoi(GetWord(pp, word_buff, 256)) - 1];
                 MovePToNextWord(&pp, line_buff + 1024);
                 ++pp;
-                vert->UV() = tex_coords[atoi(GetWord(pp, word_buff, 256)) - 1];
+                auto temp = atoi(GetWord(pp, word_buff, 256)) - 1;
+                vert->UV() = tex_coords[std::atoi(GetWord(pp, word_buff, 256)) - 1];
                 MovePToNextWord(&pp, line_buff + 1024);
                 ++pp;
-                vert->Normal() = normals[atoi(GetWord(pp, word_buff, 256)) - 1];
+                if (std::atoi(GetWord(pp, word_buff, 256)) - 1 >= normals.size())
+                    throw std::runtime_error("Invalid obj file.");
+                vert->Normal() = normals[std::atoi(GetWord(pp, word_buff, 256)) - 1];
                 MovePToNextWord(&pp, line_buff + 1024);
                 poly.AddVertex(poly.GetVertexCount(), vert);
             }
