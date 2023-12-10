@@ -6,11 +6,8 @@ class PointLight : public ALight
 public:
 
 protected:
-    Vec4 diffuse_color;
-    float diffuse_intensity = 10.0f;
-    Vec4 specular_color;
-    float specular_intensity = 20.0f;
-    float specular_concent = 200.0f;
+    Vec4 color;
+    float intensity;
 
 public:
 
@@ -26,9 +23,37 @@ public:
      * 
      * @param p_color The color of the light.
      * @param p_intensity The intensity of the light.
-     * @param p_context 
+     * @param p_context The context of this light.
      */
     PointLight(const Vec4& p_color, float p_intensity, Window* p_context);
+
+    /**
+     * @brief Get the color of the light.
+     * 
+     * @return const Vec4& The color of the light
+     */
+    FORCE_INLINE const Vec4& GetColor() const noexcept { return color; }
+
+    /**
+     * @brief Get the color of the light.
+     * 
+     * @return Vec4& The color of the light
+     */
+    FORCE_INLINE Vec4& Color() noexcept { return color; }
+
+    /**
+     * @brief Get the intensity of the light
+     * 
+     * @return float The intensity of the light. 
+     */
+    FORCE_INLINE float GetIntensity() const noexcept { return intensity; }
+
+    /**
+     * @brief Get the intensity of the light
+     * 
+     * @return float& The intensity of the light. 
+     */
+    FORCE_INLINE float& Intensity() noexcept { return intensity; }
 
     /**
      * @brief Get the name of the uniform variable.

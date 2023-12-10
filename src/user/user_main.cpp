@@ -12,6 +12,7 @@ extern "C" {
 #include "ce/managers/input_manager.h"
 #include "ce/managers/event_manager.h"
 #include "ce/game/game.h"
+#include "ce/materials/valued_material.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include <cmath>
@@ -101,8 +102,9 @@ public:
         }
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
         GetBaseComponent()->AddChild(mesh);
+        mesh->SetMaterial(std::make_shared<ValuedMaterial>(Vec4(0.96f, 0.64f, 0.54f, 1.0f), 0.2f, 1.0f));
         
-        light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 20, this);
+        light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 200, this);
         light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
         auto camera = std::make_shared<UserCamera>(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
@@ -187,8 +189,6 @@ public:
     virtual void Draw() override
     {
         Window::Draw();
-        GetShaderProgram()->SetUniform("ambient_color", Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        GetShaderProgram()->SetUniform("ambient_intensity", 0.0f);
         light->SetUniform(0);
         GetShaderProgram()->SetUniform("point_light_count", 1);
         glBindVertexArray(0);
@@ -238,39 +238,6 @@ int main()
         Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", Input::KEY_K);
 
         Game::GetInstance()->Run();
-#if 0
-        try
-        {
-            std::cout << ">";
-            std::string input;
-            std::cin >> input;
-            if (input == "EulerPitch")
-                rotate = Vector<bool, 3>(true, false, false);
-            else if (input == "EulerYaw")
-                rotate = Vector<bool, 3>(false, true, false);
-            else if (input == "EulerRoll")
-                rotate = Vector<bool, 3>(false, false, true);
-            else
-                rotate = Vector<bool, 3>(false, false, false);
-
-            if (input == "exit")
-                break;
-            else if (input[0] == 'x')
-                new_rot[0] = std::stof(input.substr(2));
-            else if (input[0] == 'y')
-                new_rot[1] = std::stof(input.substr(2));
-            else if (input[0] == 'z')
-                new_rot[2] = std::stof(input.substr(2));
-            else if (input[0] == 'w')
-                new_rot[3] = std::stof(input.substr(2));
-        }
-        catch(const std::exception& e)
-        {
-            std::cout << e.what() << '\n';
-        }
-
-        delete mod_window;
-#endif
     }
     catch(const std::exception& e)
     {

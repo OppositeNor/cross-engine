@@ -6,6 +6,7 @@
 #include "ce/event/window_event.h"
 #include "ce/game/game.h"
 #include "ce/graphics/texture/static_texture.h"
+#include "ce/materials/valued_material.h"
 #include "ce/component/camera.h"
 #include "ce/component/skybox.h"
 #include "glad/glad.h"
@@ -75,6 +76,8 @@ void Window::InitWindow()
     skybox_shader_program->Compile();
     
     default_texture = std::shared_ptr<ATexture>(new StaticTexture(Resource::GetExeDirectory() + "/textures/default.png"));
+    default_material = std::shared_ptr<AMaterial>(new ValuedMaterial());
+
     base_component = std::make_shared<Component>(this);
 
     proj_matrix = Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 1000.0f);

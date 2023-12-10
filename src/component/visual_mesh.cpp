@@ -3,6 +3,7 @@
 #include "ce/geometry/triangle.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/texture/texture.h"
+#include "ce/materials/material.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 std::mutex test_mutex;
@@ -43,6 +44,11 @@ void VisualMesh::Draw()
         texture->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
     else
         GetContext()->GetDefaultTexture()->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
+    if (material)
+        material->SetUniform(GetContext()->GetShaderProgram());
+    else
+        GetContext()->GetDefaultMaterial()->SetUniform(GetContext()->GetShaderProgram());
+    
     glDrawArrays(GL_TRIANGLES, 0, GetVertexCount());
 }
 

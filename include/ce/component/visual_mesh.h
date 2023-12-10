@@ -3,6 +3,7 @@
 
 class Triangle;
 class ATexture;
+class AMaterial;
 class VisualMesh : public Component
 {
 protected:
@@ -11,6 +12,8 @@ protected:
     void UpdateVAO(const std::vector<Triangle*>& p_triangles);
 
     std::shared_ptr<ATexture> texture;
+
+    std::shared_ptr<AMaterial> material;
 public:
     VisualMesh(Window* p_context);
     ~VisualMesh();
@@ -19,6 +22,27 @@ public:
         : Component(p_other) {};
 
     VisualMesh(VisualMesh&& p_other) noexcept;
+
+    /**
+     * @brief Get the material of this component.
+     * 
+     * @return const std::shared_ptr<AMaterial>& The material of this component.
+     */
+    FORCE_INLINE const std::shared_ptr<AMaterial>& GetMaterial() const noexcept { return material; }
+
+    /**
+     * @brief Get the material of this component.
+     * 
+     * @return std::shared_ptr<AMaterial> The material of this component.
+     */
+    FORCE_INLINE std::shared_ptr<AMaterial> GetMaterial() { return material; }
+
+    /**
+     * @brief Set the material of this component.
+     * 
+     * @param p_material The material to be set to.
+     */
+    FORCE_INLINE void SetMaterial(std::shared_ptr<AMaterial> p_material) { material = p_material; } 
 
     /**
      * @brief Get the Vertex Array Object of this mesh.

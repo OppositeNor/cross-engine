@@ -12,6 +12,7 @@
 
 class InputManager;
 class ATexture;
+class AMaterial;
 class Component;
 class Camera;
 class Skybox;
@@ -25,6 +26,7 @@ protected:
     std::string window_title = "";
 
     std::shared_ptr<ATexture> default_texture;
+    std::shared_ptr<AMaterial> default_material;
 
 #ifdef _WIN32
     HWND hwnd = nullptr;
@@ -130,6 +132,8 @@ public:
     Window();
 
     FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultTexture() const noexcept { return default_texture; }
+
+    FORCE_INLINE const std::shared_ptr<AMaterial>& GetDefaultMaterial() const noexcept { return default_material; }
 
     /**
      * @brief Destroy the Window object

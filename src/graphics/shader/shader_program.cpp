@@ -37,7 +37,7 @@ void ShaderProgram::SetUniform(const std::string& p_name, float p_float) const
     {
         int location = glGetUniformLocation(program_id, p_name.c_str());
         if (location == -1)
-            throw std::runtime_error("Failed to find uniform: " + p_name);
+            return;
         glUniform1f(location, p_float);
     }
 }
@@ -48,7 +48,7 @@ void ShaderProgram::SetUniform(const std::string& p_name, int p_int) const
     {
         int location = glGetUniformLocation(program_id, p_name.c_str());
         if (location == -1)
-            throw std::runtime_error("Failed to find uniform: " + p_name);
+            return;
         glUniform1i(location, p_int);
     }
 }
@@ -59,7 +59,7 @@ void ShaderProgram::SetUniform(const std::string& p_name, const Mat4& p_mat4) co
     {
         int location = glGetUniformLocation(program_id, p_name.c_str());
         if (location == -1)
-            throw std::runtime_error("Failed to find uniform: " + p_name);
+            return;
         glUniformMatrix4fv(location, 1, GL_FALSE, p_mat4.Transpose().GetRaw());
     }
 }
@@ -70,7 +70,7 @@ void ShaderProgram::SetUniform(const std::string& p_name, const Vec4& p_vec4) co
     {
         int location = glGetUniformLocation(program_id, p_name.c_str());
         if (location == -1)
-            throw std::runtime_error("Failed to find uniform: " + p_name);
+            return;
         glUniform4fv(location, 1, p_vec4.GetRaw());
     }
 }

@@ -7,14 +7,11 @@ PointLight::PointLight(Window* p_context)
     : PointLight(Pos(), 20, p_context)
 {
 }
-PointLight::PointLight(const Vec4& p_color, float intensity, Window* p_context)
+PointLight::PointLight(const Vec4& p_color, float p_intensity, Window* p_context)
     : ALight(p_context)
 {
-    diffuse_color = p_color;
-    specular_color = p_color;
-    diffuse_intensity = intensity / 2;
-    specular_intensity = intensity;
-    specular_concent = 500;
+    color = p_color;
+    intensity = p_intensity;
 }
 
 void PointLight::SetUniform(size_t p_index)
@@ -23,9 +20,6 @@ void PointLight::SetUniform(size_t p_index)
     std::stringstream ss;
     ss << UniformName() << "[" << p_index << "]";
     GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".position", global_position);
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".diffuse_color", diffuse_color);
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".diffuse_intensity", diffuse_intensity);
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".specular_color", specular_color);
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".specular_intensity", specular_intensity);
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".specular_power", specular_concent);
+    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".color", color);
+    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".intensity", intensity);
 }

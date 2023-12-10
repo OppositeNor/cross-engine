@@ -25,6 +25,7 @@ add_subdirectory(src/graphics)
 add_subdirectory(src/resource)
 add_subdirectory(src/managers)
 add_subdirectory(src/event)
+add_subdirectory(src/materials)
 
 add_subdirectory(shaders)
 add_subdirectory(textures)
