@@ -97,15 +97,16 @@ public:
         }
         else
         {
-            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/arm.obj"));
+            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/teapot_bezier0.norm"));
             mesh->Position() = Vec4(0, 20, 0, 1);
         }
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
         GetBaseComponent()->AddChild(mesh);
-        mesh->SetMaterial(std::make_shared<ValuedMaterial>(Vec4(0.96f, 0.64f, 0.54f, 1.0f), 0.2f, 1.0f));
+        mesh->SetMaterial(std::make_shared<ValuedMaterial>(Vec4(0.96f, 0.64f, 0.54f, 1.0f), 0.2f, 1.0f, this));
+        mesh->SetVisible(true);
         
-        light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 200, this);
-        light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
+        light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);
+        light->Position() = Vec4(0.0f, 10.0f, 10.0f, 1.0f);
         auto camera = std::make_shared<UserCamera>(this);
         camera->Position() = Vec4(0, 0, -20, 1.0f);
         GetBaseComponent()->AddChild(camera);
@@ -131,6 +132,7 @@ public:
         //bottom face
         box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
         box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
+
 
         light->AddChild(box);
 

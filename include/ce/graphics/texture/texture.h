@@ -1,44 +1,9 @@
 #pragma once
 #include "ce/defs.hpp"
-
-
-enum class TextureRepeatMode
-{
-    REPEAT,
-    MIRRORED_REPEAT,
-    CLAMP_TO_EDGE,
-    CLAMP_TO_BORDER
-};
-
-enum class TextureFilterMode
-{
-    NEAREST,
-    LINEAR
-};
-
-struct TextureConfig
-{
-    TextureConfig() = default;
-    TextureConfig(
-        bool p_mipmap, 
-        TextureRepeatMode p_repeat_mode_h, 
-        TextureRepeatMode p_repeat_mode_v, 
-        TextureFilterMode p_filter_mode_min, 
-        TextureFilterMode p_filter_mode_mag)
-            : mipmap(p_mipmap), 
-            repeat_mode_h(p_repeat_mode_h), 
-            repeat_mode_v(p_repeat_mode_v), 
-            filter_mode_min(p_filter_mode_min), 
-            filter_mode_mag(p_filter_mode_mag) { }
-
-    TextureRepeatMode repeat_mode_h = TextureRepeatMode::REPEAT;
-    TextureRepeatMode repeat_mode_v = TextureRepeatMode::REPEAT;
-    TextureFilterMode filter_mode_min = TextureFilterMode::LINEAR;
-    TextureFilterMode filter_mode_mag = TextureFilterMode::LINEAR;
-    bool mipmap = true;
-};
+#include "ce/graphics/graphics.h"
 
 class ShaderProgram;
+class Window;
 class ATexture
 {
 protected:
@@ -87,11 +52,11 @@ public:
      * @param p_height The height of the texture.
      * @param p_channels The channels of the texture.
      */
-    virtual void LoadTexture(ubyte_t* p_data, size_t p_width, size_t p_height, size_t p_channels) = 0;
+    virtual void LoadTexture(const ubyte_t* p_data, size_t p_width, size_t p_height, size_t p_channels) = 0;
 
     /**
      * @brief Bind the texture.
      * 
      */
-    virtual void BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name, size_t p_index) const = 0;
+    virtual void BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name) const = 0;
 };

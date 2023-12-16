@@ -75,8 +75,8 @@ void Window::InitWindow()
                                               Resource::GetExeDirectory() + "/shaders/skybox_fragment.glsl");
     skybox_shader_program->Compile();
     
-    default_texture = std::shared_ptr<ATexture>(new StaticTexture(Resource::GetExeDirectory() + "/textures/default.png"));
-    default_material = std::shared_ptr<AMaterial>(new ValuedMaterial());
+    default_texture = std::shared_ptr<ATexture>(new StaticTexture(this, Resource::GetExeDirectory() + "/textures/default.png"));
+    default_material = std::shared_ptr<AMaterial>(new ValuedMaterial(this));
 
     base_component = std::make_shared<Component>(this);
 
@@ -113,6 +113,7 @@ void Window::ThreadFunc()
             Process(delta);
             base_component->Update(delta);
             Draw();
+            shader_program->Refresh();
             auto error = glGetError();
             if (error != GL_NO_ERROR)
                 throw std::runtime_error("OpenGL error: " + std::to_string(error));
@@ -169,18 +170,14 @@ void Window::Draw()
     if (using_camera == nullptr)
     {
         shader_program->SetUniform("view", Mat4());
-        GetShaderProgram()->SetUniform("camera_position", Vec4());
+        shader_program->SetUniform("camera_position", Vec4());
     }
     else
     {
         shader_program->SetUniform("view", using_camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("camera_position", using_camera->GetGlobalPosition());
+        shader_program->SetUniform("camera_position", using_camera->GetGlobalPosition());
     }
     if (skybox != nullptr)
-    {
-        shader_program->SetUniform("skybox", 1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->GetTextureCube());
-    }
+        shader_program->SetSamplerCubeUniform("skybox", skybox->GetTextureCube());
     base_component->Draw();
 }

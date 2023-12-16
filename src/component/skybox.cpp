@@ -1,6 +1,7 @@
 #include "ce/component/skybox.h"
 #include "ce/graphics/window.h"
 #include "ce/resource/resource.h"
+#include "ce/graphics/graphics.h"
 
 #include <glad/glad.h>
 
@@ -120,11 +121,11 @@ Skybox::Skybox(Window* p_context, const std::vector<std::string>& p_faces)
 
 Skybox::~Skybox()
 {
-    glDeleteBuffers(1, &vbo);
+    Graphics::RegisterQueueFree((void*)GetContext()->GetGLFWContext(), vbo, glDeleteBuffers);
+    Graphics::RegisterQueueFree((void*)GetContext()->GetGLFWContext(), vbo, glDeleteVertexArrays);
+    Graphics::RegisterQueueFree((void*)GetContext()->GetGLFWContext(), texture_cube, glDeleteTextures);
     vbo = 0;
-    glDeleteVertexArrays(1, &vao);
     vao = 0;
-    glDeleteTextures(1, &texture_cube);
     texture_cube = 0;
 }
 

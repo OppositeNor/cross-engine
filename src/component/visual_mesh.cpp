@@ -19,8 +19,8 @@ VisualMesh::VisualMesh(Window* p_context)
 
 VisualMesh::~VisualMesh()
 {
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
+    Graphics::RegisterQueueFree(GetContext()->GetGLFWContext(), vbo, glDeleteBuffers);
+    Graphics::RegisterQueueFree(GetContext()->GetGLFWContext(), vao, glDeleteVertexArrays);
 }
 
 
@@ -35,15 +35,19 @@ VisualMesh::VisualMesh(VisualMesh&& p_other) noexcept
 
 void VisualMesh::Draw()
 {
+    Component::Draw();
+    
+    if (!IsVisible())
+        return;
     if (GetContext()->GetThreadId() != std::this_thread::get_id())
         throw std::runtime_error("Skybox must be drawn on the main thread.");
     
     glBindVertexArray(vao);
     GetContext()->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
     if (texture)
-        texture->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
+        texture->BindTexture(GetContext()->GetShaderProgram(), "ftexture");
     else
-        GetContext()->GetDefaultTexture()->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
+        GetContext()->GetDefaultTexture()->BindTexture(GetContext()->GetShaderProgram(), "ftexture");
     if (material)
         material->SetUniform(GetContext()->GetShaderProgram());
     else
@@ -63,10 +67,12 @@ void VisualMesh::UpdateVAO(const std::vector<Triangle*>& p_triangles)
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertex_count * Vertex::ARRAY_SIZE * sizeof(float), vertices.get(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(4 * sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(4 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(10 * sizeof(float)));
+    glEnableVertexAttribArray(3);
     glBindVertexArray(0);
 }
