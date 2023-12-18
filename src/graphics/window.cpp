@@ -21,7 +21,7 @@ std::map<void*, Window*> Window::context_window_finder;
 Window::Window(const Vec2s& p_size, const std::string& p_title)
     : window_title(p_title), window_size(p_size)
 {
-    window_thread = std::make_unique<std::thread>(&Window::ThreadFunc, this);
+    window_thread = UniquePtr<std::thread>(new std::thread(&Window::ThreadFunc, this));
 }
 
 Window::Window(size_t p_width, size_t p_height, const std::string& p_title)
@@ -35,6 +35,20 @@ Window::Window()
 Window::~Window()
 {
     Close();
+}
+
+void Window::ClearResourceQueue()
+{
+    std::lock_guard<std::mutex> lock(queue_freed_thread_resources_mutex);
+    for (auto& resource : queue_freed_thread_resources)
+        resource.second(1, &resource.first);
+    queue_freed_thread_resources.clear();
+}
+
+void Window::RegisterQueueFree(unsigned int p_id, ReleaseFunction p_destroy_func) const
+{
+    std::lock_guard<std::mutex> lock(queue_freed_thread_resources_mutex);
+    queue_freed_thread_resources.push_back(ThreadResource(p_id, p_destroy_func));
 }
 
 void Window::SetClearColor(const Vec4& p_clear_color)
@@ -118,6 +132,7 @@ void Window::ThreadFunc()
             if (error != GL_NO_ERROR)
                 throw std::runtime_error("OpenGL error: " + std::to_string(error));
             Game::GetInstance()->UpdateInput(this);
+            ClearResourceQueue();
             delta = glfwGetTime() - frame_start;
         }
         OnClose();

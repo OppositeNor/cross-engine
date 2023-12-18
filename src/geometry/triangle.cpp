@@ -73,10 +73,10 @@ float* Triangle::GetVertexArray(float* p_buff, size_t p_buff_size) const
 {
     if (p_buff_size < TRIANGLE_ARRAY_SIZE)
         throw std::out_of_range("The buffer size is too small.");
-    
+    auto tangent = GetTangent();
     for (size_t i = 0; i < 3; ++i)
     {
-        vertices[i]->GetArray(p_buff + Vertex::ARRAY_SIZE, Vertex::ARRAY_SIZE, GetTangent());
+        vertices[i]->GetArray(p_buff + Vertex::ARRAY_SIZE * i, Vertex::ARRAY_SIZE, tangent);
     }
     return p_buff;
 }

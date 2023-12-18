@@ -6,7 +6,6 @@
 #include "ce/materials/material.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-std::mutex test_mutex;
 
 VisualMesh::VisualMesh(Window* p_context)
     : Component(p_context)
@@ -19,8 +18,8 @@ VisualMesh::VisualMesh(Window* p_context)
 
 VisualMesh::~VisualMesh()
 {
-    Graphics::RegisterQueueFree(GetContext()->GetGLFWContext(), vbo, glDeleteBuffers);
-    Graphics::RegisterQueueFree(GetContext()->GetGLFWContext(), vao, glDeleteVertexArrays);
+    GetContext()->RegisterQueueFree(vbo, glDeleteBuffers);
+    GetContext()->RegisterQueueFree(vao, glDeleteVertexArrays);
 }
 
 
@@ -61,11 +60,11 @@ void VisualMesh::UpdateVAO(const std::vector<Triangle*>& p_triangles)
     if (GetContext()->GetThreadId() != std::this_thread::get_id())
         throw std::runtime_error("VAO must be updated on the same thread as the Window.");
     auto vertex_count = GetVertexCount();
-    std::unique_ptr<float[]> vertices = std::unique_ptr<float[]>(new float[vertex_count * Vertex::ARRAY_SIZE]);
-    Resource::CreateModelVertexArray(p_triangles, vertices.get(), vertex_count * Vertex::ARRAY_SIZE);
+    auto vertices = UniquePtr<float[]>(new float[vertex_count * Vertex::ARRAY_SIZE]);
+    Resource::CreateModelVertexArray(p_triangles, vertices.Get(), vertex_count * Vertex::ARRAY_SIZE);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * Vertex::ARRAY_SIZE * sizeof(float), vertices.get(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * Vertex::ARRAY_SIZE * sizeof(float), vertices.Get(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(4 * sizeof(float)));

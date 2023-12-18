@@ -2,7 +2,6 @@
 #include <mutex>
 #include "ce/defs.hpp"
 #include <vector>
-#include <functional>
 #include <mutex>
 
 class Window;
@@ -13,19 +12,6 @@ class Graphics
     Graphics() = delete;
     inline static bool initialized = false;
     inline static std::mutex init_mutex;
-    struct GraphicsResource {
-        const void* context;
-        unsigned int id;
-        std::function<void(unsigned int, unsigned int*)> destroy_func;
-
-        GraphicsResource(const void* p_context, unsigned int p_id, std::function<void(unsigned int, unsigned int*)> p_destroy_func)
-            : context(p_context), id(p_id), destroy_func(p_destroy_func) { }
-    };
-
-    inline static std::vector<GraphicsResource> queue_freed_graphic_resources;
-    inline static std::mutex queue_freed_graphic_resources_mutex;
-
-    static void ClearGraphicsResourceQueue();
 
 public:
     /**
@@ -101,15 +87,6 @@ public:
      * @param p_data The data of the texture.
      */
     static void SetTexture(unsigned int p_texture_id, size_t p_width, size_t p_height, size_t p_channels, const ubyte_t* p_data, bool p_mipmap);
-
-    /**
-     * @brief Register a queue freed graphics resource. This resource will be freed in the main thread.
-     * 
-     * @param p_context The context of the resource.
-     * @param p_id The ID of the resource.
-     * @param p_destroy_func The function to destroy the resource.
-     */
-    static void RegisterQueueFree(const void* p_context, unsigned int p_id, std::function<void(unsigned int, unsigned int*)> p_destroy_func);
 
     /**
      * @brief Called every frame in the main thread.

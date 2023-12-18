@@ -39,18 +39,6 @@ void Graphics::TerminateGraphics()
     }
 }
 
-void Graphics::ClearGraphicsResourceQueue()
-{
-    std::lock_guard<std::mutex> lock(queue_freed_graphic_resources_mutex);
-    for (auto& resource : queue_freed_graphic_resources)
-    {
-        if (glfwGetCurrentContext() != resource.context)
-            glfwMakeContextCurrent((GLFWwindow*)resource.context);
-        resource.destroy_func(1, &resource.id);
-    }
-    queue_freed_graphic_resources.clear();
-}
-
 void* Graphics::CreateGLFWContext(size_t p_width, size_t p_height, const std::string& p_title, void* p_shared)
 {
     if (!initialized)
@@ -91,7 +79,7 @@ unsigned int Graphics::GenerateTexture()
 
 void Graphics::DeleteTexture(unsigned int p_texture_id, const Window* p_context)
 {
-    RegisterQueueFree((void*)p_context->GetGLFWContext(), p_texture_id, glDeleteTextures);
+    p_context->RegisterQueueFree(p_texture_id, glDeleteTextures);
 }
 
 void Graphics::ConfigTexture(unsigned int p_texture_id, const TextureConfig& p_config)
@@ -181,14 +169,6 @@ void Graphics::SetTexture(unsigned int p_texture_id, size_t p_width, size_t p_he
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Graphics::RegisterQueueFree(const void* p_context, unsigned int p_id, std::function<void(unsigned int, unsigned int*)> p_destroy_func)
-{
-    std::lock_guard<std::mutex> lock(queue_freed_graphic_resources_mutex);
-    queue_freed_graphic_resources.push_back(GraphicsResource(p_context, p_id, p_destroy_func));
-}
-
 void Graphics::Update()
 {
-    if (initialized)
-        ClearGraphicsResourceQueue();
 }

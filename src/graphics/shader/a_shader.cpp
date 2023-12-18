@@ -1,6 +1,7 @@
 #include "ce/graphics/shader/a_shader.h"
 #include <glad/glad.h>
 #include "ce/resource/resource.h"
+#include "ce/memory/unique_ptr.hpp"
 
 AShader::~AShader()
 {
@@ -12,9 +13,9 @@ AShader::~AShader()
 void AShader::Compile()
 {
     size_t size;
-    std::unique_ptr<char[]> shader_source = std::unique_ptr<char[]>(Resource::LoadFile(shader_path, size));
+    auto shader_source = UniquePtr<char[]>(Resource::LoadFile(shader_path, size));
     shader_source[size] = '\0';
-    auto p = shader_source.get();
+    auto p = shader_source.Get();
     glShaderSource(shader_id, 1, (const char**)&p, NULL);
     glCompileShader(shader_id);
     int success;

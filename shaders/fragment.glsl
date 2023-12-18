@@ -63,7 +63,7 @@ void main()
     ao = scaler_ao * texture(material.ao, frag_texture_uv).r;
 
 
-    vec4 temp_color = vec4(0.03) * albedo; //todo: change
+    vec4 temp_color = vec4(0.03) * albedo;
     vec4 f0 = mix(vec4(0.04), albedo, metallic);
     for (int i = 0; i < point_light_count; ++i)
     {

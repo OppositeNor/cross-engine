@@ -6,9 +6,11 @@
 #endif
 #include <vector>
 #include <map>
+#include <functional>
 #include "ce/math/math.hpp"
 #include "ce/graphics/shader/shader_program.h"
 #include "ce/event/i_event_listener.h"
+#include "ce/memory/unique_ptr.hpp"
 
 class InputManager;
 class ATexture;
@@ -18,6 +20,17 @@ class Camera;
 class Skybox;
 class Window : public IEventListener
 {
+private:
+    using ReleaseFunction = std::function<void(unsigned int, unsigned int*)>;
+
+    /**
+     * @brief Used for every resource that needs to be freed in the window thread.
+     */
+    using ThreadResource = std::pair<unsigned int, ReleaseFunction>;
+
+    mutable std::vector<ThreadResource> queue_freed_thread_resources;
+    mutable std::mutex queue_freed_thread_resources_mutex;
+
 protected:
     void* glfw_context = nullptr;
     static std::map<void*, Window*> context_window_finder;
@@ -31,7 +44,7 @@ protected:
 #ifdef _WIN32
     HWND hwnd = nullptr;
 #endif
-    std::unique_ptr<std::thread> window_thread;
+    UniquePtr<std::thread> window_thread;
     bool is_closed = false;
     bool should_close = false;
     ShaderProgram* shader_program = nullptr;
@@ -146,6 +159,17 @@ public:
      * @return std::thread::id The id of the window thread. 
      */
     FORCE_INLINE std::thread::id GetThreadId() const noexcept { return window_thread->get_id(); }
+
+    void ClearResourceQueue();
+
+    /**
+     * @brief Register a queue freed graphics resource. This resource will be freed in the main thread.
+     * 
+     * @param p_context The context of the resource.
+     * @param p_id The ID of the resource.
+     * @param p_destroy_func The function to destroy the resource.
+     */
+    void RegisterQueueFree(unsigned int p_id, ReleaseFunction p_destroy_func) const;
 
 #ifdef _WIN32
     /**
