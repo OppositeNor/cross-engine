@@ -37,18 +37,44 @@ Window::~Window()
     Close();
 }
 
-void Window::ClearResourceQueue()
+void Window::UpdateThreadResource()
 {
-    std::lock_guard<std::mutex> lock(queue_freed_thread_resources_mutex);
-    for (auto& resource : queue_freed_thread_resources)
-        resource.second(1, &resource.first);
-    queue_freed_thread_resources.clear();
+    for (size_t i = 0; i < queued_thread_resources.size(); ++i)
+    {
+        if (queued_thread_resources[i].is_queue_freed)
+        {
+            queued_thread_resources[i].destroy_func(1, &queued_thread_resources[i].id);
+            queued_thread_resources.erase(queued_thread_resources.begin() + i);
+            --i;
+        }
+    }
 }
 
-void Window::RegisterQueueFree(unsigned int p_id, ReleaseFunction p_destroy_func) const
+void Window::ClearResource()
 {
-    std::lock_guard<std::mutex> lock(queue_freed_thread_resources_mutex);
-    queue_freed_thread_resources.push_back(ThreadResource(p_id, p_destroy_func));
+    std::lock_guard<std::mutex> lock(queued_thread_resources_mutex);
+    for (auto& resource : queued_thread_resources)
+        resource.destroy_func(1, &resource.id);
+    queued_thread_resources.clear();
+}
+
+void Window::RegisterThreadResource(unsigned int p_id, ReleaseFunction p_destroy_func) const
+{
+    std::lock_guard<std::mutex> lock(queued_thread_resources_mutex);
+    queued_thread_resources.push_back(ThreadResource(p_id, p_destroy_func));
+}
+
+void Window::FreeThreadResource(unsigned int p_id) const
+{
+    std::lock_guard<std::mutex> lock(queued_thread_resources_mutex);
+    for (auto& resource : queued_thread_resources)
+    {
+        if (resource.id == p_id)
+        {
+            resource.is_queue_freed = true;
+            return;
+        }
+    }
 }
 
 void Window::SetClearColor(const Vec4& p_clear_color)
@@ -132,16 +158,15 @@ void Window::ThreadFunc()
             if (error != GL_NO_ERROR)
                 throw std::runtime_error("OpenGL error: " + std::to_string(error));
             Game::GetInstance()->UpdateInput(this);
-            ClearResourceQueue();
+            UpdateThreadResource();
             delta = glfwGetTime() - frame_start;
         }
         OnClose();
         Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
-        Graphics::DestroyGLFWContex(glfw_context);
         delete shader_program;
         delete skybox_shader_program;
-        base_component.reset();
-        default_texture.reset();
+        ClearResource();
+        Graphics::DestroyGLFWContex(glfw_context);
         is_closed = true;
     }
     catch (const std::exception& e){

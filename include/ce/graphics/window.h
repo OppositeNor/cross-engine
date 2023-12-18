@@ -21,15 +21,21 @@ class Skybox;
 class Window : public IEventListener
 {
 private:
-    using ReleaseFunction = std::function<void(unsigned int, unsigned int*)>;
+    using ReleaseFunction = void(*)(int, const unsigned int*);
+    
+    struct ThreadResource
+    {
+        bool is_queue_freed;
+        unsigned int id;
+        ReleaseFunction destroy_func;
+        
+        ThreadResource(unsigned int p_id, ReleaseFunction p_destroy_func)
+            : id(p_id), destroy_func(p_destroy_func), is_queue_freed(false)
+        {}
+    };
 
-    /**
-     * @brief Used for every resource that needs to be freed in the window thread.
-     */
-    using ThreadResource = std::pair<unsigned int, ReleaseFunction>;
-
-    mutable std::vector<ThreadResource> queue_freed_thread_resources;
-    mutable std::mutex queue_freed_thread_resources_mutex;
+    mutable std::vector<ThreadResource> queued_thread_resources;
+    mutable std::mutex queued_thread_resources_mutex;
 
 protected:
     void* glfw_context = nullptr;
@@ -68,6 +74,8 @@ protected:
 
 private:
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
+    void UpdateThreadResource();
+    void ClearResource();
 
 public:
 
@@ -160,16 +168,21 @@ public:
      */
     FORCE_INLINE std::thread::id GetThreadId() const noexcept { return window_thread->get_id(); }
 
-    void ClearResourceQueue();
-
     /**
-     * @brief Register a queue freed graphics resource. This resource will be freed in the main thread.
+     * @brief Register a resource that needs to be freed at the end of the thread.
      * 
      * @param p_context The context of the resource.
      * @param p_id The ID of the resource.
      * @param p_destroy_func The function to destroy the resource.
      */
-    void RegisterQueueFree(unsigned int p_id, ReleaseFunction p_destroy_func) const;
+    void RegisterThreadResource(unsigned int p_id, ReleaseFunction p_destroy_func) const;
+
+    /**
+     * @brief Free a resource that was registered.
+     * 
+     * @param p_id The ID of the resource.
+     */
+    void FreeThreadResource(unsigned int p_id) const;
 
 #ifdef _WIN32
     /**

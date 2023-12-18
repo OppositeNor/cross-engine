@@ -57,7 +57,7 @@ void Graphics::DestroyGLFWContex(void* p_context)
     glfwDestroyWindow(static_cast<GLFWwindow*>(p_context));
 }
 
-unsigned int Graphics::GenerateVBO(unsigned int p_vao, float* p_vertices, size_t p_size)
+unsigned int Graphics::GenerateVBO(unsigned int p_vao, float* p_vertices, size_t p_size, const Window* p_context)
 {
     unsigned int vbo;
     glGenBuffers(1, &vbo);
@@ -67,19 +67,21 @@ unsigned int Graphics::GenerateVBO(unsigned int p_vao, float* p_vertices, size_t
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
+    p_context->RegisterThreadResource(vbo, glDeleteBuffers);
     return vbo;
 }
 
-unsigned int Graphics::GenerateTexture()
+unsigned int Graphics::GenerateTexture(const Window* p_context)
 {
     unsigned int texture_id;
     glGenTextures(1, &texture_id);
+    p_context->RegisterThreadResource(texture_id, glDeleteTextures);
     return texture_id;
 }
 
 void Graphics::DeleteTexture(unsigned int p_texture_id, const Window* p_context)
 {
-    p_context->RegisterQueueFree(p_texture_id, glDeleteTextures);
+    p_context->FreeThreadResource(p_texture_id);
 }
 
 void Graphics::ConfigTexture(unsigned int p_texture_id, const TextureConfig& p_config)

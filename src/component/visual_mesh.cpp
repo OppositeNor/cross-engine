@@ -18,8 +18,8 @@ VisualMesh::VisualMesh(Window* p_context)
 
 VisualMesh::~VisualMesh()
 {
-    GetContext()->RegisterQueueFree(vbo, glDeleteBuffers);
-    GetContext()->RegisterQueueFree(vao, glDeleteVertexArrays);
+    GetContext()->FreeThreadResource(vbo);
+    GetContext()->FreeThreadResource(vao);
 }
 
 

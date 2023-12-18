@@ -198,10 +198,6 @@ public:
 
     virtual void OnClose() override
     {
-        mesh.reset();
-        light.reset();
-        box2.reset();
-        box.reset();
         if (window2 != nullptr)
         {
             window2->Close();

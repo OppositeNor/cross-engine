@@ -62,7 +62,10 @@ void Skybox::SetSkyboxTexture(const std::vector<std::string>& p_faces)
     if (GetContext()->GetThreadId() != std::this_thread::get_id())
         throw std::runtime_error("Skybox must be created on the main thread.");
     if (texture_cube == 0)
+    {
         glGenTextures(1, &texture_cube);
+        GetContext()->RegisterThreadResource(texture_cube, glDeleteTextures);
+    }
     
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture_cube);
     size_t img_width, img_height, img_channels;
@@ -108,22 +111,25 @@ Skybox::Skybox(Window* p_context, const std::vector<std::string>& p_faces)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), vertices, GL_STATIC_DRAW);
+    GetContext()->RegisterThreadResource(vbo, glDeleteBuffers);
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    GetContext()->RegisterThreadResource(vao, glDeleteVertexArrays);
 
     glGenTextures(1, &texture_cube);
+    GetContext()->RegisterThreadResource(texture_cube, glDeleteTextures);
     SetSkyboxTexture(p_faces);
 
 }
 
 Skybox::~Skybox()
 {
-    GetContext()->RegisterQueueFree(vbo, glDeleteBuffers);
-    GetContext()->RegisterQueueFree(vbo, glDeleteVertexArrays);
-    GetContext()->RegisterQueueFree(texture_cube, glDeleteTextures);
+    GetContext()->FreeThreadResource(vbo);
+    GetContext()->FreeThreadResource(vbo);
+    GetContext()->FreeThreadResource(texture_cube);
     vbo = 0;
     vao = 0;
     texture_cube = 0;

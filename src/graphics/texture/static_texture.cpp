@@ -4,7 +4,7 @@
 
 void StaticTexture::CreateTexture()
 {
-    texture = Graphics::GenerateTexture();
+    texture = Graphics::GenerateTexture(context);
     Graphics::ConfigTexture(texture, config);
 }
 

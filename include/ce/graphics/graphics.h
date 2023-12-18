@@ -52,14 +52,14 @@ public:
      * @param p_size The size of the vertices.
      * @return unsigned int The ID of the VBO.
      */
-    static unsigned int GenerateVBO(unsigned int p_vao, float* p_vertices, size_t p_size);
+    static unsigned int GenerateVBO(unsigned int p_vao, float* p_vertices, size_t p_size, const Window* p_context);
 
     /**
      * @brief Generate a texture.
      * 
      * @return unsigned int The ID of the texture.
      */
-    static unsigned int GenerateTexture();
+    static unsigned int GenerateTexture(const Window* p_context);
 
     /**
      * @brief Delete a texture.
