@@ -98,7 +98,7 @@ public:
         else
         {
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/teapot_bezier0.norm"));
-            mesh->Position() = Vec4(0, 20, 0, 1);
+            mesh->Position() = Vec4(0, 0, 0, 1);
         }
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
         GetBaseComponent()->AddChild(mesh);

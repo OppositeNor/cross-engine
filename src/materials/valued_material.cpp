@@ -42,11 +42,11 @@ void ValuedMaterial::SetUniform(const ShaderProgram* p_shader_program) const
 {
     albedo->BindTexture(p_shader_program, GetUniformName() + ".albedo");
     p_shader_program->SetUniform("scaler_albedo", scaler_albedo);
-    normal->BindTexture(p_shader_program, GetUniformName() + ".material.normal");
-    metallic->BindTexture(p_shader_program, GetUniformName() + ".material.metallic");
+    normal->BindTexture(p_shader_program, GetUniformName() + ".normal");
+    metallic->BindTexture(p_shader_program, GetUniformName() + ".metallic");
     p_shader_program->SetUniform("scaler_metallic", scaler_metallic);
-    roughness->BindTexture(p_shader_program, GetUniformName() + ".material.roughness");
+    roughness->BindTexture(p_shader_program, GetUniformName() + ".roughness");
     p_shader_program->SetUniform("scaler_roughness", scaler_roughness);
-    ao->BindTexture(p_shader_program, GetUniformName() + ".material.ao");
+    ao->BindTexture(p_shader_program, GetUniformName() + ".ao");
 
 }

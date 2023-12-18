@@ -151,12 +151,19 @@ void Graphics::SetTexture(unsigned int p_texture_id, size_t p_width, size_t p_he
     glBindTexture(GL_TEXTURE_2D, p_texture_id);
     switch (p_channels)
     {
-    case 1:
+    case 1: {
+        std::unique_ptr<ubyte_t[]> data(new ubyte_t[p_width * p_height * 3]);
+        for (size_t i = 0; i < p_width * p_height; ++i)
+        {
+            data[i * 3] = p_data[i];
+            data[i * 3 + 1] = p_data[i];
+            data[i * 3 + 2] = p_data[i];
+        }
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, p_width, p_height, 0, GL_RED, GL_UNSIGNED_BYTE, p_data);
-        break;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, p_width, p_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.get());
+    }   break;
     case 3:
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, p_width, p_height, 0, GL_RGB, GL_UNSIGNED_BYTE, p_data);
         break;
     case 4:

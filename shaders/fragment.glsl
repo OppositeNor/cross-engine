@@ -29,10 +29,10 @@ struct Material {
     sampler2D ao;
 };
 
-vec4 scaler_albedo;
-float scaler_metallic;
-float scaler_roughness;
-float scaler_ao;
+uniform vec4 scaler_albedo;
+uniform float scaler_metallic;
+uniform float scaler_roughness;
+uniform float scaler_ao;
 
 vec4 albedo;
 vec4 normal;
@@ -55,9 +55,10 @@ void main()
     vec4 to_camera = normalize(camera_position - frag_position);
 
     albedo = scaler_albedo * texture(material.albedo, frag_texture_uv);
-    normal = texture(material.normal, frag_texture_uv);
+    normal = texture(material.normal, frag_texture_uv) * 2.0 - 1.0;
     normal.w = 0.0;
     normal = frag_tbn * normal;
+    normal = normalize(normal);
     metallic = scaler_metallic * texture(material.metallic, frag_texture_uv).r;
     roughness = scaler_roughness * texture(material.roughness, frag_texture_uv).r;
     ao = scaler_ao * texture(material.ao, frag_texture_uv).r;
