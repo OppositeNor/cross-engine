@@ -6,7 +6,7 @@
 #include "ce/graphics/window.h"
 
 PBRMaterial::PBRMaterial(const Window* p_context)
-    : PBRMaterial(Vec4(1.0, 1.0, 1.0, 1.0), 0.2, 0, p_context)
+    : PBRMaterial(Vec4(1.0, 1.0, 1.0, 1.0), 0.2, 0.5, p_context)
 {
 }
 

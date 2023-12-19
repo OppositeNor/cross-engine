@@ -29,6 +29,7 @@ add_subdirectory(src/materials)
 
 add_subdirectory(shaders)
 add_subdirectory(textures)
+add_subdirectory(user)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/dependencies/glfw/windows/64/include

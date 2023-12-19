@@ -104,6 +104,8 @@ void Window::InitWindow()
 #endif
     glViewport(0, 0, window_size[0], window_size[1]);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
     SetClearColor(Vec4(0.2f, 0.2f, 0.2f, 1.0f));
 
     glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));
