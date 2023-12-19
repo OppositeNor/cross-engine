@@ -36,7 +36,7 @@ public:
      *
      * @return std::shared_ptr<ATexture> The albedo of the material.
      */
-    FORCE_INLINE std::shared_ptr<ATexture> Albedo() noexcept { return albedo; }
+    FORCE_INLINE std::shared_ptr<ATexture>& Albedo() noexcept { return albedo; }
 
     /**
      * @brief Get the normal of the material.
@@ -50,7 +50,14 @@ public:
      *
      * @return std::shared_ptr<ATexture> The normal of the material.
      */
-    FORCE_INLINE std::shared_ptr<ATexture> Normal() noexcept { return normal; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetNormal() noexcept { return normal; }
+
+    /**
+     * @brief Get the normal of the material.
+     *
+     * @return std::shared_ptr<ATexture> The normal of the material.
+     */
+    FORCE_INLINE std::shared_ptr<ATexture>& Normal() noexcept { return normal; }
 
     /**
      * @brief Get the metallic of the material.
@@ -64,7 +71,14 @@ public:
      *
      * @return std::shared_ptr<ATexture> The metallic of the material.
      */
-    FORCE_INLINE std::shared_ptr<ATexture> Metallic() noexcept { return metallic; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetMetallic() noexcept { return metallic; }
+
+    /**
+     * @brief Get the metallic of the material.
+     *
+     * @return std::shared_ptr<ATexture> The metallic of the material.
+     */
+    FORCE_INLINE std::shared_ptr<ATexture>& Matallic() noexcept { return metallic; }
 
     /**
      * @brief Get the roughness of the material.
@@ -78,7 +92,14 @@ public:
      *
      * @return std::shared_ptr<ATexture> The roughness of the material.
      */
-    FORCE_INLINE std::shared_ptr<ATexture> Roughness() noexcept { return roughness; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetRoughness() noexcept { return roughness; }
+
+    /**
+     * @brief Get the roughness of the material.
+     *
+     * @return std::shared_ptr<ATexture> The roughness of the material.
+     */
+    FORCE_INLINE std::shared_ptr<ATexture>& Roughness() noexcept { return roughness; }
 
     /**
      * @brief Get the ambient occlusion of the material.
@@ -92,7 +113,14 @@ public:
      *
      * @return std::shared_ptr<ATexture> The ambient occlusion of the material.
      */
-    FORCE_INLINE std::shared_ptr<ATexture> AO() noexcept { return ao; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetAO() noexcept { return ao; }
+
+    /**
+     * @brief Get the ambient occlusion of the material.
+     *
+     * @return std::shared_ptr<ATexture> The ambient occlusion of the material.
+     */
+    FORCE_INLINE std::shared_ptr<ATexture>& AO() noexcept { return ao; }
 
     /**
      * @brief Get the albedo of the material.

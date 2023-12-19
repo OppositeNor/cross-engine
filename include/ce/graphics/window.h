@@ -93,11 +93,11 @@ public:
     FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultRoughness() const noexcept { return default_roughness; }
     FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultAO() const noexcept { return default_ao; }
 
-    FORCE_INLINE std::shared_ptr<ATexture> DefaultAlbedo() noexcept { return default_albedo; }
-    FORCE_INLINE std::shared_ptr<ATexture> DefaultNormal() noexcept { return default_normal; }
-    FORCE_INLINE std::shared_ptr<ATexture> DefaultMetallic() noexcept { return default_metallic; }
-    FORCE_INLINE std::shared_ptr<ATexture> DefaultRoughness() noexcept { return default_roughness; }
-    FORCE_INLINE std::shared_ptr<ATexture> DefaultAO() noexcept { return default_ao; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultAlbedo() noexcept { return default_albedo; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultNormal() noexcept { return default_normal; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultMetallic() noexcept { return default_metallic; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultRoughness() noexcept { return default_roughness; }
+    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultAO() noexcept { return default_ao; }
 
     /**
      * @brief Get the GLFW context.
