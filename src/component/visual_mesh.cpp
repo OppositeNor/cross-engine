@@ -6,7 +6,6 @@
 #include "ce/materials/material.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-std::mutex test_mutex;
 
 VisualMesh::VisualMesh(Window* p_context)
     : Component(p_context)
@@ -19,8 +18,8 @@ VisualMesh::VisualMesh(Window* p_context)
 
 VisualMesh::~VisualMesh()
 {
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
+    GetContext()->FreeThreadResource(vbo);
+    GetContext()->FreeThreadResource(vao);
 }
 
 
@@ -35,15 +34,15 @@ VisualMesh::VisualMesh(VisualMesh&& p_other) noexcept
 
 void VisualMesh::Draw()
 {
+    Component::Draw();
+    
+    if (!IsVisible())
+        return;
     if (GetContext()->GetThreadId() != std::this_thread::get_id())
         throw std::runtime_error("Skybox must be drawn on the main thread.");
     
     glBindVertexArray(vao);
     GetContext()->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
-    if (texture)
-        texture->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
-    else
-        GetContext()->GetDefaultTexture()->BindTexture(GetContext()->GetShaderProgram(), "ftexture", 0);
     if (material)
         material->SetUniform(GetContext()->GetShaderProgram());
     else
@@ -57,16 +56,18 @@ void VisualMesh::UpdateVAO(const std::vector<Triangle*>& p_triangles)
     if (GetContext()->GetThreadId() != std::this_thread::get_id())
         throw std::runtime_error("VAO must be updated on the same thread as the Window.");
     auto vertex_count = GetVertexCount();
-    std::unique_ptr<float[]> vertices = std::unique_ptr<float[]>(new float[vertex_count * Vertex::ARRAY_SIZE]);
-    Resource::CreateModelVertexArray(p_triangles, vertices.get(), vertex_count * Vertex::ARRAY_SIZE);
+    auto vertices = UniquePtr<float[]>(new float[vertex_count * Vertex::ARRAY_SIZE]);
+    Resource::CreateModelVertexArray(p_triangles, vertices.Get(), vertex_count * Vertex::ARRAY_SIZE);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * Vertex::ARRAY_SIZE * sizeof(float), vertices.get(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * Vertex::ARRAY_SIZE * sizeof(float), vertices.Get(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(4 * sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(4 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, Vertex::ARRAY_SIZE * sizeof(float), (void*)(10 * sizeof(float)));
+    glEnableVertexAttribArray(3);
     glBindVertexArray(0);
 }

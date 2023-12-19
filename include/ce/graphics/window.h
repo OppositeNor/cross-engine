@@ -6,32 +6,59 @@
 #endif
 #include <vector>
 #include <map>
+#include <functional>
 #include "ce/math/math.hpp"
 #include "ce/graphics/shader/shader_program.h"
 #include "ce/event/i_event_listener.h"
+#include "ce/memory/unique_ptr.hpp"
 
 class InputManager;
-class ATexture;
 class AMaterial;
 class Component;
 class Camera;
 class Skybox;
+class ATexture;
 class Window : public IEventListener
 {
+
+    inline static const ubyte_t WHITE_IMAGE[] = {
+        0xFF, 0xFF, 0xFF, 0xFF
+    };
+private:
+    using ReleaseFunction = void(*)(int, const unsigned int*);
+    
+    struct ThreadResource
+    {
+        bool is_queue_freed;
+        unsigned int id;
+        ReleaseFunction destroy_func;
+        
+        ThreadResource(unsigned int p_id, ReleaseFunction p_destroy_func)
+            : id(p_id), destroy_func(p_destroy_func), is_queue_freed(false)
+        {}
+    };
+
+    mutable std::vector<ThreadResource> queued_thread_resources;
+    mutable std::mutex queued_thread_resources_mutex;
+
+    std::shared_ptr<ATexture> default_albedo;
+    std::shared_ptr<ATexture> default_normal;
+    std::shared_ptr<ATexture> default_metallic;
+    std::shared_ptr<ATexture> default_roughness;
+    std::shared_ptr<ATexture> default_ao;
+
 protected:
     void* glfw_context = nullptr;
     static std::map<void*, Window*> context_window_finder;
 
     Vec2s window_size;
     std::string window_title = "";
-
-    std::shared_ptr<ATexture> default_texture;
     std::shared_ptr<AMaterial> default_material;
 
 #ifdef _WIN32
     HWND hwnd = nullptr;
 #endif
-    std::unique_ptr<std::thread> window_thread;
+    UniquePtr<std::thread> window_thread;
     bool is_closed = false;
     bool should_close = false;
     ShaderProgram* shader_program = nullptr;
@@ -55,8 +82,22 @@ protected:
 
 private:
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
+    void UpdateThreadResource();
+    void ClearResource();
 
 public:
+
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultAlbedo() const noexcept { return default_albedo; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultNormal() const noexcept { return default_normal; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultMetallic() const noexcept { return default_metallic; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultRoughness() const noexcept { return default_roughness; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultAO() const noexcept { return default_ao; }
+
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultAlbedo() noexcept { return default_albedo; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultNormal() noexcept { return default_normal; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultMetallic() noexcept { return default_metallic; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultRoughness() noexcept { return default_roughness; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultAO() noexcept { return default_ao; }
 
     /**
      * @brief Get the GLFW context.
@@ -131,8 +172,6 @@ public:
      */
     Window();
 
-    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultTexture() const noexcept { return default_texture; }
-
     FORCE_INLINE const std::shared_ptr<AMaterial>& GetDefaultMaterial() const noexcept { return default_material; }
 
     /**
@@ -146,6 +185,22 @@ public:
      * @return std::thread::id The id of the window thread. 
      */
     FORCE_INLINE std::thread::id GetThreadId() const noexcept { return window_thread->get_id(); }
+
+    /**
+     * @brief Register a resource that needs to be freed at the end of the thread.
+     * 
+     * @param p_context The context of the resource.
+     * @param p_id The ID of the resource.
+     * @param p_destroy_func The function to destroy the resource.
+     */
+    void RegisterThreadResource(unsigned int p_id, ReleaseFunction p_destroy_func) const;
+
+    /**
+     * @brief Free a resource that was registered.
+     * 
+     * @param p_id The ID of the resource.
+     */
+    void FreeThreadResource(unsigned int p_id) const;
 
 #ifdef _WIN32
     /**

@@ -126,10 +126,10 @@ Vertex* Vertex::RemoveNext()
     return temp;
 }
 
-float* Vertex::GetArray(float* p_buff, size_t p_buff_size) const
+float* Vertex::GetArray(float* p_buff, size_t p_buff_size, const Vec4& p_tangent) const
 {
     if (p_buff_size < ARRAY_SIZE)
-        throw std::domain_error("The buffer size is too small.");
+        throw std::out_of_range("The buffer size is too small.");
     for (size_t i = 0; i < 4; ++i)
         p_buff[i] = position[i];
     
@@ -146,6 +146,8 @@ float* Vertex::GetArray(float* p_buff, size_t p_buff_size) const
     }
     for (size_t i = 0; i < 2; ++i)
         p_buff[i + 8] = uv[i];
+    for (size_t i = 0; i < 4; ++i)
+        p_buff[i + 10] = p_tangent[i];
     return p_buff;
 }
 
@@ -174,4 +176,21 @@ bool Vertex::IsEar() const
         current_vertex = current_vertex->next;
     }
     return true;
+}
+
+Vec4 Vertex::GetTangent() const
+{
+    if (prev == nullptr || next == nullptr)
+        throw std::domain_error("The vertex is not fully connected.");
+    
+    Vec4 delta_pos1 = GetNext()->GetPosition() - GetPosition();
+    Vec4 delta_pos2 = GetPrev()->GetPosition() - GetPosition();
+    Vec2 delta_uv1 = GetNext()->GetUV() - GetUV();
+    Vec2 delta_uv2 = GetPrev()->GetUV() - GetUV();
+    float temp = 1.0f / (delta_uv1[0] * delta_uv2[1] - delta_uv2[0] * delta_uv1[1]);
+    Vec4 result;
+    result[0] = temp * (delta_uv2[1] * delta_pos1[0] - delta_uv1[1] * delta_pos2[0]);
+    result[1] = temp * (delta_uv2[1] * delta_pos1[1] - delta_uv1[1] * delta_pos2[1]);
+    result[2] = temp * (delta_uv2[1] * delta_pos1[2] - delta_uv1[1] * delta_pos2[2]);
+    return result.Normalize();
 }

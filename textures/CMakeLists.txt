@@ -1,5 +1,6 @@
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/default.png DESTINATION ${EXECUTABLE_OUTPUT_PATH}/textures)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/default_normal.png DESTINATION ${EXECUTABLE_OUTPUT_PATH}/textures)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/back.jpg DESTINATION ${EXECUTABLE_OUTPUT_PATH}/textures/skybox/default)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/bottom.jpg DESTINATION ${EXECUTABLE_OUTPUT_PATH}/textures/skybox/default)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/front.jpg DESTINATION ${EXECUTABLE_OUTPUT_PATH}/textures/skybox/default)

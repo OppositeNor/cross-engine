@@ -88,6 +88,7 @@ void Game::Run()
     {
         frame_start = (float)glfwGetTime();
         Process(delta);
+        Graphics::Update();
         Sleep(1);
         delta = (float)glfwGetTime() - frame_start;
     }

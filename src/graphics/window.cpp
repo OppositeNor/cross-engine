@@ -5,8 +5,8 @@
 #include "ce/managers/event_manager.h"
 #include "ce/event/window_event.h"
 #include "ce/game/game.h"
-#include "ce/graphics/texture/static_texture.h"
 #include "ce/materials/valued_material.h"
+#include "ce/graphics/texture/static_texture.h"
 #include "ce/component/camera.h"
 #include "ce/component/skybox.h"
 #include "glad/glad.h"
@@ -21,7 +21,7 @@ std::map<void*, Window*> Window::context_window_finder;
 Window::Window(const Vec2s& p_size, const std::string& p_title)
     : window_title(p_title), window_size(p_size)
 {
-    window_thread = std::make_unique<std::thread>(&Window::ThreadFunc, this);
+    window_thread = UniquePtr<std::thread>(new std::thread(&Window::ThreadFunc, this));
 }
 
 Window::Window(size_t p_width, size_t p_height, const std::string& p_title)
@@ -35,6 +35,46 @@ Window::Window()
 Window::~Window()
 {
     Close();
+}
+
+void Window::UpdateThreadResource()
+{
+    for (size_t i = 0; i < queued_thread_resources.size(); ++i)
+    {
+        if (queued_thread_resources[i].is_queue_freed)
+        {
+            queued_thread_resources[i].destroy_func(1, &queued_thread_resources[i].id);
+            queued_thread_resources.erase(queued_thread_resources.begin() + i);
+            --i;
+        }
+    }
+}
+
+void Window::ClearResource()
+{
+    std::lock_guard<std::mutex> lock(queued_thread_resources_mutex);
+    for (auto& resource : queued_thread_resources)
+        resource.destroy_func(1, &resource.id);
+    queued_thread_resources.clear();
+}
+
+void Window::RegisterThreadResource(unsigned int p_id, ReleaseFunction p_destroy_func) const
+{
+    std::lock_guard<std::mutex> lock(queued_thread_resources_mutex);
+    queued_thread_resources.push_back(ThreadResource(p_id, p_destroy_func));
+}
+
+void Window::FreeThreadResource(unsigned int p_id) const
+{
+    std::lock_guard<std::mutex> lock(queued_thread_resources_mutex);
+    for (auto& resource : queued_thread_resources)
+    {
+        if (resource.id == p_id)
+        {
+            resource.is_queue_freed = true;
+            return;
+        }
+    }
 }
 
 void Window::SetClearColor(const Vec4& p_clear_color)
@@ -74,9 +114,6 @@ void Window::InitWindow()
     skybox_shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/skybox_vertex.glsl", 
                                               Resource::GetExeDirectory() + "/shaders/skybox_fragment.glsl");
     skybox_shader_program->Compile();
-    
-    default_texture = std::shared_ptr<ATexture>(new StaticTexture(Resource::GetExeDirectory() + "/textures/default.png"));
-    default_material = std::shared_ptr<AMaterial>(new ValuedMaterial());
 
     base_component = std::make_shared<Component>(this);
 
@@ -88,6 +125,20 @@ void Window::InitWindow()
                                Resource::GetExeDirectory() + "/textures/skybox/default/bottom.jpg",
                                Resource::GetExeDirectory() + "/textures/skybox/default/front.jpg",
                                Resource::GetExeDirectory() + "/textures/skybox/default/back.jpg"});
+    
+    default_albedo = std::make_shared<StaticTexture>(this);
+    default_normal = std::make_shared<StaticTexture>(this);
+    default_metallic = std::make_shared<StaticTexture>(this);
+    default_roughness = std::make_shared<StaticTexture>(this);
+    default_ao = std::make_shared<StaticTexture>(this);
+
+    default_albedo->LoadTexture(Resource::GetExeDirectory() + "/textures/default.png");
+    default_normal->LoadTexture(Resource::GetExeDirectory() + "/textures/default_normal.png");
+    default_metallic->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+    default_roughness->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+    default_ao->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+    
+    default_material = std::shared_ptr<AMaterial>(new PBRMaterial(this));
 }
 
 void Window::UpdateWindowSize(const Vec2s& p_new_window_size)
@@ -113,19 +164,20 @@ void Window::ThreadFunc()
             Process(delta);
             base_component->Update(delta);
             Draw();
+            shader_program->Refresh();
             auto error = glGetError();
             if (error != GL_NO_ERROR)
                 throw std::runtime_error("OpenGL error: " + std::to_string(error));
             Game::GetInstance()->UpdateInput(this);
+            UpdateThreadResource();
             delta = glfwGetTime() - frame_start;
         }
         OnClose();
         Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
-        Graphics::DestroyGLFWContex(glfw_context);
         delete shader_program;
         delete skybox_shader_program;
-        base_component.reset();
-        default_texture.reset();
+        ClearResource();
+        Graphics::DestroyGLFWContex(glfw_context);
         is_closed = true;
     }
     catch (const std::exception& e){
@@ -169,18 +221,14 @@ void Window::Draw()
     if (using_camera == nullptr)
     {
         shader_program->SetUniform("view", Mat4());
-        GetShaderProgram()->SetUniform("camera_position", Vec4());
+        shader_program->SetUniform("camera_position", Vec4());
     }
     else
     {
         shader_program->SetUniform("view", using_camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("camera_position", using_camera->GetGlobalPosition());
+        shader_program->SetUniform("camera_position", using_camera->GetGlobalPosition());
     }
     if (skybox != nullptr)
-    {
-        shader_program->SetUniform("skybox", 1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->GetTextureCube());
-    }
+        shader_program->SetSamplerCubeUniform("skybox", skybox->GetTextureCube());
     base_component->Draw();
 }
