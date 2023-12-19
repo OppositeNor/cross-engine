@@ -71,25 +71,25 @@ void Skybox::SetSkyboxTexture(const std::vector<std::string>& p_faces)
     size_t img_width, img_height, img_channels;
     Resource::GetImageSize(p_faces[0], img_width, img_height, img_channels);
     size_t buffer_size = img_width * img_height * img_channels;
-    UniquePtr<byte[]> buffer = 
-        UniquePtr<byte[]>(new byte[buffer_size]);
+    std::unique_ptr<byte[]> buffer = 
+        std::unique_ptr<byte[]>(new byte[buffer_size]);
     std::vector<unsigned char> image_data;
     for (size_t i = 0; i < p_faces.size(); ++i)
     {
-        Resource::LoadTextureImage(p_faces[i], buffer.Get(), buffer_size, img_width, img_height, img_channels);
+        Resource::LoadTextureImage(p_faces[i], buffer.get(), buffer_size, img_width, img_height, img_channels);
         switch (img_channels)
         {
         case 1:
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RED, img_width, img_height, 0, GL_RED, GL_UNSIGNED_BYTE, buffer.Get());
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RED, img_width, img_height, 0, GL_RED, GL_UNSIGNED_BYTE, buffer.get());
             break;
         case 3:
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer.Get());
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer.get());
             break;
         case 4:
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, img_width, img_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer.Get());
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, img_width, img_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer.get());
             break;
         default:
             throw std::runtime_error("Invalid image format.");

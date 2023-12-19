@@ -30,8 +30,8 @@ void StaticTexture::LoadTexture(const std::string& p_path)
 {
     if (texture == 0)
         CreateTexture();
-    auto data = UniquePtr<ubyte_t[]>(Resource::LoadTextureImage(p_path, nullptr, 0, width, height, channels));
-    LoadTexture(data.Get(), width, height, channels);
+    auto data = std::unique_ptr<ubyte_t[]>(Resource::LoadTextureImage(p_path, nullptr, 0, width, height, channels));
+    LoadTexture(data.get(), width, height, channels);
 };
 
 void StaticTexture::LoadTexture(const ubyte_t* p_data, size_t p_width, size_t p_height, size_t p_channels)

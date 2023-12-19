@@ -164,5 +164,10 @@ public:
      */
     FORCE_INLINE float& MetallicScaler() noexcept { return scaler_metallic; }
 
+    /**
+     * @brief Set the uniform for this material.
+     * 
+     * @param p_shader_program The shader program.
+     */
     virtual void SetUniform(const ShaderProgram* p_shader_program) const override;
 };

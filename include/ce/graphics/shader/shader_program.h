@@ -4,7 +4,7 @@
 #include "ce/graphics/shader/a_shader.h"
 #include "ce/math/math.hpp"
 #include "ce/component/point_light.h"
-#include "ce/memory/unique_ptr.hpp"
+#include <memory>
 
 class ShaderProgram
 {

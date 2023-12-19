@@ -13,11 +13,8 @@ extern "C" {
 #include "ce/managers/event_manager.h"
 #include "ce/game/game.h"
 #include "ce/materials/valued_material.h"
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include "ce/graphics/texture/static_texture.h"
 #include <cmath>
-
-Vec4 new_rot = Vec4(0, 0, 0, 1.0f);
 Vector<bool, 3> rotate;
 
 class UserCamera : public Camera
@@ -64,7 +61,7 @@ class UserWindow : public Window
     std::shared_ptr<UserWindow> window2;
     std::shared_ptr<VisualMesh> mesh;
     std::shared_ptr<DynamicMesh> box;
-    std::shared_ptr<DynamicMesh> box2;
+    std::shared_ptr<DynamicMesh> floor;
     std::shared_ptr<PointLight> light;
     std::string title;
 
@@ -102,7 +99,17 @@ public:
         }
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
         GetBaseComponent()->AddChild(mesh);
-        mesh->SetMaterial(std::make_shared<PBRMaterial>(Vec4(0.96f, 0.64f, 0.54f, 1.0f), 0.2f, 1.0f, this));
+        auto mesh_material = std::make_shared<PBRMaterial>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.95f, 1.0f, this);
+        mesh_material->Albedo() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() + 
+            "/textures/monkey_albedo.png");
+        mesh_material->Normal() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/monkey_normal.png");
+        mesh_material->Roughness() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/monkey_roughness.png");
+        mesh_material->AO() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/monkey_ao.png");
+        
+        mesh->SetMaterial(mesh_material);
         mesh->SetVisible(true);
         
         light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);
@@ -136,50 +143,50 @@ public:
 
         light->AddChild(box);
 
-        box2 = std::make_shared<DynamicMesh>(this);
+        floor = std::make_shared<DynamicMesh>(this);
         
-        box2->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(-1, 0, 1, 1), Vec4(1, 0, 1, 1)));
-        box2->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(1, 0, 1, 1), Vec4(1, 0, -1, 1)));
-        box2->Triangles()[0]->GetVertex(0)->UV() = Vec2(0, 1);
-        box2->Triangles()[0]->GetVertex(1)->UV() = Vec2(0, 0);
-        box2->Triangles()[0]->GetVertex(2)->UV() = Vec2(1, 0);
-        box2->Triangles()[1]->GetVertex(0)->UV() = Vec2(0, 1);
-        box2->Triangles()[1]->GetVertex(1)->UV() = Vec2(1, 0);
-        box2->Triangles()[1]->GetVertex(2)->UV() = Vec2(1, 1);
-        GetBaseComponent()->AddChild(box2);
+        floor->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(-1, 0, 1, 1), Vec4(1, 0, 1, 1)));
+        floor->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(1, 0, 1, 1), Vec4(1, 0, -1, 1)));
+        floor->Triangles()[0]->GetVertex(0)->UV() = Vec2(0, 10);
+        floor->Triangles()[0]->GetVertex(1)->UV() = Vec2(0, 0);
+        floor->Triangles()[0]->GetVertex(2)->UV() = Vec2(10, 0);
+        floor->Triangles()[1]->GetVertex(0)->UV() = Vec2(0, 10);
+        floor->Triangles()[1]->GetVertex(1)->UV() = Vec2(10, 0);
+        floor->Triangles()[1]->GetVertex(2)->UV() = Vec2(10, 10);
+        GetBaseComponent()->AddChild(floor);
 
         box->Scale() = Vec4(1.5f, 1.5f, 1.5f);
-        box2->Position() = Vec4(0, 0, 0, 1.0f);
-        box2->Scale() = Vec4(50, 1, 50);
+        floor->Position() = Vec4(0, 0, 0, 1.0f);
+        floor->Scale() = Vec4(50, 1, 50);
+
+        auto floor_material = std::make_shared<PBRMaterial>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.8f, 1.0f, this);
+        floor_material->Albedo() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() + 
+            "/textures/floor_albedo.png");
+        floor_material->Normal() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/floor_normal.png");
+        floor_material->Roughness() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/floor_roughness.png");
+        floor_material->AO() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/floor_ao.png");
+        floor->SetMaterial(floor_material);
         light->AddChild(box);
         GetBaseComponent()->AddChild(light);
     }
 
     virtual void Process(float p_delta) override
-    {
-        mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
-
-        auto time = glfwGetTime();
-
-        if (rotate[0])
-            new_rot = EulerToQuat(Vec3(time, 0, 0), EulerRotOrder::PRY);
-        else if (rotate[1])
-            new_rot = EulerToQuat(Vec3(0, time, 0), EulerRotOrder::PRY);
-        else if (rotate[2])
-            new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
-        
+    {        
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_left") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, GetUsingCamera()->GetDirection()).Normalized() * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::UP, GetUsingCamera()->GetDirection()).Normalize() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_right") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
+            light->Position() += Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP).Normalize() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_up") == InputManager::InputState::Pressed)
             light->Position() += Vec4::UP * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_down") == InputManager::InputState::Pressed)
             light->Position() -= Vec4::UP * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_forward") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP)) * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP)).Normalize() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP), Vec4::UP) * p_delta * 10;
+            light->Position() += Vec4::Cross(Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP), Vec4::UP).Normalize() * p_delta * 10;
         if (window2 != nullptr && window2->IsClosed())
         {
             window2.reset();
@@ -193,7 +200,6 @@ public:
         Window::Draw();
         light->SetUniform(0);
         GetShaderProgram()->SetUniform("point_light_count", 1);
-        glBindVertexArray(0);
     }
 
     virtual void OnClose() override

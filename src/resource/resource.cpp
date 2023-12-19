@@ -1,6 +1,6 @@
 #include "ce/resource/resource.h"
 #include "ce/geometry/polygon.h"
-#include "ce/memory/unique_ptr.hpp"
+#include <memory>
 #include <fstream>
 #include <windows.h>
 #include <functional>
@@ -164,12 +164,12 @@ byte_t* Resource::LoadFile(const std::string& p_path, byte_t* p_buffer, size_t p
 void Resource::LoadTris(const std::string& p_path, std::vector<Triangle*>& p_result)
 {
     size_t file_size;
-    auto data = UniquePtr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
-    byte_t* p = data.Get();
+    auto data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    byte_t* p = data.get();
     byte_t buff[256];
     GetWord(p, buff, 256);
     size_t tri_count = (size_t)std::atoi(buff);
-    MovePToNextSpace(&p, data.Get() + file_size);
+    MovePToNextSpace(&p, data.get() + file_size);
     ++p;
     
     Vec4f temp = Pos();
@@ -183,7 +183,7 @@ void Resource::LoadTris(const std::string& p_path, std::vector<Triangle*>& p_res
             {
                 GetWord(p, buff, 256);
                 temp[k] = std::atof(buff);
-                MovePToNextSpace(&p, data.Get() + file_size);
+                MovePToNextSpace(&p, data.get() + file_size);
                 ++p;
             }
             current_tri->GetVertex(j)->SetPosition(temp);
@@ -235,9 +235,9 @@ void Resource::GetImageSize(const std::string& p_path, size_t& p_width, size_t& 
 ubyte_t* Resource::LoadTextureImage(const std::string& p_path, ubyte_t* p_buffer, size_t p_buffer_size,
         size_t& p_width, size_t& p_height, size_t& p_channels)
 {
-    auto result = UniquePtr<ubyte_t[], std::function<decltype(stbi_image_free)>>(
+    auto result = std::unique_ptr<ubyte_t[], std::function<decltype(stbi_image_free)>>(
             stbi_load(p_path.c_str(), (int*)&p_width, (int*)&p_height, (int*)&p_channels, 0), stbi_image_free);
-    if (result.Get() == nullptr)
+    if (result.get() == nullptr)
         throw std::runtime_error("Failed to load image at path: " + p_path + ".");
     
     if (p_buffer == nullptr)
@@ -245,19 +245,19 @@ ubyte_t* Resource::LoadTextureImage(const std::string& p_path, ubyte_t* p_buffer
     else if (p_buffer_size < p_width * p_height * p_channels)
         throw std::out_of_range("The buffer size is too small.");
     
-    memcpy(p_buffer, result.Get(), p_width * p_height * p_channels);
+    memcpy(p_buffer, result.get(), p_width * p_height * p_channels);
     return p_buffer;
 }
 
 void Resource::LoadTrisWithNormal(const std::string& p_path, std::vector<Triangle*>& p_result)
 {
     size_t file_size;
-    auto data = UniquePtr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
-    byte_t* p = data.Get();
+    auto data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    byte_t* p = data.get();
     byte_t buff[256];
     GetWord(p, buff, 256);
     size_t tri_count = (size_t)std::atoi(buff);
-    MovePToNextSpace(&p, data.Get() + file_size);
+    MovePToNextSpace(&p, data.get() + file_size);
     ++p;
     
     Vec4f temp_pos = Pos();
@@ -272,14 +272,14 @@ void Resource::LoadTrisWithNormal(const std::string& p_path, std::vector<Triangl
             {
                 GetWord(p, buff, 256);
                 temp_pos[k] = std::atof(buff);
-                MovePToNextSpace(&p, data.Get() + file_size);
+                MovePToNextSpace(&p, data.get() + file_size);
                 ++p;
             }
             for (size_t k = 0; k < 3; ++k)
             {
                 GetWord(p, buff, 256);
                 temp_normal[k] = std::atof(buff);
-                MovePToNextSpace(&p, data.Get() + file_size);
+                MovePToNextSpace(&p, data.get() + file_size);
                 ++p;
             }
             current_tri->GetVertex(j)->Position() = temp_pos;
@@ -322,8 +322,8 @@ void Resource::LoadModel(const std::string& p_path, std::vector<Triangle*>& p_re
 void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p_result)
 {
     size_t file_size;
-    auto data = UniquePtr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
-    byte_t* p = data.Get();
+    auto data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
+    byte_t* p = data.get();
 
     std::vector<Vec4> positions;
     std::vector<Vec4> normals;
@@ -331,7 +331,7 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
     byte_t line_buff[1024];
     byte_t word_buff[256];
     size_t counter = 0;
-    while (p < data.Get() + file_size) {
+    while (p < data.get() + file_size) {
         GetLine(p, line_buff, 1024);
         auto *pp = line_buff;
         if (pp[0] == 'v' && pp[1] == ' ')
@@ -403,7 +403,7 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
                 p_result.push_back(temp_triangles[i]);
             }
         }
-        MovePToNextLine(&p, data.Get() + file_size);
+        MovePToNextLine(&p, data.get() + file_size);
         ++p;
     }
 }

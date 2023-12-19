@@ -21,7 +21,7 @@ std::map<void*, Window*> Window::context_window_finder;
 Window::Window(const Vec2s& p_size, const std::string& p_title)
     : window_title(p_title), window_size(p_size)
 {
-    window_thread = UniquePtr<std::thread>(new std::thread(&Window::ThreadFunc, this));
+    window_thread = std::unique_ptr<std::thread>(new std::thread(&Window::ThreadFunc, this));
 }
 
 Window::Window(size_t p_width, size_t p_height, const std::string& p_title)

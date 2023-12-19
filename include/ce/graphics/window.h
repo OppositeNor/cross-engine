@@ -10,7 +10,7 @@
 #include "ce/math/math.hpp"
 #include "ce/graphics/shader/shader_program.h"
 #include "ce/event/i_event_listener.h"
-#include "ce/memory/unique_ptr.hpp"
+#include <memory>
 
 class InputManager;
 class AMaterial;
@@ -58,7 +58,7 @@ protected:
 #ifdef _WIN32
     HWND hwnd = nullptr;
 #endif
-    UniquePtr<std::thread> window_thread;
+    std::unique_ptr<std::thread> window_thread;
     bool is_closed = false;
     bool should_close = false;
     ShaderProgram* shader_program = nullptr;
