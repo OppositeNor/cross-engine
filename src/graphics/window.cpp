@@ -5,8 +5,8 @@
 #include "ce/managers/event_manager.h"
 #include "ce/event/window_event.h"
 #include "ce/game/game.h"
-#include "ce/graphics/texture/static_texture.h"
 #include "ce/materials/valued_material.h"
+#include "ce/graphics/texture/static_texture.h"
 #include "ce/component/camera.h"
 #include "ce/component/skybox.h"
 #include "glad/glad.h"
@@ -114,9 +114,6 @@ void Window::InitWindow()
     skybox_shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/skybox_vertex.glsl", 
                                               Resource::GetExeDirectory() + "/shaders/skybox_fragment.glsl");
     skybox_shader_program->Compile();
-    
-    default_texture = std::shared_ptr<ATexture>(new StaticTexture(this, Resource::GetExeDirectory() + "/textures/default.png"));
-    default_material = std::shared_ptr<AMaterial>(new ValuedMaterial(this));
 
     base_component = std::make_shared<Component>(this);
 
@@ -128,6 +125,20 @@ void Window::InitWindow()
                                Resource::GetExeDirectory() + "/textures/skybox/default/bottom.jpg",
                                Resource::GetExeDirectory() + "/textures/skybox/default/front.jpg",
                                Resource::GetExeDirectory() + "/textures/skybox/default/back.jpg"});
+    
+    default_albedo = std::make_shared<StaticTexture>(this);
+    default_normal = std::make_shared<StaticTexture>(this);
+    default_metallic = std::make_shared<StaticTexture>(this);
+    default_roughness = std::make_shared<StaticTexture>(this);
+    default_ao = std::make_shared<StaticTexture>(this);
+
+    default_albedo->LoadTexture(Resource::GetExeDirectory() + "/textures/default.png");
+    default_normal->LoadTexture(Resource::GetExeDirectory() + "/textures/default_normal.png");
+    default_metallic->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+    default_roughness->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+    default_ao->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+    
+    default_material = std::shared_ptr<AMaterial>(new PBRMaterial(this));
 }
 
 void Window::UpdateWindowSize(const Vec2s& p_new_window_size)

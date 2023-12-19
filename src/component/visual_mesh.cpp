@@ -43,10 +43,6 @@ void VisualMesh::Draw()
     
     glBindVertexArray(vao);
     GetContext()->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
-    if (texture)
-        texture->BindTexture(GetContext()->GetShaderProgram(), "ftexture");
-    else
-        GetContext()->GetDefaultTexture()->BindTexture(GetContext()->GetShaderProgram(), "ftexture");
     if (material)
         material->SetUniform(GetContext()->GetShaderProgram());
     else

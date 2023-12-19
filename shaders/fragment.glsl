@@ -18,7 +18,6 @@ in vec4 frag_position;
 in vec2 frag_texture_uv;
 in mat4 frag_tbn;
 
-uniform sampler2D ftexture;
 uniform samplerCube skybox;
 
 struct Material {
@@ -84,7 +83,7 @@ void main()
     }
 
     temp_color.w = 1.0;
-    FragColor = temp_color * texture(ftexture, frag_texture_uv);
+    FragColor = temp_color;
 }
 
 float TRGGX(vec4 p_normal, vec4 p_half)

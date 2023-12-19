@@ -13,13 +13,17 @@
 #include "ce/memory/unique_ptr.hpp"
 
 class InputManager;
-class ATexture;
 class AMaterial;
 class Component;
 class Camera;
 class Skybox;
+class ATexture;
 class Window : public IEventListener
 {
+
+    inline static const ubyte_t WHITE_IMAGE[] = {
+        0xFF, 0xFF, 0xFF, 0xFF
+    };
 private:
     using ReleaseFunction = void(*)(int, const unsigned int*);
     
@@ -37,14 +41,18 @@ private:
     mutable std::vector<ThreadResource> queued_thread_resources;
     mutable std::mutex queued_thread_resources_mutex;
 
+    std::shared_ptr<ATexture> default_albedo;
+    std::shared_ptr<ATexture> default_normal;
+    std::shared_ptr<ATexture> default_metallic;
+    std::shared_ptr<ATexture> default_roughness;
+    std::shared_ptr<ATexture> default_ao;
+
 protected:
     void* glfw_context = nullptr;
     static std::map<void*, Window*> context_window_finder;
 
     Vec2s window_size;
     std::string window_title = "";
-
-    std::shared_ptr<ATexture> default_texture;
     std::shared_ptr<AMaterial> default_material;
 
 #ifdef _WIN32
@@ -78,6 +86,18 @@ private:
     void ClearResource();
 
 public:
+
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultAlbedo() const noexcept { return default_albedo; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultNormal() const noexcept { return default_normal; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultMetallic() const noexcept { return default_metallic; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultRoughness() const noexcept { return default_roughness; }
+    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultAO() const noexcept { return default_ao; }
+
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultAlbedo() noexcept { return default_albedo; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultNormal() noexcept { return default_normal; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultMetallic() noexcept { return default_metallic; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultRoughness() noexcept { return default_roughness; }
+    FORCE_INLINE std::shared_ptr<ATexture> DefaultAO() noexcept { return default_ao; }
 
     /**
      * @brief Get the GLFW context.
@@ -151,8 +171,6 @@ public:
      * @details This constructor is used for creating a window that is 640x480 with no title.
      */
     Window();
-
-    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultTexture() const noexcept { return default_texture; }
 
     FORCE_INLINE const std::shared_ptr<AMaterial>& GetDefaultMaterial() const noexcept { return default_material; }
 

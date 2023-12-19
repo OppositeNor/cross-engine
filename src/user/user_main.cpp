@@ -102,7 +102,7 @@ public:
         }
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
         GetBaseComponent()->AddChild(mesh);
-        mesh->SetMaterial(std::make_shared<ValuedMaterial>(Vec4(0.96f, 0.64f, 0.54f, 1.0f), 0.2f, 1.0f, this));
+        mesh->SetMaterial(std::make_shared<PBRMaterial>(Vec4(0.96f, 0.64f, 0.54f, 1.0f), 0.2f, 1.0f, this));
         mesh->SetVisible(true);
         
         light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);

@@ -1,6 +1,7 @@
 #pragma once
 #include "ce/defs.hpp"
 #include <memory>
+#include <mutex>
 
 class ShaderProgram;
 class ATexture;
@@ -8,11 +9,11 @@ class Window;
 class AMaterial
 {
 protected:
-    std::unique_ptr<ATexture> albedo;
-    std::unique_ptr<ATexture> normal;
-    std::unique_ptr<ATexture> metallic;
-    std::unique_ptr<ATexture> roughness;
-    std::unique_ptr<ATexture> ao;
+    std::shared_ptr<ATexture> albedo;
+    std::shared_ptr<ATexture> normal;
+    std::shared_ptr<ATexture> metallic;
+    std::shared_ptr<ATexture> roughness;
+    std::shared_ptr<ATexture> ao;
 
     const Window* context;
 public:
