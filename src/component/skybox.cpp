@@ -1,6 +1,7 @@
 #include "ce/component/skybox.h"
 #include "ce/graphics/window.h"
 #include "ce/resource/resource.h"
+#include "ce/graphics/graphics.h"
 
 #include <glad/glad.h>
 
@@ -61,31 +62,34 @@ void Skybox::SetSkyboxTexture(const std::vector<std::string>& p_faces)
     if (GetContext()->GetThreadId() != std::this_thread::get_id())
         throw std::runtime_error("Skybox must be created on the main thread.");
     if (texture_cube == 0)
+    {
         glGenTextures(1, &texture_cube);
+        GetContext()->RegisterThreadResource(texture_cube, glDeleteTextures);
+    }
     
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture_cube);
     size_t img_width, img_height, img_channels;
     Resource::GetImageSize(p_faces[0], img_width, img_height, img_channels);
     size_t buffer_size = img_width * img_height * img_channels;
-    std::unique_ptr<byte[]> buffer = 
-        std::unique_ptr<byte[]>(new byte[buffer_size]);
+    UniquePtr<byte[]> buffer = 
+        UniquePtr<byte[]>(new byte[buffer_size]);
     std::vector<unsigned char> image_data;
     for (size_t i = 0; i < p_faces.size(); ++i)
     {
-        Resource::LoadTextureImage(p_faces[i], buffer.get(), buffer_size, img_width, img_height, img_channels);
+        Resource::LoadTextureImage(p_faces[i], buffer.Get(), buffer_size, img_width, img_height, img_channels);
         switch (img_channels)
         {
         case 1:
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RED, img_width, img_height, 0, GL_RED, GL_UNSIGNED_BYTE, buffer.get());
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RED, img_width, img_height, 0, GL_RED, GL_UNSIGNED_BYTE, buffer.Get());
             break;
         case 3:
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer.get());
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer.Get());
             break;
         case 4:
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, img_width, img_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer.get());
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, img_width, img_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer.Get());
             break;
         default:
             throw std::runtime_error("Invalid image format.");
@@ -107,24 +111,27 @@ Skybox::Skybox(Window* p_context, const std::vector<std::string>& p_faces)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), vertices, GL_STATIC_DRAW);
+    GetContext()->RegisterThreadResource(vbo, glDeleteBuffers);
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    GetContext()->RegisterThreadResource(vao, glDeleteVertexArrays);
 
     glGenTextures(1, &texture_cube);
+    GetContext()->RegisterThreadResource(texture_cube, glDeleteTextures);
     SetSkyboxTexture(p_faces);
 
 }
 
 Skybox::~Skybox()
 {
-    glDeleteBuffers(1, &vbo);
+    GetContext()->FreeThreadResource(vbo);
+    GetContext()->FreeThreadResource(vbo);
+    GetContext()->FreeThreadResource(texture_cube);
     vbo = 0;
-    glDeleteVertexArrays(1, &vao);
     vao = 0;
-    glDeleteTextures(1, &texture_cube);
     texture_cube = 0;
 }
 

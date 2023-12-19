@@ -75,6 +75,29 @@ void ShaderProgram::SetUniform(const std::string& p_name, const Vec4& p_vec4) co
     }
 }
 
+void ShaderProgram::SetSampler2DUniform(const std::string& p_name, unsigned int p_texture_id) const
+{
+    if (usable)
+    {
+        int index = GetSamplerNewIndex();
+        SetUniform(p_name, index);
+        glActiveTexture(GL_TEXTURE0 + index);
+        glBindTexture(GL_TEXTURE_2D, p_texture_id);
+    }
+}
+
+void ShaderProgram::SetSamplerCubeUniform(const std::string& p_name, unsigned int p_texture_id) const
+{
+    if (usable)
+    {
+        int index = GetSamplerNewIndex();
+        SetUniform(p_name, index);
+        glActiveTexture(GL_TEXTURE0 + index);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, p_texture_id);
+    }
+
+}
+
 ShaderProgram::~ShaderProgram()
 {
     if (program_id != 0)
@@ -118,4 +141,9 @@ void ShaderProgram::Use()
 {
     if (usable)
         glUseProgram(program_id);
+}
+
+void ShaderProgram::Refresh()
+{
+    sampler_count = 0;
 }

@@ -2,7 +2,6 @@
 #include "ce/component/component.h"
 
 class Triangle;
-class ATexture;
 class AMaterial;
 class VisualMesh : public Component
 {
@@ -10,8 +9,6 @@ protected:
     unsigned int vao = 0;
     unsigned int vbo = 0;
     void UpdateVAO(const std::vector<Triangle*>& p_triangles);
-
-    std::shared_ptr<ATexture> texture;
 
     std::shared_ptr<AMaterial> material;
 public:
@@ -85,20 +82,6 @@ public:
      * @param p_file The file to load the triangles from.
      */
     virtual void LoadTrisWithNormal(const std::string& p_file) = 0;
-
-    /**
-     * @brief Set the texture.
-     * 
-     * @param p_texture The texture to be set to.
-     */
-    FORCE_INLINE void SetTexture(std::shared_ptr<ATexture> p_texture) { texture = p_texture; }
-
-    /**
-     * @brief Get the texture.
-     * 
-     * @return std::shared_ptr<Texture> The texture.
-     */
-    FORCE_INLINE std::shared_ptr<ATexture> GetTexture() const { return texture; }
 
     /**
      * @brief Draw the mesh.

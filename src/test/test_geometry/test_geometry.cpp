@@ -1,7 +1,7 @@
 #include "../unit_test/unit_test.h"
 #include "ce/geometry/vertex.h"
 #include "ce/geometry/triangle.h"
-#include <memory>
+#include "ce/memory/unique_ptr.hpp"
 
 void UnitTest::TestVertex0()
 {
@@ -10,7 +10,7 @@ void UnitTest::TestVertex0()
     auto vertex_2 = new Vertex(Vec4(1, 2, 3, 4));
     EXPECT_VALUES_EQUAL(vertex_2->GetPosition(), Vec4(1, 2, 3, 4));
     delete vertex_2;
-    std::unique_ptr<Vertex> vertex_3(new Vertex(Vec4(1, 2, 3, 4)));
+    UniquePtr<Vertex> vertex_3(new Vertex(Vec4(1, 2, 3, 4)));
     EXPECT_VALUES_EQUAL(vertex_3->GetPosition(), Vec4(1, 2, 3, 4));
 }
 

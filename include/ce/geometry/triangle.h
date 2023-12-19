@@ -9,9 +9,10 @@ class Triangle : public AGeometry
 {
     
     Vertex* vertices[3];
+
 public:
 
-    static constexpr size_t TRIANGLE_ARRAY_SIZE = 3 * Vertex::ARRAY_SIZE;
+    static constexpr size_t TRIANGLE_ARRAY_SIZE = 3 * (Vertex::ARRAY_SIZE);
     
     /**
      * @brief Constructor.
@@ -93,4 +94,11 @@ public:
      * @return Vec4 The normal of the triangle.
      */
     FORCE_INLINE Vec4 GetNormal() const { return vertices[0]->GetInducedNormal(); }
+
+    /**
+     * @brief Get the tangent of a vertex.
+     * 
+     * @return Vec4 The tangent of the vertex.
+     */
+    Vec4 GetTangent() const;
 };

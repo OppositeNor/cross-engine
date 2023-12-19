@@ -4,6 +4,7 @@
 #include "ce/graphics/shader/a_shader.h"
 #include "ce/math/math.hpp"
 #include "ce/component/point_light.h"
+#include "ce/memory/unique_ptr.hpp"
 
 class ShaderProgram
 {
@@ -12,6 +13,7 @@ class ShaderProgram
     std::shared_ptr<AShader> frag_shader;
     std::mutex compile_mutex;
     bool usable = false;
+    mutable int sampler_count = 0;
 public:
 
     /**
@@ -49,6 +51,12 @@ public:
     ShaderProgram(ShaderProgram&& p_other) noexcept;
 
     /**
+     * @brief Destroy the Shader Program object.
+     * 
+     */
+    virtual ~ShaderProgram();
+
+    /**
      * @brief Set the uniform for the shader.
      * 
      * @param p_name The name of the uniform.
@@ -81,6 +89,22 @@ public:
     void SetUniform(const std::string& p_name, const Vec4& p_vec4) const;
 
     /**
+     * @brief Set the sampler uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_texture_id The texture id to set the uniform to.
+     */
+    void SetSampler2DUniform(const std::string& p_name, unsigned int p_texture_id) const;
+
+    /**
+     * @brief Set the sampler uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_texture_id The texture id to set the uniform to.
+     */
+    void SetSamplerCubeUniform(const std::string& p_name, unsigned int p_texture_id) const;
+
+    /**
      * @brief Compile the shader program.
      * 
      * @throw std::runtime_error If the shader program fails to link.
@@ -96,10 +120,11 @@ public:
     void Use();
 
     /**
-     * @brief Destroy the Shader Program object.
+     * @brief Refresh the shader program.
      * 
      */
-    virtual ~ShaderProgram();
+    void Refresh();
+
     /**
      * @brief Returns whether or not this shader program is usable.
      * The shader program will be usable if it has been successfully
@@ -123,4 +148,6 @@ public:
      * @return std::shared_ptr<AShader> The fragment shader.
      */
     FORCE_INLINE std::shared_ptr<AShader> GetFragShader() const { return frag_shader; }
+
+    FORCE_INLINE int GetSamplerNewIndex() const { return sampler_count++; }
 };

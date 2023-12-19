@@ -14,6 +14,7 @@ class Vertex
     Vec4 normal;
     Vec2 uv;
 
+
     Vertex* prev = nullptr;
     Vertex* next = nullptr;
 public:
@@ -21,7 +22,7 @@ public:
     /**
      * @brief The count of elements in the vertex array.
      */
-    static constexpr size_t ARRAY_SIZE = 10;
+    static constexpr size_t ARRAY_SIZE = 14;
 
     /**
      * @brief Constructor for Vertex.
@@ -196,6 +197,7 @@ public:
      */
     FORCE_INLINE void ResetNormal() { normal = GetInducedNormal(); }
 
+    
     /**
      * @brief Get the vertex array.
      * 
@@ -203,7 +205,17 @@ public:
      * @param p_buff_size The size of the buffer.
      * @return float* The pointer to the buffer.
      */
-    float* GetArray(float* p_buff, size_t p_buff_size) const;
+    FORCE_INLINE float* GetArray(float* p_buff, size_t p_buff_size) const { return GetArray(p_buff, p_buff_size, GetTangent()); }
+
+    /**
+     * @brief Get the vertex array.
+     * 
+     * @param p_buff The buffer to store the vertex array.
+     * @param p_buff_size The size of the buffer.
+     * @param p_tangent The tangent of the vertex.
+     * @return float* The pointer to the buffer.
+     */
+    float* GetArray(float* p_buff, size_t p_buff_size, const Vec4& p_tangent) const;
 
     /**
      * @brief Get the normal based on the previous and the next vertex.
@@ -219,4 +231,11 @@ public:
      * @return false The vertex is not a ear.
      */
     bool IsEar() const;
+
+    /**
+     * @brief Get the tangent of the vertex.
+     * @todo Buffer the tangent.
+     * @return Vec4 The tangent of the vertex.
+     */
+    Vec4 GetTangent() const;
 };
