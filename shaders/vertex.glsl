@@ -16,10 +16,11 @@ uniform mat4 proj;
 void main()
 {
     gl_Position = proj * view * model * pos;
-    vec3 T = normalize(model * tangent).xyz;
     vec3 N = normalize(mat4(transpose(inverse(mat3(model)))) * normal).xyz;
-    vec4 B = vec4(cross(T, N), 0);
-    frag_tbn = mat4(vec4(T, 0), B, vec4(N, 0), vec4(0.0, 0.0, 0.0, 1.0));
+    vec3 T = normalize(model * tangent).xyz;
+    vec3 B = normalize(cross(T, N));
+    vec3 T_perp = normalize(cross(N, B));
+    frag_tbn = mat4(vec4(T_perp, 0), vec4(B, 0), vec4(N, 0), vec4(0.0, 0.0, 0.0, 1.0));
 
     frag_position = model * pos;
     frag_texture_uv = texture_uv;

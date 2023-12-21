@@ -52,6 +52,9 @@ protected:
     static std::map<void*, Window*> context_window_finder;
 
     Vec2s window_size;
+    bool is_fullscreen = false;
+    bool is_resizable = false;
+
     std::string window_title = "";
     std::shared_ptr<AMaterial> default_material;
 
@@ -165,6 +168,26 @@ public:
      * @param p_title The title of the window.
      */
     Window(size_t p_width, size_t p_height, const std::string& p_title);
+
+    /**
+     * @brief Constructor for window.
+     * 
+     * @param p_size The size of the window.
+     * @param p_title The title of the window.
+     * @param p_fullscreen Should the window be fullscreen.
+     * @param p_resizable Should the window be resizable.
+     */
+    Window(const Vec2s& p_size, const std::string& p_title, bool p_fullscreen, bool p_resizable);
+
+    /**
+     * @brief Constructor for window.
+     * 
+     * @param p_size The size of the window.
+     * @param p_title The title of the window.
+     * @param p_fullscreen Should the window be fullscreen.
+     * @param p_resizable Should the window be resizable.
+     */
+    Window(size_t p_width, size_t p_height, const std::string& p_title, bool p_fullscreen, bool p_resizable);
 
     /**
      * @brief Constructor for window.

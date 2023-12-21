@@ -6,7 +6,7 @@
 #include "ce/event/window_event.h"
 #include "ce/game/game.h"
 #include "ce/materials/valued_material.h"
-#include "ce/graphics/texture/static_texture.h"
+#include "ce/texture/static_texture.h"
 #include "ce/component/camera.h"
 #include "ce/component/skybox.h"
 #include "glad/glad.h"
@@ -27,6 +27,21 @@ Window::Window(const Vec2s& p_size, const std::string& p_title)
 Window::Window(size_t p_width, size_t p_height, const std::string& p_title)
     : Window({p_width, p_height}, p_title)
 {}
+
+Window::Window(const Vec2s& p_size, const std::string& p_title, bool p_fullscreen, bool p_resizable)
+    : Window(p_size, p_title)
+{
+    is_fullscreen = p_fullscreen;
+    is_resizable = p_resizable;
+}
+    
+
+Window::Window(size_t p_width, size_t p_height, const std::string& p_title, bool p_fullscreen, bool p_resizable)
+    : Window({p_width, p_height}, p_title)
+{
+    is_fullscreen = p_fullscreen;
+    is_resizable = p_resizable;
+}
 
 Window::Window()
     : Window(640, 480, "")
@@ -88,7 +103,13 @@ void Window::SetClearColor(const Vec4& p_clear_color)
 void Window::InitWindow()
 {
     Graphics::InitGraphics();
-    glfw_context = Graphics::CreateGLFWContext(window_size[0], window_size[1], window_title.c_str(), nullptr);
+    if (window_size[0] == 0)
+        window_size = Graphics::GetScreenSize();
+    glfw_context = Graphics::CreateGLFWContext(
+        window_size[0], window_size[1], 
+        window_title.c_str(), 
+        is_fullscreen, is_resizable, nullptr);
+
     context_window_finder[glfw_context] = this;
     glfwMakeContextCurrent((GLFWwindow*)(glfw_context));
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -119,7 +140,9 @@ void Window::InitWindow()
 
     base_component = std::make_shared<Component>(this);
 
-    proj_matrix = Mat4::ProjPersp(1.75f, -1.75f, 1.0f, -1.0f, 2.5f, 1000.0f);
+    float aspect_ratio = (float)window_size[0] / (float)window_size[1];
+    proj_matrix = Mat4::ProjPersp(
+        1.0f * aspect_ratio, -1.0f * aspect_ratio, 1.0f, -1.0f, 2.5f, 1000.0f);
 
     skybox = new Skybox(this, {Resource::GetExeDirectory() + "/textures/skybox/default/right.jpg",
                                Resource::GetExeDirectory() + "/textures/skybox/default/left.jpg",

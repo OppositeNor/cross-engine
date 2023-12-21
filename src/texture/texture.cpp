@@ -1,4 +1,4 @@
-#include "ce/graphics/texture/texture.h"
+#include "ce/texture/texture.h"
 #include <glad/glad.h>
 
 ATexture::ATexture(const TextureConfig& p_config)

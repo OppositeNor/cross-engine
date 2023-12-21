@@ -1,5 +1,4 @@
 add_subdirectory(shader)
-add_subdirectory(texture)
 set(CE_SOURCES
     ${CE_SOURCES}
     ${PROJECT_SOURCE_DIR}/include/ce/graphics/window.h

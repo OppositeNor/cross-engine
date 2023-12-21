@@ -307,6 +307,15 @@ public:
         }
         return false;
     }
+
+    template <typename T1>
+    FORCE_INLINE operator Vector<T1, N>() const
+    {
+        Vector<T1, N> result;
+        for (size_t i = 0; i < N; ++i)
+            result[i] = static_cast<T1>(data[i]);
+        return result;
+    }
 };
 
 template <size_t N>

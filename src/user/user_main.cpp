@@ -13,7 +13,7 @@ extern "C" {
 #include "ce/managers/event_manager.h"
 #include "ce/game/game.h"
 #include "ce/materials/valued_material.h"
-#include "ce/graphics/texture/static_texture.h"
+#include "ce/texture/static_texture.h"
 #include <cmath>
 Vector<bool, 3> rotate;
 
@@ -71,7 +71,7 @@ public:
     }
 
     UserWindow(const std::string& p_title)
-        : Window(1260, 720, p_title)
+        : Window(Vec2s(1260, 720), p_title, false, false)
     {
         title = p_title;
     }
@@ -94,7 +94,7 @@ public:
         }
         else
         {
-            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/teapot_bezier0.norm"));
+            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/jet.obj"));
             mesh->Position() = Vec4(0, 0, 0, 1);
         }
         mesh->Scale() = Vec4(1.5, 1.5, 1.5);
@@ -102,8 +102,6 @@ public:
         auto mesh_material = std::make_shared<PBRMaterial>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.95f, 1.0f, this);
         mesh_material->Albedo() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() + 
             "/textures/monkey_albedo.png");
-        mesh_material->Normal() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
-            "/textures/monkey_normal.png");
         mesh_material->Roughness() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
             "/textures/monkey_roughness.png");
         mesh_material->AO() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
@@ -169,6 +167,7 @@ public:
         floor_material->AO() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
             "/textures/floor_ao.png");
         floor->SetMaterial(floor_material);
+        floor->SetVisible(false);
         light->AddChild(box);
         GetBaseComponent()->AddChild(light);
     }

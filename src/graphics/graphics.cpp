@@ -41,15 +41,29 @@ void Graphics::TerminateGraphics()
 
 void* Graphics::CreateGLFWContext(size_t p_width, size_t p_height, const std::string& p_title, void* p_shared)
 {
+    return CreateGLFWContext(p_width, p_height, p_title, false, false, p_shared);
+}
+
+void* Graphics::CreateGLFWContext(size_t p_width, size_t p_height, const std::string& p_title, bool p_fullscreen, bool p_resizable, void* p_shared)
+{
     if (!initialized)
         throw std::runtime_error("Graphics not initialized.");
-    GLFWwindow* result = glfwCreateWindow(p_width, p_height, p_title.c_str(), NULL, (GLFWwindow*)p_shared);
+    if (p_width == 0)
+    {
+        auto size = GetScreenSize();
+        p_width = size[0];
+        p_height = size[1];
+    }
+    GLFWwindow* result = glfwCreateWindow(p_width, p_height, p_title.c_str(), p_fullscreen ? glfwGetPrimaryMonitor() : NULL, (GLFWwindow*)p_shared);
     if (!result)
     {
         glfwTerminate();
         throw std::runtime_error("Failed to create GLFW window");
     }
+    if (!p_resizable)
+        glfwSetWindowAttrib(result, GLFW_RESIZABLE, GLFW_FALSE);
     return reinterpret_cast<void*>(result);
+
 }
 
 void Graphics::DestroyGLFWContex(void* p_context)
@@ -169,6 +183,15 @@ void Graphics::SetTexture(unsigned int p_texture_id, size_t p_width, size_t p_he
     if (p_mipmap)
         glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Vec2s Graphics::GetScreenSize()
+{
+    if (!initialized)
+        throw std::runtime_error("Graphics not initialized.");
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    return {(size_t)mode->width, (size_t)mode->height};
 }
 
 void Graphics::Update()

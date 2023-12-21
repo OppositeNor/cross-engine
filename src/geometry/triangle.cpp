@@ -76,7 +76,7 @@ float* Triangle::GetVertexArray(float* p_buff, size_t p_buff_size) const
     auto tangent = GetTangent();
     for (size_t i = 0; i < 3; ++i)
     {
-        vertices[i]->GetArray(p_buff + Vertex::ARRAY_SIZE * i, Vertex::ARRAY_SIZE, tangent);
+        vertices[i]->GetArray(p_buff + Vertex::ARRAY_SIZE * i, Vertex::ARRAY_SIZE);
     }
     return p_buff;
 }

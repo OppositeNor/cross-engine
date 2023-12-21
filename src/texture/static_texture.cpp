@@ -1,4 +1,4 @@
-#include "ce/graphics/texture/static_texture.h"
+#include "ce/texture/static_texture.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/shader/shader_program.h"
 

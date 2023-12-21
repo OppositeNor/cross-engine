@@ -2,7 +2,7 @@
 #include "ce/graphics/shader/shader_program.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/graphics.h"
-#include "ce/graphics/texture/static_texture.h"
+#include "ce/texture/static_texture.h"
 #include "ce/graphics/window.h"
 
 PBRMaterial::PBRMaterial(const Window* p_context)

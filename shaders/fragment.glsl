@@ -55,15 +55,15 @@ void main()
     albedo = scaler_albedo * texture(material.albedo, frag_texture_uv);
     normal = texture(material.normal, frag_texture_uv) * 2.0 - 1.0;
     normal.w = 0.0;
-    normal = frag_tbn * normal;
-    normal = normalize(normal);
+    normal = normalize(frag_tbn * normal);
     metallic = scaler_metallic * texture(material.metallic, frag_texture_uv).r;
     roughness = scaler_roughness * texture(material.roughness, frag_texture_uv).r;
     ao = texture(material.ao, frag_texture_uv).r;
 
 
-    vec4 temp_color = vec4(0.3) * ao * albedo;
+    vec4 temp_color;// = vec4(0.3) * ao * albedo;
     vec4 f0 = mix(vec4(0.04), albedo, metallic);
+    
     for (int i = 0; i < point_light_count; ++i)
     {
         vec4 to_light = normalize(point_light[i].position - frag_position);

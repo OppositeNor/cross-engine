@@ -1,5 +1,5 @@
 #pragma once
-#include "ce/graphics/texture/texture.h"
+#include "ce/texture/texture.h"
 
 class ShaderProgram;
 class Window;

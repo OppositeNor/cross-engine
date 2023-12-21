@@ -1,6 +1,7 @@
 #pragma once
 #include <mutex>
 #include "ce/defs.hpp"
+#include "ce/math/math.hpp"
 #include <vector>
 #include <mutex>
 
@@ -36,6 +37,22 @@ public:
      * @return void* The created window context.
      */
     static void* CreateGLFWContext(size_t p_width, size_t p_height, const std::string& p_title, void* p_shared);
+    
+    /**
+     * @brief Create glfw window context.
+     * 
+     * @param p_width The width of the window.
+     * @param p_height The height of the window.
+     * @param p_title The title of the window.
+     * @param p_fullscreen Is the window fullscreen.
+     * @param p_resizable Is the window resizable.
+     * @param p_shared The context that this context share resource with.
+     * 
+     * @throw std::runtime_error Failed to create GLFW window.
+     * @throw std::runtime_error Graphics not initialized.
+     * @return void* THe created window context.
+     */
+    static void* CreateGLFWContext(size_t p_width, size_t p_height, const std::string& p_title, bool p_fullscreen, bool p_resizable, void* p_shared);
 
     /**
      * @brief Destroy the window context.
@@ -87,6 +104,13 @@ public:
      * @param p_data The data of the texture.
      */
     static void SetTexture(unsigned int p_texture_id, size_t p_width, size_t p_height, size_t p_channels, const ubyte_t* p_data, bool p_mipmap);
+
+    /**
+     * @brief Get the size of the screen.
+     * 
+     * @return Vec2s The size of the screen.
+     */
+    static Vec2s GetScreenSize();
 
     /**
      * @brief Called every frame in the main thread.

@@ -2,7 +2,7 @@
 #include "ce/graphics/window.h"
 #include "ce/geometry/triangle.h"
 #include "ce/resource/resource.h"
-#include "ce/graphics/texture/texture.h"
+#include "ce/texture/texture.h"
 #include "ce/materials/material.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
