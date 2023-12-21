@@ -19,4 +19,10 @@ public:
      * 
      */
     virtual void SetUniform(size_t p_index) = 0;
+
+    /**
+     * @brief Draw the light.
+     * 
+     */
+    virtual void Draw() override;
 };

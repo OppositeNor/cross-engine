@@ -24,20 +24,20 @@ struct OnWindowFocusEvent : public AEvent
 struct OnWindowResizeEvent : public AEvent
 {
     Window* window;
-    Vec2s original;
-    Vec2s new_size;
+    Math::Vec2s original;
+    Math::Vec2s new_size;
 
-    OnWindowResizeEvent(Window* p_window, const Vec2s& p_original, const Vec2s& p_new_size);
+    OnWindowResizeEvent(Window* p_window, const Math::Vec2s& p_original, const Math::Vec2s& p_new_size);
     virtual ~OnWindowResizeEvent() override {}
 };
 
 struct OnWindowMove : public AEvent
 {
     Window* window;
-    Vec2s original;
-    Vec2s new_position;
+    Math::Vec2s original;
+    Math::Vec2s new_position;
 
-    OnWindowMove(Window* p_window, const Vec2s& p_original, const Vec2s& p_new_position);
+    OnWindowMove(Window* p_window, const Math::Vec2s& p_original, const Math::Vec2s& p_new_position);
     virtual ~OnWindowMove() override {}
 };
 

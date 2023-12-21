@@ -53,7 +53,7 @@ void ShaderProgram::SetUniform(const std::string& p_name, int p_int) const
     }
 }
 
-void ShaderProgram::SetUniform(const std::string& p_name, const Mat4& p_mat4) const
+void ShaderProgram::SetUniform(const std::string& p_name, const Math::Mat4& p_mat4) const
 {
     if (usable)
     {
@@ -64,7 +64,7 @@ void ShaderProgram::SetUniform(const std::string& p_name, const Mat4& p_mat4) co
     }
 }
 
-void ShaderProgram::SetUniform(const std::string& p_name, const Vec4& p_vec4) const
+void ShaderProgram::SetUniform(const std::string& p_name, const Math::Vec4& p_vec4) const
 {
     if (usable)
     {

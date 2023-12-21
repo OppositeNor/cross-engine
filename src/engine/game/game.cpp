@@ -42,7 +42,7 @@ void Game::Init(Window*&& p_window)
     }
 }
 
-void Game::Init(const Vec2s& p_size, const std::string& p_title)
+void Game::Init(const Math::Vec2s& p_size, const std::string& p_title)
 {
     Init(std::make_shared<Window>(p_size, p_title));
 }

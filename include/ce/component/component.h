@@ -14,17 +14,17 @@ private:
     using WPComponent = std::weak_ptr<Component>;
     Window* context = nullptr;
 
-    Vec4 position;
-    Vec4 rotation;
-    Vec4 scale;
+     Math::Vec4 position;
+     Math::Vec4 rotation;
+     Math::Vec4 scale;
     void SetSubspaceMatrixDirty();
 
-    mutable Mat4 subspace_matrix;
+    mutable Math::Mat4 subspace_matrix;
     mutable bool subspace_matrix_dirty = true;
     mutable std::mutex subspace_matrix_mutex;
     void SetChildrenSubspaceMatrixDirty();
 
-    mutable Mat4 subspace_matrix_inverse;
+    mutable Math::Mat4 subspace_matrix_inverse;
     mutable bool subspace_matrix_inverse_dirty = true;
     mutable std::mutex subspace_matrix_inverse_mutex;
     void SetChildrenSubspaceMatrixInverseDirty();
@@ -71,32 +71,32 @@ public:
     /**
      * @brief Get the position of the component.
      * 
-     * @return const Vec3& The position of the component.
+     * @return const Math::Vec3& The position of the component.
      */
-    FORCE_INLINE const Vec4& GetPosition() const { return position; }
+    FORCE_INLINE const Math::Vec4& GetPosition() const { return position; }
 
     /**
      * @brief Get the reference of the position of the component.
      * 
-     * @return Vec3& The reference of the position of the component.
+     * @return Math::Vec3& The reference of the position of the component.
      */
-    Vec4& Position();
+     Math::Vec4& Position();
 
     /**
      * @brief Get the rotation of the component. The rotation
      * is ordered as pitch, yaw, roll.
      * 
-     * @return const Vec3& The rotation of the component.
+     * @return const Math::Vec3& The rotation of the component.
      */
-    FORCE_INLINE Vec4 GetRotation() const { return rotation.Normalized(); }
+    FORCE_INLINE Math::Vec4 GetRotation() const { return rotation.Normalized(); }
 
     /**
      * @brief Get the rotation of the component. The rotation
      * is ordered as pitch, yaw, roll.
      * 
-     * @return Vec3& The rotation of the component.
+     * @return Math::Vec3& The rotation of the component.
      */
-    Vec4& Rotation();
+     Math::Vec4& Rotation();
 
     /**
      * @brief Set the rotation of the component in Euler angle.
@@ -104,7 +104,7 @@ public:
      * 
      * @param p_rotation The rotation of the component.
      */
-    void SetRotationEuler(const Vec4& p_rotation, EulerRotOrder p_order);
+    void SetRotationEuler(const Math::Vec4& p_rotation, EulerRotOrder p_order);
 
     /**
      * @brief Set the rotation of the component in Euler angle.
@@ -112,29 +112,29 @@ public:
      * 
      * @param p_rotation The rotation of the component.
      */
-    void SetRotationEuler(const Vec3& p_rotation, EulerRotOrder p_order);
+    void SetRotationEuler(const Math::Vec3& p_rotation, EulerRotOrder p_order);
 
     /**
      * @brief Get the rotation of the component in Euler angle.
      * The rotation is ordered as pitch, yaw, roll.
      * 
-     * @return const Vec3& The rotation of the component.
+     * @return const Math::Vec3& The rotation of the component.
      */
-    Vec4 GetRotationEuler() const;
+    Math::Vec4 GetRotationEuler() const;
 
     /**
      * @brief Get the scale of the component.
      * 
-     * @return const Vec3& The scale of the component.
+     * @return const Math::Vec3& The scale of the component.
      */
-    FORCE_INLINE const Vec4& GetScale() const { return scale; }
+    FORCE_INLINE const Math::Vec4& GetScale() const { return scale; }
 
     /**
      * @brief Get the scale of the component.
      * 
-     * @return Vec3& The scale of the component.
+     * @return Math::Vec3& The scale of the component.
      */
-    Vec4& Scale();
+    Math::Vec4& Scale();
 
     /**
      * @brief Move the component in the direction.
@@ -142,7 +142,7 @@ public:
      * @param p_direction The direction to move the component.
      * @param p_distance The distance to move the component.
      */
-    void Move(Vec4 p_direction, float p_distance);
+    void Move(Math::Vec4 p_direction, float p_distance);
 
     /**
      * @brief Rotate the component in the direction.
@@ -150,7 +150,7 @@ public:
      * @param p_direction The direction to rotate the component.
      * @param p_angle The angle to rotate the component.
      */
-    void Rotate(Vec4 p_direction, float p_angle);
+    void Rotate(Math::Vec4 p_direction, float p_angle);
 
     /**
      * @brief Scale the component in the direction.
@@ -158,9 +158,9 @@ public:
      * @param p_direction The direction to scale the component.
      * @param p_scale The scale to scale the component.
      */
-    void Scale(Vec4 p_direction, float p_scale);
+    void Scale(Math::Vec4 p_direction, float p_scale);
 
-    Vec4 GetDirection() const;
+    Math::Vec4 GetDirection() const;
 
     /**
      * @brief Remove a child from this component.
@@ -193,37 +193,37 @@ public:
     /**
      * @brief Get the subspace matrix of this component.
      * 
-     * @return const Mat4& The subspace matrix of this component.
+     * @return const Math::Mat4& The subspace matrix of this component.
      */
-    const Mat4& GetSubspaceMatrix() const;
+    const Math::Mat4& GetSubspaceMatrix() const;
 
     /**
      * @brief Get the inverse subspace matrix of this component.
      * 
-     * @return Mat4 The inverse subspace matrix of this component.
+     * @return Math::Mat4 The inverse subspace matrix of this component.
      */
-    const Mat4& GetSubspaceMatrixInverse() const;
+    const Math::Mat4& GetSubspaceMatrixInverse() const;
 
     /**
      * @brief Get the model matrix of this component.
      * 
-     * @return const Mat4& The model matrix of this component.
+     * @return const Math::Mat4& The model matrix of this component.
      */
-    const Mat4& GetModelMatrix();
+    const Math::Mat4& GetModelMatrix();
 
     /**
      * @brief Get the global position of this component.
      * 
-     * @return const Vec4& The global position of this component.
+     * @return const Math::Vec4& The global position of this component.
      */
-    Vec4 GetGlobalPosition() const;
+    Math::Vec4 GetGlobalPosition() const;
 
     /**
      * @brief Set the position of this component.
      * 
      * @param p_position The new position of this component.
      */
-    void SetGlobalPosition(const Vec4& p_position);
+    void SetGlobalPosition(const Math::Vec4& p_position);
 
     /**
      * @brief Get the context of this mesh.

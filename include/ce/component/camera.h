@@ -8,5 +8,5 @@ public:
 
     Camera(Window* p_context);
 
-    Mat4 GetViewMatrix() const;
+     Math::Mat4 GetViewMatrix() const;
 };

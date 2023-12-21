@@ -49,7 +49,7 @@ public:
      * @param p_size The size of the main window.
      * @param p_title The title of the main window.
      */
-    static void Init(const Vec2s& p_size, const std::string& p_title = "");
+    static void Init(const Math::Vec2s& p_size, const std::string& p_title = "");
 
     /**
      * @brief Initialize the game.

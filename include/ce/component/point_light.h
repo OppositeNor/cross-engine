@@ -6,7 +6,7 @@ class PointLight : public ALight
 public:
 
 protected:
-    Vec4 color;
+     Math::Vec4 color;
     float intensity;
 
 public:
@@ -25,21 +25,21 @@ public:
      * @param p_intensity The intensity of the light.
      * @param p_context The context of this light.
      */
-    PointLight(const Vec4& p_color, float p_intensity, Window* p_context);
+    PointLight(const Math::Vec4& p_color, float p_intensity, Window* p_context);
 
     /**
      * @brief Get the color of the light.
      * 
-     * @return const Vec4& The color of the light
+     * @return const Math::Vec4& The color of the light
      */
-    FORCE_INLINE const Vec4& GetColor() const noexcept { return color; }
+    FORCE_INLINE const Math::Vec4& GetColor() const noexcept { return color; }
 
     /**
      * @brief Get the color of the light.
      * 
-     * @return Vec4& The color of the light
+     * @return Math::Vec4& The color of the light
      */
-    FORCE_INLINE Vec4& Color() noexcept { return color; }
+    FORCE_INLINE Math::Vec4& Color() noexcept { return color; }
 
     /**
      * @brief Get the intensity of the light

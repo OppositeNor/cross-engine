@@ -4,10 +4,10 @@
 #include <sstream>
 
 PointLight::PointLight(Window* p_context)
-    : PointLight(Pos(), 20, p_context)
+    : PointLight(Math::Pos(), 20, p_context)
 {
 }
-PointLight::PointLight(const Vec4& p_color, float p_intensity, Window* p_context)
+PointLight::PointLight(const Math::Vec4& p_color, float p_intensity, Window* p_context)
     : ALight(p_context)
 {
     color = p_color;

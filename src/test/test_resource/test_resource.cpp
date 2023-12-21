@@ -39,11 +39,11 @@ void UnitTest::TestLoadFile3()
 void UnitTest::TestLoadTris0()
 {
     auto result = Resource::LoadTris(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
-    EXPECT_VALUES_EQUAL(result[0]->GetVertex(0)->GetPosition(), Vec4f(0.000000, 2.250000, 1.500000, 1.0));
-    EXPECT_STRINGS_EQUAL((std::string)result[256]->GetVertex(2)->GetPosition(), (std::string)Vec4f(1.39922, 2.35664, 0, 1));
-    EXPECT_STRINGS_EQUAL((std::string)result[3487]->GetVertex(0)->GetPosition(), (std::string)Vec4f(0.000000, 2.550000, -0.200000, 1.0));
-    EXPECT_STRINGS_EQUAL((std::string)result[3487]->GetVertex(1)->GetPosition(), (std::string)Vec4f(0.056000, 2.550000, -0.200000, 1.0));
-    EXPECT_STRINGS_EQUAL((std::string)result[3487]->GetVertex(2)->GetPosition(), (std::string)Vec4f(0.000000, 2.533333, -0.222222, 1.0));
+    EXPECT_VALUES_EQUAL(result[0]->GetVertex(0)->GetPosition(), Math::Vec4f(0.000000, 2.250000, 1.500000, 1.0));
+    EXPECT_STRINGS_EQUAL((std::string)result[256]->GetVertex(2)->GetPosition(), (std::string)Math::Vec4f(1.39922, 2.35664, 0, 1));
+    EXPECT_STRINGS_EQUAL((std::string)result[3487]->GetVertex(0)->GetPosition(), (std::string)Math::Vec4f(0.000000, 2.550000, -0.200000, 1.0));
+    EXPECT_STRINGS_EQUAL((std::string)result[3487]->GetVertex(1)->GetPosition(), (std::string)Math::Vec4f(0.056000, 2.550000, -0.200000, 1.0));
+    EXPECT_STRINGS_EQUAL((std::string)result[3487]->GetVertex(2)->GetPosition(), (std::string)Math::Vec4f(0.000000, 2.533333, -0.222222, 1.0));
     for (auto i : result)
         delete i;
 }

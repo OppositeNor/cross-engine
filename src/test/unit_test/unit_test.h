@@ -208,12 +208,12 @@ private:
     }
 
     /** Math Test Start **/
-    /** Vector Test Start**/
+    /**Math::Vector Test Start**/
     static void TestVector0();
     static void TestVector1();
     static void TestVector2();
     static void TestVector3();
-    /** Vector Test End **/
+    /**Math::Vector Test End **/
     /** Matrix Test Start **/
     static void TestMatrix0();
     static void TestMatrix1();

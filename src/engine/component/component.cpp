@@ -81,7 +81,7 @@ void Component::AddChild(WPComponent p_child)
     child->parent = shared_from_this();
 }
 
-const Mat4& Component::GetSubspaceMatrix() const
+const Math::Mat4& Component::GetSubspaceMatrix() const
 {
     if (subspace_matrix_dirty)
     {
@@ -92,7 +92,7 @@ const Mat4& Component::GetSubspaceMatrix() const
     return subspace_matrix;
 }
 
-const Mat4& Component::GetSubspaceMatrixInverse() const
+const Math::Mat4& Component::GetSubspaceMatrixInverse() const
 {
     if (subspace_matrix_inverse_dirty)
     {
@@ -103,37 +103,37 @@ const Mat4& Component::GetSubspaceMatrixInverse() const
     return subspace_matrix_inverse;
 }
 
-Vec4& Component::Position()
+Math::Vec4& Component::Position()
 {
     SetSubspaceMatrixDirty();
     return position;
 }
 
-Vec4& Component::Rotation()
+Math::Vec4& Component::Rotation()
 {
     rotation.Normalize();
     SetSubspaceMatrixDirty();
     return rotation;
 }
 
-Vec4& Component::Scale()
+Math::Vec4& Component::Scale()
 {
     SetSubspaceMatrixDirty();
     return scale;
 }
 
-void Component::Move(Vec4 p_direction, float p_distance)
+void Component::Move(Math::Vec4 p_direction, float p_distance)
 {
     p_direction.Normalize();
     Position() += p_direction * p_distance;
 }
 
-void Component::Rotate(Vec4 p_direction, float p_angle)
+void Component::Rotate(Math::Vec4 p_direction, float p_angle)
 {
     p_direction.Normalize();
     float half_angle = p_angle / 2.0f;
     float sin_half_angle = std::sin(half_angle);
-    Vec4 quat;
+    Math::Vec4 quat;
     quat[3] = std::cos(half_angle);
     quat[0] = p_direction[0] * sin_half_angle;
     quat[1] = p_direction[1] * sin_half_angle;
@@ -141,15 +141,15 @@ void Component::Rotate(Vec4 p_direction, float p_angle)
     Rotation() = QuatProd(quat, rotation);
 }
 
-void Component::Scale(Vec4 p_direction, float p_scale)
+void Component::Scale(Math::Vec4 p_direction, float p_scale)
 {
     p_direction.Normalize();
     Scale() *= p_direction * p_scale;
 }
 
-Vec4 Component::GetDirection() const
+Math::Vec4 Component::GetDirection() const
 {
-    return (Mat4::RotQuaternion(rotation) * Vec4(0, 0, 1, 0)).Normalized();
+    return (Math::RotQuaternion(rotation) *Math::Vec4(0, 0, 1, 0)).Normalized();
 }
 
 void Component::SetSubspaceMatrixDirty()
@@ -214,32 +214,32 @@ void Component::SetChildrenSubspaceMatrixInverseDirty()
 void Component::UpdateSubspaceMatrix() const
 {
     if (parent.expired())
-        subspace_matrix = Mat4::Model(position, rotation, scale);
+        subspace_matrix = Math::Model(position, rotation, scale);
     else
-        subspace_matrix = parent.lock()->GetSubspaceMatrix() * Mat4::Model(position, rotation, scale);
+        subspace_matrix = parent.lock()->GetSubspaceMatrix() * Math::Model(position, rotation, scale);
     subspace_matrix_dirty = false;
 }
 
 void Component::UpdateSubspaceMatrixInverse() const
 {
     if (parent.expired())
-        subspace_matrix_inverse = Mat4::ModelInv(position, rotation, scale);
+        subspace_matrix_inverse = Math::ModelInv(position, rotation, scale);
     else
-        subspace_matrix_inverse = Mat4::ModelInv(position, rotation, scale) * parent.lock()->GetSubspaceMatrixInverse();
+        subspace_matrix_inverse = Math::ModelInv(position, rotation, scale) * parent.lock()->GetSubspaceMatrixInverse();
     subspace_matrix_inverse_dirty = false;
 }
 
-const Mat4& Component::GetModelMatrix()
+const Math::Mat4& Component::GetModelMatrix()
 {
     return GetSubspaceMatrix();
 }
 
-Vec4 Component::GetGlobalPosition() const
+Math::Vec4 Component::GetGlobalPosition() const
 {
-    return GetSubspaceMatrix() * Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    return GetSubspaceMatrix() *Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void Component::SetGlobalPosition(const Vec4& p_position)
+void Component::SetGlobalPosition(const Math::Vec4& p_position)
 {
     if (parent.expired())
         Position() = p_position;
@@ -247,21 +247,21 @@ void Component::SetGlobalPosition(const Vec4& p_position)
         Position() = parent.lock()->GetSubspaceMatrixInverse() * p_position;
 }
 
-void Component::SetRotationEuler(const Vec4& p_rotation, EulerRotOrder p_order)
+void Component::SetRotationEuler(const Math::Vec4& p_rotation, EulerRotOrder p_order)
 {
     Rotation() = EulerToQuat(p_rotation, p_order);
 }
 
-void Component::SetRotationEuler(const Vec3& p_rotation, EulerRotOrder p_order)
+void Component::SetRotationEuler(const Math::Vec3& p_rotation, EulerRotOrder p_order)
 {
     Rotation() = EulerToQuat(p_rotation, p_order);
 }
 
-Vec4 Component::GetRotationEuler() const
+Math::Vec4 Component::GetRotationEuler() const
 {
     //todo
     throw std::runtime_error("Not implemented");
-    return Vec4();
+    return Math::Vec4();
 }
 
 void Component::Draw()

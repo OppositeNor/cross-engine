@@ -105,7 +105,7 @@ void Skybox::SetSkyboxTexture(const std::vector<std::string>& p_faces)
 Skybox::Skybox(Window* p_context, const std::vector<std::string>& p_faces)
     : Component(p_context)
 {
-    Scale() = Vec4(10.0f, 10.0f, 10.0f);
+    Scale() =Math::Vec4(10.0f, 10.0f, 10.0f);
     if (p_context->GetThreadId() != std::this_thread::get_id())
         throw std::runtime_error("Skybox must be created on the main thread.");
     glGenBuffers(1, &vbo);

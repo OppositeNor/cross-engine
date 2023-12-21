@@ -76,17 +76,17 @@ public:
      * @brief Set the uniform for the shader.
      * 
      * @param p_name The name of the uniform.
-     * @param p_mat4 The Mat4f to set the uniform to.
+     * @param p_mat4 The Math::Mat4f to set the uniform to.
      */
-    void SetUniform(const std::string& p_name, const Mat4& p_mat4) const;
+    void SetUniform(const std::string& p_name, const Math::Mat4& p_mat4) const;
 
     /**
      * @brief Set the uniform for the shader.
      * 
      * @param p_name The name of the uniform.
-     * @param p_vec4 The Vec4f to set the uniform to.
+     * @param p_vec4 TheMath::Vec4f to set the uniform to.
      */
-    void SetUniform(const std::string& p_name, const Vec4& p_vec4) const;
+    void SetUniform(const std::string& p_name, const Math::Vec4& p_vec4) const;
 
     /**
      * @brief Set the sampler uniform for the shader.

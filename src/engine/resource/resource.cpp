@@ -172,7 +172,7 @@ void Resource::LoadTris(const std::string& p_path, std::vector<Triangle*>& p_res
     MovePToNextSpace(&p, data.get() + file_size);
     ++p;
     
-    Vec4f temp = Pos();
+    Math::Vec4f temp = Math::Pos();
     p_result.reserve(tri_count);
     for (size_t i = 0; i < tri_count; ++i)
     {
@@ -260,8 +260,8 @@ void Resource::LoadTrisWithNormal(const std::string& p_path, std::vector<Triangl
     MovePToNextSpace(&p, data.get() + file_size);
     ++p;
     
-    Vec4f temp_pos = Pos();
-    Vec4f temp_normal = Vec4f();
+    Math::Vec4f temp_pos = Math::Pos();
+    Math::Vec4f temp_normal =Math::Vec4f();
     p_result.reserve(tri_count);
     for (size_t i = 0; i < tri_count; ++i)
     {
@@ -325,9 +325,9 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
     auto data = std::unique_ptr<byte_t[]>(LoadFile(p_path.c_str(), file_size));
     byte_t* p = data.get();
 
-    std::vector<Vec4> positions;
-    std::vector<Vec4> normals;
-    std::vector<Vec2> tex_coords;
+    std::vector<Math::Vec4> positions;
+    std::vector<Math::Vec4> normals;
+    std::vector<Math::Vec2> tex_coords;
     byte_t line_buff[1024];
     byte_t word_buff[256];
     size_t counter = 0;
@@ -337,7 +337,7 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
         if (pp[0] == 'v' && pp[1] == ' ')
         {
             pp += 2;
-            Vec4 pos = Pos();
+            Math::Vec4 pos = Math::Pos();
             for (size_t i = 0; i < 3; ++i)
             {
                 GetWord(pp, word_buff, 256);
@@ -350,7 +350,7 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
         else if (pp[0] == 'v' && pp[1] == 't')
         {
             pp += 3;
-            Vec2 tex_coord;
+            Math::Vec2 tex_coord;
             for (size_t i = 0; i < 2; ++i)
             {
                 GetWord(pp, word_buff, 256);
@@ -363,7 +363,7 @@ void Resource::LoadObjModel(const std::string& p_path, std::vector<Triangle*>& p
         else if (pp[0] == 'v' && pp[1] == 'n')
         {
             pp += 3;
-            Vec4 norm = Vec4();
+            Math::Vec4 norm =Math::Vec4();
             for (size_t i = 0; i < 3; ++i)
             {
                 GetWord(pp, word_buff, 256);

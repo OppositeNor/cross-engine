@@ -108,9 +108,9 @@ public:
     /**
      * @brief Get the size of the screen.
      * 
-     * @return Vec2s The size of the screen.
+     * @return Math::Vec2s The size of the screen.
      */
-    static Vec2s GetScreenSize();
+    static Math::Vec2s GetScreenSize();
 
     /**
      * @brief Called every frame in the main thread.

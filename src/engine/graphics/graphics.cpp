@@ -185,7 +185,7 @@ void Graphics::SetTexture(unsigned int p_texture_id, size_t p_width, size_t p_he
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Vec2s Graphics::GetScreenSize()
+Math::Vec2s Graphics::GetScreenSize()
 {
     if (!initialized)
         throw std::runtime_error("Graphics not initialized.");

@@ -58,7 +58,7 @@ public:
      * @param p_v2 The position of the second vertex.
      * @param p_v3 The position of the third vertex.
      */
-    Triangle(const Vec4& p_v1, const Vec4& p_v2, const Vec4& p_v3);
+    Triangle(const Math::Vec4& p_v1, const Math::Vec4& p_v2, const Math::Vec4& p_v3);
     virtual ~Triangle();
 
     /**
@@ -91,14 +91,14 @@ public:
     /**
      * @brief Get the normal of the triangle.
      * 
-     * @return Vec4 The normal of the triangle.
+     * @return Math::Vec4 The normal of the triangle.
      */
-    FORCE_INLINE Vec4 GetNormal() const { return vertices[0]->GetInducedNormal(); }
+    FORCE_INLINE Math::Vec4 GetNormal() const { return vertices[0]->GetInducedNormal(); }
 
     /**
      * @brief Get the tangent of a vertex.
      * 
-     * @return Vec4 The tangent of the vertex.
+     * @return Math::Vec4 The tangent of the vertex.
      */
-    Vec4 GetTangent() const;
+    Math::Vec4 GetTangent() const;
 };

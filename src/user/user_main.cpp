@@ -15,7 +15,7 @@ extern "C" {
 #include "ce/materials/valued_material.h"
 #include "ce/texture/static_texture.h"
 #include <cmath>
-Vector<bool, 3> rotate;
+Math::Vector<bool, 3> rotate;
 
 class UserCamera : public Camera
 {
@@ -32,27 +32,27 @@ public:
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "backward") == InputManager::InputState::Pressed)
             Position() += -1 * GetDirection() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "left") == InputManager::InputState::Pressed)
-            Position() += Vec4::Cross(Vec4::UP, GetDirection()).Normalized() * p_delta * 10;
+            Position() +=Math::Cross(Math::UP<4>, GetDirection()).Normalized() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "right") == InputManager::InputState::Pressed)
-            Position() += Vec4::Cross(GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
+            Position() +=Math::Cross(GetDirection(), Math::UP<4>).Normalized() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "up") == InputManager::InputState::Pressed)
-            Position() += Vec4::UP * p_delta * 10;
+            Position() +=Math::UP<4> * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "down") == InputManager::InputState::Pressed)
-            Position() += -1 * Vec4::UP * p_delta * 10;
+            Position() += -1 *Math::UP<4> * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_x") == InputManager::InputState::Pressed)
         {
-            if (GetDirection().Dot(Vec4::UP) < 0.99)
-                Rotate(Vec4::Cross(GetDirection(), Vec4::UP), p_delta * 1.5);
+            if (GetDirection().Dot(Math::UP<4>) < 0.99)
+                Rotate(Math::Cross(GetDirection(), Math::UP<4>), p_delta * 1.5);
         }
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-x") == InputManager::InputState::Pressed)
         {
-            if (GetDirection().Dot(Vec4::UP) > -0.99)
-                Rotate(Vec4::Cross(Vec4::UP, GetDirection()), p_delta * 1.5);
+            if (GetDirection().Dot(Math::UP<4>) > -0.99)
+                Rotate(Math::Cross(Math::UP<4>, GetDirection()), p_delta * 1.5);
         }
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_y") == InputManager::InputState::Pressed)
-            Rotate(Vec4::UP, p_delta * 1.5);
+            Rotate(Math::UP<4>, p_delta * 1.5);
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-y") == InputManager::InputState::Pressed)
-            Rotate(-1 * Vec4::UP, p_delta * 1.5);
+            Rotate(-1 *Math::UP<4>, p_delta * 1.5);
     }
 };
 
@@ -71,7 +71,7 @@ public:
     }
 
     UserWindow(const std::string& p_title)
-        : Window(Vec2s(1260, 720), p_title, false, false)
+        : Window(Math::Vec2s(1260, 720), p_title, false, false)
     {
         title = p_title;
     }
@@ -90,16 +90,16 @@ public:
         if (title == "")
         {
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/monkey.obj"));
-            mesh->Position() = Vec4(0, 1.5, 0, 1);
+            mesh->Position() =Math::Vec4(0, 1.5, 0, 1);
         }
         else
         {
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/jet.obj"));
-            mesh->Position() = Vec4(0, 0, 0, 1);
+            mesh->Position() =Math::Vec4(0, 0, 0, 1);
         }
-        mesh->Scale() = Vec4(1.5, 1.5, 1.5);
+        mesh->Scale() =Math::Vec4(1.5, 1.5, 1.5);
         GetBaseComponent()->AddChild(mesh);
-        auto mesh_material = std::make_shared<PBRMaterial>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.95f, 1.0f, this);
+        auto mesh_material = std::make_shared<PBRMaterial>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.95f, 1.0f, this);
         mesh_material->Albedo() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() + 
             "/textures/monkey_albedo.png");
         mesh_material->Roughness() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
@@ -110,54 +110,54 @@ public:
         mesh->SetMaterial(mesh_material);
         mesh->SetVisible(true);
         
-        light = std::make_shared<PointLight>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);
-        light->Position() = Vec4(0.0f, 10.0f, 10.0f, 1.0f);
+        light = std::make_shared<PointLight>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);
+        light->Position() =Math::Vec4(0.0f, 10.0f, 10.0f, 1.0f);
         auto camera = std::make_shared<UserCamera>(this);
-        camera->Position() = Vec4(0, 0, -20, 1.0f);
+        camera->Position() =Math::Vec4(0, 0, -20, 1.0f);
         GetBaseComponent()->AddChild(camera);
         SetUsingCamera(camera);
 
         box = std::make_shared<DynamicMesh>(this);
         // Box mesh clock wise
         //front face
-        box->Triangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, 1, 1, 1)));
-        box->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(-1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, -1, 1, 1), Math::Vec4(-1, -1, 1, 1), Math::Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, 1, 1, 1), Math::Vec4(-1, -1, 1, 1), Math::Vec4(-1, 1, 1, 1)));
         //back face
-        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, -1, 1), Vec4(1, 1, -1, 1)));
-        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(1, -1, -1, 1), Math::Vec4(1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(1, 1, -1, 1), Math::Vec4(-1, 1, -1, 1)));
         //left face
-        box->Triangles().push_back(new Triangle(Vec4(-1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, 1, 1)));
-        box->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, 1, 1), Math::Vec4(-1, -1, -1, 1), Math::Vec4(-1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, 1, 1, 1), Math::Vec4(-1, -1, -1, 1), Math::Vec4(-1, 1, -1, 1)));
         //right face
-        box->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, 1, 1, 1)));
-        box->Triangles().push_back(new Triangle(Vec4(1, -1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, -1, -1, 1), Math::Vec4(1, -1, 1, 1), Math::Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, -1, -1, 1), Math::Vec4(1, 1, 1, 1), Math::Vec4(1, 1, -1, 1)));
         //top face
-        box->Triangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, 1, 1)));
-        box->Triangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, 1, 1, 1), Math::Vec4(-1, 1, -1, 1), Math::Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, 1, 1, 1), Math::Vec4(-1, 1, -1, 1), Math::Vec4(1, 1, -1, 1)));
         //bottom face
-        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
-        box->Triangles().push_back(new Triangle(Vec4(-1, -1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(-1, -1, 1, 1), Math::Vec4(1, -1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(1, -1, 1, 1), Math::Vec4(1, -1, -1, 1)));
 
 
         light->AddChild(box);
 
         floor = std::make_shared<DynamicMesh>(this);
         
-        floor->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(-1, 0, 1, 1), Vec4(1, 0, 1, 1)));
-        floor->Triangles().push_back(new Triangle(Vec4(-1, 0, -1, 1), Vec4(1, 0, 1, 1), Vec4(1, 0, -1, 1)));
-        floor->Triangles()[0]->GetVertex(0)->UV() = Vec2(0, 10);
-        floor->Triangles()[0]->GetVertex(1)->UV() = Vec2(0, 0);
-        floor->Triangles()[0]->GetVertex(2)->UV() = Vec2(10, 0);
-        floor->Triangles()[1]->GetVertex(0)->UV() = Vec2(0, 10);
-        floor->Triangles()[1]->GetVertex(1)->UV() = Vec2(10, 0);
-        floor->Triangles()[1]->GetVertex(2)->UV() = Vec2(10, 10);
+        floor->Triangles().push_back(new Triangle(Math::Vec4(-1, 0, -1, 1), Math::Vec4(-1, 0, 1, 1), Math::Vec4(1, 0, 1, 1)));
+        floor->Triangles().push_back(new Triangle(Math::Vec4(-1, 0, -1, 1), Math::Vec4(1, 0, 1, 1), Math::Vec4(1, 0, -1, 1)));
+        floor->Triangles()[0]->GetVertex(0)->UV() =Math::Vec2(0, 10);
+        floor->Triangles()[0]->GetVertex(1)->UV() =Math::Vec2(0, 0);
+        floor->Triangles()[0]->GetVertex(2)->UV() =Math::Vec2(10, 0);
+        floor->Triangles()[1]->GetVertex(0)->UV() =Math::Vec2(0, 10);
+        floor->Triangles()[1]->GetVertex(1)->UV() =Math::Vec2(10, 0);
+        floor->Triangles()[1]->GetVertex(2)->UV() =Math::Vec2(10, 10);
         GetBaseComponent()->AddChild(floor);
 
-        box->Scale() = Vec4(1.5f, 1.5f, 1.5f);
-        floor->Position() = Vec4(0, 0, 0, 1.0f);
-        floor->Scale() = Vec4(50, 1, 50);
+        box->Scale() =Math::Vec4(1.5f, 1.5f, 1.5f);
+        floor->Position() =Math::Vec4(0, 0, 0, 1.0f);
+        floor->Scale() =Math::Vec4(50, 1, 50);
 
-        auto floor_material = std::make_shared<PBRMaterial>(Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.8f, 1.0f, this);
+        auto floor_material = std::make_shared<PBRMaterial>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.8f, 1.0f, this);
         floor_material->Albedo() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() + 
             "/textures/floor_albedo.png");
         floor_material->Normal() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
@@ -175,17 +175,17 @@ public:
     virtual void Process(float p_delta) override
     {        
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_left") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, GetUsingCamera()->GetDirection()).Normalize() * p_delta * 10;
+            light->Position() +=Math::Cross(Math::UP<4>, GetUsingCamera()->GetDirection()).Normalize() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_right") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP).Normalize() * p_delta * 10;
+            light->Position() +=Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>).Normalize() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_up") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::UP * p_delta * 10;
+            light->Position() +=Math::UP<4> * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_down") == InputManager::InputState::Pressed)
-            light->Position() -= Vec4::UP * p_delta * 10;
+            light->Position() -=Math::UP<4> * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_forward") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP)).Normalize() * p_delta * 10;
+            light->Position() +=Math::Cross(Math::UP<4>, Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>)).Normalize() * p_delta * 10;
         if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::Cross(GetUsingCamera()->GetDirection(), Vec4::UP), Vec4::UP).Normalize() * p_delta * 10;
+            light->Position() +=Math::Cross(Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>), Math::UP<4>).Normalize() * p_delta * 10;
         if (window2 != nullptr && window2->IsClosed())
         {
             window2.reset();
@@ -197,8 +197,7 @@ public:
     virtual void Draw() override
     {
         Window::Draw();
-        light->SetUniform(0);
-        GetShaderProgram()->SetUniform("point_light_count", 1);
+        GetShaderProgram()->SetUniform("point_light_count", GetPointLightCount());
     }
 
     virtual void OnClose() override

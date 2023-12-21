@@ -18,7 +18,7 @@
 
 std::map<void*, Window*> Window::context_window_finder;
 
-Window::Window(const Vec2s& p_size, const std::string& p_title)
+Window::Window(const Math::Vec2s& p_size, const std::string& p_title)
     : window_title(p_title), window_size(p_size)
 {
     window_thread = std::unique_ptr<std::thread>(new std::thread(&Window::ThreadFunc, this));
@@ -28,7 +28,7 @@ Window::Window(size_t p_width, size_t p_height, const std::string& p_title)
     : Window({p_width, p_height}, p_title)
 {}
 
-Window::Window(const Vec2s& p_size, const std::string& p_title, bool p_fullscreen, bool p_resizable)
+Window::Window(const Math::Vec2s& p_size, const std::string& p_title, bool p_fullscreen, bool p_resizable)
     : Window(p_size, p_title)
 {
     is_fullscreen = p_fullscreen;
@@ -92,7 +92,7 @@ void Window::FreeThreadResource(unsigned int p_id) const
     }
 }
 
-void Window::SetClearColor(const Vec4& p_clear_color)
+void Window::SetClearColor(const Math::Vec4& p_clear_color)
 {
     if (std::this_thread::get_id() != window_thread->get_id())
         throw std::runtime_error("Cannot set clear color from another thread.");
@@ -127,7 +127,7 @@ void Window::InitWindow()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
-    SetClearColor(Vec4(0.2f, 0.2f, 0.2f, 1.0f));
+    SetClearColor(Math::Vec4(0.2f, 0.2f, 0.2f, 1.0f));
 
     glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));
     
@@ -141,7 +141,7 @@ void Window::InitWindow()
     base_component = std::make_shared<Component>(this);
 
     float aspect_ratio = (float)window_size[0] / (float)window_size[1];
-    proj_matrix = Mat4::ProjPersp(
+    proj_matrix = Math::ProjPersp(
         1.0f * aspect_ratio, -1.0f * aspect_ratio, 1.0f, -1.0f, 2.5f, 1000.0f);
 
     skybox = new Skybox(this, {Resource::GetExeDirectory() + "/textures/skybox/default/right.jpg",
@@ -166,7 +166,7 @@ void Window::InitWindow()
     default_material = std::shared_ptr<AMaterial>(new PBRMaterial(this));
 }
 
-void Window::UpdateWindowSize(const Vec2s& p_new_window_size)
+void Window::UpdateWindowSize(const Math::Vec2s& p_new_window_size)
 {
     glViewport(0, 0, p_new_window_size[0], p_new_window_size[1]);
     
@@ -195,6 +195,7 @@ void Window::ThreadFunc()
                 throw std::runtime_error("OpenGL error: " + std::to_string(error));
             Game::GetInstance()->UpdateInput(this);
             UpdateThreadResource();
+            point_light_count = 0;
             delta = glfwGetTime() - frame_start;
         }
         OnClose();
@@ -236,7 +237,7 @@ void Window::Draw()
         skybox_shader_program->Use();
         skybox_shader_program->SetUniform("proj", proj_matrix);
         if (using_camera == nullptr)
-            skybox_shader_program->SetUniform("view", Mat4());
+            skybox_shader_program->SetUniform("view", Math::Mat4());
         else
             skybox_shader_program->SetUniform("view", using_camera->GetViewMatrix());
         skybox->Draw();
@@ -245,8 +246,8 @@ void Window::Draw()
     shader_program->SetUniform("proj", proj_matrix);
     if (using_camera == nullptr)
     {
-        shader_program->SetUniform("view", Mat4());
-        shader_program->SetUniform("camera_position", Vec4());
+        shader_program->SetUniform("view", Math::Mat4());
+        shader_program->SetUniform("camera_position", Math::Vec4());
     }
     else
     {

@@ -46,12 +46,14 @@ private:
     std::shared_ptr<ATexture> default_metallic;
     std::shared_ptr<ATexture> default_roughness;
     std::shared_ptr<ATexture> default_ao;
+    
+    mutable size_t point_light_count = 0;
 
 protected:
     void* glfw_context = nullptr;
     static std::map<void*, Window*> context_window_finder;
 
-    Vec2s window_size;
+    Math::Vec2s window_size;
     bool is_fullscreen = false;
     bool is_resizable = false;
 
@@ -70,18 +72,18 @@ protected:
 
     unsigned int vao = 0;
     
-    Vec4 clear_color = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    Math::Vec4 clear_color =Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
     void ThreadFunc();
     static void WindowResized(void* p_glfw_context, int p_width, int p_height);
     static void WindowFocused(void* p_glfw_context, int p_focused);
     void InitWindow();
-    void UpdateWindowSize(const Vec2s& p_new_window_size);
+    void UpdateWindowSize(const Math::Vec2s& p_new_window_size);
 
     std::shared_ptr<Component> base_component;
     std::shared_ptr<Camera> using_camera;
 
-    Mat4 proj_matrix;
+     Math::Mat4 proj_matrix;
 
 private:
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
@@ -148,9 +150,9 @@ public:
     /**
      * @brief Get the projection matrix.
      * 
-     * @return const Mat4& The projection matrix.
+     * @return const Math::Mat4& The projection matrix.
      */
-    FORCE_INLINE const Mat4& GetProjMatrix() const { return proj_matrix; }
+    FORCE_INLINE const Math::Mat4& GetProjMatrix() const { return proj_matrix; }
 
     /**
      * @brief Constructor for window.
@@ -158,7 +160,7 @@ public:
      * @param p_size The size of the window.
      * @param p_title The title of the window.
      */
-    Window(const Vec2s& p_size, const std::string& p_title);
+    Window(const Math::Vec2s& p_size, const std::string& p_title);
 
     /**
      * @brief Constructor for window.
@@ -177,7 +179,7 @@ public:
      * @param p_fullscreen Should the window be fullscreen.
      * @param p_resizable Should the window be resizable.
      */
-    Window(const Vec2s& p_size, const std::string& p_title, bool p_fullscreen, bool p_resizable);
+    Window(const Math::Vec2s& p_size, const std::string& p_title, bool p_fullscreen, bool p_resizable);
 
     /**
      * @brief Constructor for window.
@@ -236,23 +238,23 @@ public:
     /**
      * @brief Get the window's clear color.
      * 
-     * @return Vec4 The clear color.
+     * @return Math::Vec4 The clear color.
      */
-    FORCE_INLINE Vec4 GetClearColor() const noexcept { return clear_color; }
+    FORCE_INLINE Math::Vec4 GetClearColor() const noexcept { return clear_color; }
 
     /**
      * @brief Set the window's clear color.
      * 
      * @param p_clear_color The clear color.
      */
-    void SetClearColor(const Vec4& p_clear_color);
+    void SetClearColor(const Math::Vec4& p_clear_color);
 
     /**
      * @brief Get the size of the window.
      * 
-     * @return const Vec2s& The size of the window.
+     * @return const Math::Vec2s& The size of the window.
      */
-    const Vec2s& GetWindowSize() const noexcept { return window_size; }
+    const Math::Vec2s& GetWindowSize() const noexcept { return window_size; }
 
     /**
      * @brief Is the window closed.
@@ -344,4 +346,18 @@ public:
      * @param p_event The event that was dispatched.
      */
     virtual void OnEvent(std::shared_ptr<AEvent> p_event) override {}
+
+    /**
+     * @brief Get the next index for a point light.
+     * 
+     * @return int The next index for a point light. 
+     */
+    FORCE_INLINE int GetPointLightNextIndex() const noexcept { return point_light_count++; }
+
+    /**
+     * @brief Get the number of point lights.
+     * 
+     * @return int The number of point lights.
+     */
+    FORCE_INLINE int GetPointLightCount() const noexcept { return point_light_count; }
 };

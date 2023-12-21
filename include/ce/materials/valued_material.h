@@ -4,7 +4,7 @@
 
 class PBRMaterial : public AMaterial
 {
-    Vec4 scaler_albedo;
+    Math::Vec4 scaler_albedo;
     float scaler_roughness;
     float scaler_metallic;
 
@@ -22,7 +22,7 @@ public:
      * @param p_metallic Metallic.
      * @param p_ao Ambient occlusion.
      */
-    PBRMaterial(const Vec4& p_albedo, float p_roughness, float p_metallic, const Window* p_context);
+    PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic, const Window* p_context);
 
     /**
      * @brief Get the albedo of the material.
@@ -125,16 +125,16 @@ public:
     /**
      * @brief Get the albedo of the material.
      * 
-     * @return const Vec4& The albedo of the material.
+     * @return const Math::Vec4& The albedo of the material.
      */
-    FORCE_INLINE const Vec4& GetAlbedoScaler() const noexcept { return scaler_albedo; }
+    FORCE_INLINE const Math::Vec4& GetAlbedoScaler() const noexcept { return scaler_albedo; }
 
     /**
      * @brief Get the albedo of the material.
      * 
-     * @return Vec4& The albedo of the material.
+     * @return Math::Vec4& The albedo of the material.
      */
-    FORCE_INLINE Vec4& AlbedoScaler() noexcept { return scaler_albedo; }
+    FORCE_INLINE Math::Vec4& AlbedoScaler() noexcept { return scaler_albedo; }
 
     /**
      * @brief Get the roughness of the material.

@@ -5,8 +5,8 @@ Camera::Camera(Window* p_context)
 {
 }
 
-Mat4 Camera::GetViewMatrix() const
+Math::Mat4 Camera::GetViewMatrix() const
 {
     //todo
-    return Mat4::View(GetPosition(), GetRotation());
+    return Math::View(GetPosition(), GetRotation());
 }

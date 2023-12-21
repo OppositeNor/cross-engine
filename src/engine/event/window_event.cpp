@@ -11,12 +11,12 @@ OnWindowFocusEvent::OnWindowFocusEvent(Window* p_window, bool p_is_focused)
 {
 }
 
-OnWindowResizeEvent::OnWindowResizeEvent(Window* p_window, const Vec2s& p_original, const Vec2s& p_new_size)
+OnWindowResizeEvent::OnWindowResizeEvent(Window* p_window, const Math::Vec2s& p_original, const Math::Vec2s& p_new_size)
     : AEvent(EventType::OnWindowResize), window(p_window), original(p_original), new_size(p_new_size)
 {
 }
 
-OnWindowMove::OnWindowMove(Window* p_window, const Vec2s& p_original, const Vec2s& p_new_position)
+OnWindowMove::OnWindowMove(Window* p_window, const Math::Vec2s& p_original, const Math::Vec2s& p_new_position)
     : AEvent(EventType::OnWindowMove), window(p_window), original(p_original), new_position(p_new_position)
 {
 }

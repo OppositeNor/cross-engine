@@ -10,9 +10,9 @@
  */
 class Vertex
 {
-    Vec4 position;
-    Vec4 normal;
-    Vec2 uv;
+    Math::Vec4 position;
+    Math::Vec4 normal;
+    Math::Vec2 uv;
 
 
     Vertex* prev = nullptr;
@@ -36,14 +36,14 @@ public:
      * @param p_normal The normal of the vertex.
      * @param p_uv The uv of the vertex.
      */
-    Vertex(const Vec4& p_position, const Vec4& p_normal, const Vec2& p_uv);
+    Vertex(const Math::Vec4& p_position, const Math::Vec4& p_normal, const Math::Vec2& p_uv);
 
     /**
      * @brief Constructor for Vertex.
      * 
      * @param p_position The position of the vertex.
      */
-    Vertex(const Vec4& p_position);
+    Vertex(const Math::Vec4& p_position);
 
     /**
      * @brief Copy constructor for Vertex.
@@ -62,66 +62,66 @@ public:
     /**
      * @brief Get the normal of the vertex.
      * 
-     * @return const Vec4& The normal of the vertex.
+     * @return const Math::Vec4& The normal of the vertex.
      */
-    FORCE_INLINE const Vec4& GetNormal() const noexcept { return normal; }
+    FORCE_INLINE const Math::Vec4& GetNormal() const noexcept { return normal; }
 
     /**
      * @brief Get the normal of the vertex.
      * 
-     * @return Vec4& The normal of the vertex.
+     * @return Math::Vec4& The normal of the vertex.
      */
-    FORCE_INLINE Vec4& Normal() noexcept { return normal; }
+    FORCE_INLINE Math::Vec4& Normal() noexcept { return normal; }
 
     /**
      * @brief Set the normal of the vertex.
      * 
      * @param p_normal The normal of the vertex.
      */
-    FORCE_INLINE void SetNormal(const Vec4& p_normal) noexcept { normal = p_normal; }
+    FORCE_INLINE void SetNormal(const Math::Vec4& p_normal) noexcept { normal = p_normal; }
 
     virtual ~Vertex();
 
     /**
      * @brief Get the position of the vertex.
      * 
-     * @return const Vec4& The position of the vertex.
+     * @return const Math::Vec4& The position of the vertex.
      */
-    FORCE_INLINE const Vec4& GetPosition() const noexcept { return position; }
+    FORCE_INLINE const Math::Vec4& GetPosition() const noexcept { return position; }
 
     /**
      * @brief Get the position of the vertex.
      * 
-     * @return const Vec4& The position of the vertex.
+     * @return const Math::Vec4& The position of the vertex.
      */
-    FORCE_INLINE Vec4& Position() noexcept { return position; }
+    FORCE_INLINE Math::Vec4& Position() noexcept { return position; }
     /**
      * @brief Set the position of the vertex.
      * 
      * @param p_position The position of the vertex.
      */
-    FORCE_INLINE void SetPosition(const Vec4& p_position) noexcept { position = p_position; }
+    FORCE_INLINE void SetPosition(const Math::Vec4& p_position) noexcept { position = p_position; }
 
     /**
      * @brief Get the uv of the vertex.
      * 
-     * @return const Vec2& The uv of the vertex.
+     * @return const Math::Vec2& The uv of the vertex.
      */
-    FORCE_INLINE const Vec2& GetUV() const noexcept { return uv; }
+    FORCE_INLINE const Math::Vec2& GetUV() const noexcept { return uv; }
 
     /**
      * @brief Get the uv of the vertex.
      * 
-     * @return Vec2& The uv of the vertex.
+     * @return Math::Vec2& The uv of the vertex.
      */
-    FORCE_INLINE Vec2& UV() noexcept { return uv; }
+    FORCE_INLINE Math::Vec2& UV() noexcept { return uv; }
 
     /**
      * @brief Set the uv of the vertex.
      * 
      * @param p_uv The uv of the vertex.
      */
-    FORCE_INLINE void SetUV(const Vec2& p_uv) noexcept { uv = p_uv; }
+    FORCE_INLINE void SetUV(const Math::Vec2& p_uv) noexcept { uv = p_uv; }
 
     /**
      * @brief Get the previous vertex.
@@ -215,14 +215,14 @@ public:
      * @param p_tangent The tangent of the vertex.
      * @return float* The pointer to the buffer.
      */
-    float* GetArray(float* p_buff, size_t p_buff_size, const Vec4& p_tangent) const;
+    float* GetArray(float* p_buff, size_t p_buff_size, const Math::Vec4& p_tangent) const;
 
     /**
      * @brief Get the normal based on the previous and the next vertex.
      * 
-     * @return Vec4 The normal.
+     * @return Math::Vec4 The normal.
      */
-    Vec4 GetInducedNormal() const;
+    Math::Vec4 GetInducedNormal() const;
 
     /**
      * @brief Is the vertex a ear.
@@ -235,7 +235,7 @@ public:
     /**
      * @brief Get the tangent of the vertex.
      * @todo Buffer the tangent.
-     * @return Vec4 The tangent of the vertex.
+     * @return Math::Vec4 The tangent of the vertex.
      */
-    Vec4 GetTangent() const;
+    Math::Vec4 GetTangent() const;
 };

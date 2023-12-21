@@ -33,7 +33,7 @@ Triangle::Triangle(Triangle&& p_other) noexcept
     p_other.vertices[2] = nullptr;
 }
 
-Triangle::Triangle(const Vec4& p_v1, const Vec4& p_v2, const Vec4& p_v3)
+Triangle::Triangle(const Math::Vec4& p_v1, const Math::Vec4& p_v2, const Math::Vec4& p_v3)
 {
     vertices[0] = new Vertex(p_v1);
     vertices[1] = new Vertex(p_v2);
@@ -81,14 +81,14 @@ float* Triangle::GetVertexArray(float* p_buff, size_t p_buff_size) const
     return p_buff;
 }
 
-Vec4 Triangle::GetTangent() const
+Math::Vec4 Triangle::GetTangent() const
 {
-    Vec4 delta_pos1 = vertices[1]->GetPosition() - vertices[0]->GetPosition();
-    Vec4 delta_pos2 = vertices[2]->GetPosition() - vertices[0]->GetPosition();
-    Vec2 delta_uv1 = vertices[1]->GetUV() - vertices[0]->GetUV();
-    Vec2 delta_uv2 = vertices[2]->GetUV() - vertices[0]->GetUV();
+    Math::Vec4 delta_pos1 = vertices[1]->GetPosition() - vertices[0]->GetPosition();
+    Math::Vec4 delta_pos2 = vertices[2]->GetPosition() - vertices[0]->GetPosition();
+    Math::Vec2 delta_uv1 = vertices[1]->GetUV() - vertices[0]->GetUV();
+    Math::Vec2 delta_uv2 = vertices[2]->GetUV() - vertices[0]->GetUV();
     float temp = 1.0f / (delta_uv1[0] * delta_uv2[1] - delta_uv2[0] * delta_uv1[1]);
-    Vec4 result;
+    Math::Vec4 result;
     result[0] = temp * (delta_uv2[1] * delta_pos1[0] - delta_uv1[1] * delta_pos2[0]);
     result[1] = temp * (delta_uv2[1] * delta_pos1[1] - delta_uv1[1] * delta_pos2[1]);
     result[2] = temp * (delta_uv2[1] * delta_pos1[2] - delta_uv1[1] * delta_pos2[2]);

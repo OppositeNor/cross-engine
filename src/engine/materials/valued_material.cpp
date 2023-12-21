@@ -6,11 +6,11 @@
 #include "ce/graphics/window.h"
 
 PBRMaterial::PBRMaterial(const Window* p_context)
-    : PBRMaterial(Vec4(1.0, 1.0, 1.0, 1.0), 0.2, 0.5, p_context)
+    : PBRMaterial(Math::Vec4(1.0, 1.0, 1.0, 1.0), 0.2, 0.5, p_context)
 {
 }
 
-PBRMaterial::PBRMaterial(const Vec4& p_albedo, float p_roughness, float p_metallic, const Window* p_context)
+PBRMaterial::PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic, const Window* p_context)
     : scaler_albedo(p_albedo), scaler_roughness(p_roughness), scaler_metallic(p_metallic), AMaterial(p_context)
 {
     albedo = p_context->GetDefaultAlbedo();
