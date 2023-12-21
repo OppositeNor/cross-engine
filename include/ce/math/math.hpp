@@ -909,4 +909,7 @@ namespace Math
 
     template<int N>
     inline const Vec<N> BACK = Vec<N>(0, 0, -1);
+    
+    template<typename T, int N>
+    inline static const Vector<T, N> ZERO = Vector<T, N>();
 }

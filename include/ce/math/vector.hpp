@@ -20,7 +20,6 @@ namespace Math
         T data[N];
     public:
         inline static constexpr size_t DIMENSION = N;
-        inline static const Vector<T, N> ZERO = Vector<T, N>();
 
         Vector() noexcept
         {
@@ -195,7 +194,7 @@ namespace Math
          */
         FORCE_INLINE Vector<T, N>& Normalize()
         {
-            if (*this == ZERO)
+            if (*this == Vector<T, N>())
                 return *this;
             auto length = Length();
             for (size_t i = 0; i < N; ++i)

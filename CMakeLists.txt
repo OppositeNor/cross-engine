@@ -1,12 +1,22 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Cross C CXX)
+project(Cross LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/exe/${CMAKE_SYSTEM_NAME})
 file (MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+
+if (MSVC)
+    if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
+        set (EXE_PATH "${EXECUTABLE_OUTPUT_PATH}/Debug")
+    else()
+        set (EXE_PATH "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}")
+    endif()
+else()
+    set (EXE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 option(WIN32_STARTUP "WIN32_STARTUP" OFF)

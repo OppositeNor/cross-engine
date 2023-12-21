@@ -79,16 +79,6 @@ namespace Math
             return data[p_i];
         }
 
-        FORCE_INLINE T& operator [](size_t p_i, size_t p_j)
-        {
-            return data2[p_i][p_j];
-        }
-
-        FORCE_INLINE const T& operator [](size_t p_i, size_t p_j) const
-        {
-            return data2[p_i][p_j];
-        }
-
         Matrix<T, N, M> Transpose() const
         {
             Matrix<T, N, M> result;

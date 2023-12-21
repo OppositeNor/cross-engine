@@ -1,6 +1,7 @@
 #pragma once
 #include "ce/math/math.hpp"
 #include <vector>
+#include <mutex>
 
 class Window;
 

@@ -102,7 +102,7 @@ byte_t* Resource::LoadFile(const std::string& p_path)
 {
     std::ifstream file(p_path.c_str(), std::ios::binary);
     if (!file.is_open())
-        throw std::runtime_error("Failed to open file");
+        throw std::runtime_error("Failed to open file: \"" + p_path + "\".");
     file.seekg(0, std::ios::end);
     size_t size = file.tellg();
     file.seekg(0, std::ios::beg);
@@ -116,7 +116,7 @@ byte_t* Resource::LoadFile(const std::string& p_path, size_t& p_size)
 {
     std::ifstream file(p_path.c_str(), std::ios::binary);
     if (!file.is_open())
-        throw std::runtime_error("Failed to open file");
+        throw std::runtime_error("Failed to open file: \"" + p_path + "\".");
     file.seekg(0, std::ios::end);
     p_size = file.tellg();
     file.seekg(0, std::ios::beg);
@@ -130,7 +130,7 @@ byte_t* Resource::LoadFile(const std::string& p_path, byte_t* p_buffer, size_t p
 {
     std::ifstream file(p_path.c_str(), std::ios::binary);
     if (!file.is_open())
-        throw std::runtime_error("Failed to open file");
+        throw std::runtime_error("Failed to open file: \"" + p_path + "\".");
     file.seekg(0, std::ios::end);
     size_t size = file.tellg();
     file.seekg(0, std::ios::beg);
@@ -147,7 +147,7 @@ byte_t* Resource::LoadFile(const std::string& p_path, byte_t* p_buffer, size_t p
 {
     std::ifstream file(p_path.c_str(), std::ios::binary);
     if (!file.is_open())
-        throw std::runtime_error("Failed to open file");
+        throw std::runtime_error("Failed to open file: \"" + p_path + "\".");
     file.seekg(0, std::ios::end);
     size_t size = file.tellg();
     file.seekg(0, std::ios::beg);
