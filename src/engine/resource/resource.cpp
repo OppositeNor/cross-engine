@@ -240,12 +240,32 @@ ubyte_t* Resource::LoadTextureImage(const std::string& p_path, ubyte_t* p_buffer
     if (result.get() == nullptr)
         throw std::runtime_error("Failed to load image at path: " + p_path + ".");
     
+    size_t image_size = p_width * p_height * p_channels;
+
     if (p_buffer == nullptr)
-        p_buffer = new ubyte_t[p_width * p_height * p_channels];
-    else if (p_buffer_size < p_width * p_height * p_channels)
+        p_buffer = new ubyte_t[image_size];
+    else if (p_buffer_size < image_size)
         throw std::out_of_range("The buffer size is too small.");
     
-    memcpy(p_buffer, result.get(), p_width * p_height * p_channels);
+    memcpy(p_buffer, result.get(), image_size * sizeof(ubyte_t));
+    return p_buffer;
+}
+
+float* LoadHDRImage(const std::string& p_path, float* p_buffer, size_t p_buffer_size,
+        size_t& p_width, size_t& p_height, size_t& p_channels)
+{
+    auto result = std::unique_ptr<float[], std::function<decltype(stbi_image_free)>>(
+            stbi_loadf(p_path.c_str(), (int*)&p_width, (int*)&p_height, (int*)&p_channels, 0), stbi_image_free);
+    if (result.get() == nullptr)
+        throw std::runtime_error("Failed to load image at path: " + p_path + ".");
+    
+    size_t image_size = p_width * p_height * p_channels;
+    if (p_buffer == nullptr)
+        p_buffer = new float[image_size];
+    else if (p_buffer_size < image_size)
+        throw std::out_of_range("The buffer size is too small.");
+    
+    memcpy(p_buffer, result.get(), image_size * sizeof(float));
     return p_buffer;
 }
 

@@ -8,6 +8,7 @@ set(CE_SOURCES
     ${PROJECT_SOURCE_DIR}/include/ce/component/camera.h
     ${PROJECT_SOURCE_DIR}/include/ce/component/light.h
     ${PROJECT_SOURCE_DIR}/include/ce/component/point_light.h
+    ${PROJECT_SOURCE_DIR}/include/ce/component/parallel_light.h
     ${PROJECT_SOURCE_DIR}/include/ce/component/skybox.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/component.cpp
@@ -17,5 +18,6 @@ set(CE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/light.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/point_light.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/parallel_light.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/skybox.cpp
     PARENT_SCOPE)

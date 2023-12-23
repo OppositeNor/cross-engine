@@ -15,5 +15,4 @@ ALight::~ALight()
 void ALight::Draw()
 {
     Component::Draw();
-    SetUniform(GetContext()->GetPointLightNextIndex());
 }

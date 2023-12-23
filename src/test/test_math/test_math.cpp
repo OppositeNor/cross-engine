@@ -71,17 +71,17 @@ void UnitTest::TestMatrix0()
 {
      Math::Mat4 mat;
     EXPECT_VALUES_EQUAL(mat[0][0], 1.0f);
-    EXPECT_VALUES_EQUAL((mat[0, 1]), 0.0f);
-    EXPECT_VALUES_EQUAL((mat[0, 2]), 0.0f);
+    EXPECT_VALUES_EQUAL((mat[0][1]), 0.0f);
+    EXPECT_VALUES_EQUAL((mat[0][2]), 0.0f);
     EXPECT_VALUES_EQUAL(mat[0][3], 0.0f);
-    EXPECT_VALUES_EQUAL((mat[1, 0]), 0.0f);
+    EXPECT_VALUES_EQUAL((mat[1][0]), 0.0f);
     EXPECT_VALUES_EQUAL(mat[1][1], 1.0f);
-    EXPECT_VALUES_EQUAL((mat[1, 2]), 0.0f);
+    EXPECT_VALUES_EQUAL((mat[1][2]), 0.0f);
     EXPECT_VALUES_EQUAL(mat[1][3], 0.0f);
-    EXPECT_VALUES_EQUAL((mat[2, 0]), 0.0f);
+    EXPECT_VALUES_EQUAL((mat[2][0]), 0.0f);
     EXPECT_VALUES_EQUAL(mat[2][1], 0.0f);
     EXPECT_VALUES_EQUAL(mat[2][2], 1.0f);
-    EXPECT_VALUES_EQUAL((mat[2, 3]), 0.0f);
+    EXPECT_VALUES_EQUAL((mat[2][3]), 0.0f);
 
     EXPECT_VALUES_EQUAL(mat, 
         (Math::Mat4({1.0f, 0.0f, 0.0f, 0.0f,

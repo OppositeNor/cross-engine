@@ -79,6 +79,7 @@ void Component::AddChild(WPComponent p_child)
         child->parent.lock()->RemoveChild(child.get());
     child->SetSubspaceMatrixDirty();
     child->parent = shared_from_this();
+    child->Ready();
 }
 
 const Math::Mat4& Component::GetSubspaceMatrix() const

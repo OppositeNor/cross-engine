@@ -12,7 +12,6 @@
 #include "ce/event/i_event_listener.h"
 #include <memory>
 
-class InputManager;
 class AMaterial;
 class Component;
 class Camera;
@@ -48,6 +47,7 @@ private:
     std::shared_ptr<ATexture> default_ao;
     
     mutable size_t point_light_count = 0;
+    mutable size_t parallel_light_count = 0;
 
 protected:
     void* glfw_context = nullptr;
@@ -355,9 +355,23 @@ public:
     FORCE_INLINE int GetPointLightNextIndex() const noexcept { return point_light_count++; }
 
     /**
+     * @brief Get the next index for a parallel light.
+     * 
+     * @return int The next index for a parallel light.
+     */
+    FORCE_INLINE int GetParallelLightNextIndex() const noexcept { return parallel_light_count++; }
+
+    /**
      * @brief Get the number of point lights.
      * 
      * @return int The number of point lights.
      */
     FORCE_INLINE int GetPointLightCount() const noexcept { return point_light_count; }
+
+    /**
+     * @brief Get the number of parallel lights.
+     * 
+     * @return int The number of parallel lights.
+     */
+    FORCE_INLINE int GetParallelLightCount() const noexcept { return parallel_light_count; }
 };

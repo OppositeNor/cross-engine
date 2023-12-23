@@ -12,6 +12,16 @@ struct PointLight {
 uniform PointLight point_light[MAX_POINT_LIGHTS];
 uniform int point_light_count;
 
+#define MAX_PARALLEL_LIGHTS 4
+struct ParallelLight {
+    vec4 direction;
+    vec4 color;
+    float intensity;
+};
+
+uniform ParallelLight parallel_light[MAX_PARALLEL_LIGHTS];
+uniform int parallel_light_count;
+
 uniform vec4 camera_position;
 
 in vec4 frag_position;
@@ -42,12 +52,14 @@ uniform Material material;
 
 const float PI = 3.141592653589793;
 
+vec4 ShadeColor(vec4 p_to_camera, vec4 p_to_light, float p_d_to_light, vec4 p_normal, vec4 p_color, float p_intensity);
 
 float TRGGX(vec4 p_normal, vec4 p_half);
 float SchlickGGX(vec4 p_normal, vec4 p_vec, float p_k);
 float GSmith(vec4 p_normal, vec4 p_to_camera, vec4 p_to_light);
 vec4 FresnelSchlick(vec4 p_half, vec4 p_to_camera, vec4 f0);
 
+vec4 f0;
 void main()
 {
     vec4 to_camera = normalize(camera_position - frag_position);
@@ -61,28 +73,38 @@ void main()
     ao = texture(material.ao, frag_texture_uv).r;
 
 
-    vec4 temp_color;// = vec4(0.3) * ao * albedo;
-    vec4 f0 = mix(vec4(0.04), albedo, metallic);
-    
+    f0 = mix(vec4(0.04), albedo, metallic);
+    vec4 temp_color;
     for (int i = 0; i < point_light_count; ++i)
     {
         vec4 to_light = normalize(point_light[i].position - frag_position);
-        vec4 half = normalize(to_camera + to_light);
-
-        vec4 F = FresnelSchlick(half, to_camera, f0);
-
-        // specular
-        vec4 specular = TRGGX(normal, half) * F * GSmith(normal, to_camera, to_light) 
-            / (4.0 * max(dot(normal, to_camera), 0.0) * max(dot(normal, to_light), 0.0) + 0.001);
-        vec4 kD = (vec4(1.0) - F) * (1 - metallic);
-
-        float d_to_light = length(point_light[i].position - frag_position);
-        vec4 radiance = point_light[i].color * point_light[i].intensity / (d_to_light * d_to_light);
-        temp_color += (kD * albedo / PI + specular) * radiance * max(dot(normal, to_light), 0.0);
+        temp_color += ShadeColor(to_camera, to_light, length(point_light[i].position - frag_position), 
+            normal, point_light[i].color, point_light[i].intensity);
     }
+    for (int i = 0; i < parallel_light_count; ++i)
+    {
+        temp_color += ShadeColor(to_camera, normalize(-1 * parallel_light[i].direction), 1, normal, 
+            parallel_light[i].color, parallel_light[i].intensity);
+    }
+    temp_color *= ao;
+    temp_color += vec4(0.04, 0.04, 0.06, 1.0);
 
     temp_color.w = 1.0;
     FragColor = temp_color;
+}
+
+vec4 ShadeColor(vec4 p_to_camera, vec4 p_to_light, float p_d_to_light, vec4 p_normal, vec4 p_color, float p_intensity)
+{
+    vec4 half = normalize(p_to_camera + p_to_light);
+
+    vec4 F = FresnelSchlick(half, p_to_camera, f0);
+
+    vec4 specular = TRGGX(p_normal, half) * F * GSmith(p_normal, p_to_camera, p_to_light) 
+        / (4.0 * max(dot(p_normal, p_to_camera), 0.0) * max(dot(p_normal, p_to_light), 0.0) + 0.001);
+    vec4 kD = (vec4(1.0) - F) * (1 - metallic);
+
+    vec4 radiance = p_color * p_intensity / (p_d_to_light * p_d_to_light);
+    return (kD * albedo / PI + specular) * radiance * max(dot(p_normal, p_to_light), 0.0);
 }
 
 float TRGGX(vec4 p_normal, vec4 p_half)

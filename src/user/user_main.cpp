@@ -14,6 +14,7 @@ extern "C" {
 #include "ce/game/game.h"
 #include "ce/materials/valued_material.h"
 #include "ce/texture/static_texture.h"
+#include "ce/component/parallel_light.h"
 #include <cmath>
 Math::Vector<bool, 3> rotate;
 
@@ -63,6 +64,7 @@ class UserWindow : public Window
     std::shared_ptr<DynamicMesh> box;
     std::shared_ptr<DynamicMesh> floor;
     std::shared_ptr<PointLight> light;
+    std::shared_ptr<ParallelLight> parallel_light;
     std::string title;
 
     
@@ -112,6 +114,10 @@ public:
         
         light = std::make_shared<PointLight>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);
         light->Position() =Math::Vec4(0.0f, 10.0f, 10.0f, 1.0f);
+
+        parallel_light = std::make_shared<ParallelLight>(Math::Vec4(1.0f, -1.0f, 1.0f), Math::Vec4(1, 1, 1, 1), 10, this);
+
+        
         auto camera = std::make_shared<UserCamera>(this);
         camera->Position() =Math::Vec4(0, 0, -20, 1.0f);
         GetBaseComponent()->AddChild(camera);
@@ -170,6 +176,7 @@ public:
         floor->SetVisible(false);
         light->AddChild(box);
         GetBaseComponent()->AddChild(light);
+        GetBaseComponent()->AddChild(parallel_light);
     }
 
     virtual void Process(float p_delta) override
@@ -197,7 +204,6 @@ public:
     virtual void Draw() override
     {
         Window::Draw();
-        GetShaderProgram()->SetUniform("point_light_count", GetPointLightCount());
     }
 
     virtual void OnClose() override

@@ -178,6 +178,7 @@ void Window::ThreadFunc()
     try {
         InitWindow();
         Ready();
+        base_component->Ready();
         float frame_start;
         float delta = 0.01;
         while (!glfwWindowShouldClose((GLFWwindow*)glfw_context) && !should_close)
@@ -196,6 +197,7 @@ void Window::ThreadFunc()
             Game::GetInstance()->UpdateInput(this);
             UpdateThreadResource();
             point_light_count = 0;
+            parallel_light_count = 0;
             delta = glfwGetTime() - frame_start;
         }
         OnClose();
@@ -257,4 +259,6 @@ void Window::Draw()
     if (skybox != nullptr)
         shader_program->SetSamplerCubeUniform("skybox", skybox->GetTextureCube());
     base_component->Draw();
+    GetShaderProgram()->SetUniform("point_light_count", GetPointLightCount());
+    GetShaderProgram()->SetUniform("parallel_light_count", GetParallelLightCount());
 }

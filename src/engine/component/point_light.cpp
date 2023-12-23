@@ -23,3 +23,9 @@ void PointLight::SetUniform(size_t p_index)
     GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".color", color);
     GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".intensity", intensity);
 }
+
+void PointLight::Draw()
+{
+    ALight::Draw();
+    SetUniform(GetContext()->GetPointLightNextIndex());
+}

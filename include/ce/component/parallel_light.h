@@ -1,31 +1,29 @@
 #pragma once
 #include "ce/component/light.h"
 
-class PointLight : public ALight
+class Window;
+class ParallelLight : public ALight
 {
-public:
-
-protected:
-     Math::Vec4 color;
+    Math::Vec4 direction;
+    Math::Vec4 color;
     float intensity;
-
 public:
+    ParallelLight(Window* p_context);
+    ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, float p_intensity, Window* p_context);
+    
+    /**
+     * @brief Get the direction of the light.
+     * 
+     * @return const Math::Vec4& The direction of the light.
+     */
+    FORCE_INLINE const Math::Vec4& GetDirection() const noexcept { return direction; }
 
     /**
-     * @brief Constructor for PointLight.
+     * @brief Get the direction of the light.
      * 
-     * @param p_context 
+     * @return Math::Vec4& The direction of the light.
      */
-    PointLight(Window* p_context);
-
-    /**
-     * @brief Constructor for PointLight.
-     * 
-     * @param p_color The color of the light.
-     * @param p_intensity The intensity of the light.
-     * @param p_context The context of this light.
-     */
-    PointLight(const Math::Vec4& p_color, float p_intensity, Window* p_context);
+    FORCE_INLINE Math::Vec4& Direction() noexcept { return direction; }
 
     /**
      * @brief Get the color of the light.
@@ -55,12 +53,14 @@ public:
      */
     FORCE_INLINE float& Intensity() noexcept { return intensity; }
 
+    virtual ~ParallelLight();
+
     /**
      * @brief Get the name of the uniform variable.
      * 
      * @return std::string The name of the uniform variable.
      */
-    virtual std::string UniformName() const override { return "point_light"; }
+    virtual std::string UniformName() const override { return "parallel_light"; }
 
     /**
      * @brief Set the uniform of the light's data.
@@ -73,4 +73,5 @@ public:
      * 
      */
     virtual void Draw() override;
+
 };

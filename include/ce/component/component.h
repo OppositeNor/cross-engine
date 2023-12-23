@@ -229,6 +229,13 @@ public:
     /**
      * @brief Get the context of this mesh.
      * 
+     * @return Window* The context of this mesh.
+     */
+    Window* GetContext() { return context; }
+
+    /**
+     * @brief Get the context of this mesh.
+     * 
      * @return const Window* The context of this mesh.
      */
     const Window* GetContext() const { return context; }
