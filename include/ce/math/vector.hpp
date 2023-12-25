@@ -119,7 +119,7 @@ namespace Math
          * @brief Dot product of this vector and another vector.
          * 
          * @param p_other The other vector.
-         * @return decltype(std::declval<T>() * std::declval<T>()) The result of the dot product.s
+         * @return decltype(std::declval<T>() * std::declval<T>()) The result of the dot product.
          */
         template<typename T1>
         FORCE_INLINE auto Dot(const Vector<T1, N>& p_other) const
@@ -197,6 +197,8 @@ namespace Math
             if (*this == Vector<T, N>())
                 return *this;
             auto length = Length();
+            if (length == 0)
+                return *this = Vector<T, N>();
             for (size_t i = 0; i < N; ++i)
                 data[i] /= length;
             return *this;

@@ -6,7 +6,8 @@ enum class EventType
     OnWindowFocus,
     OnWindowResize,
     OnWindowMove,
-    OnKey
+    OnKey,
+    OnMouseMove
 };
 
 class AEvent

@@ -1,6 +1,7 @@
 #include "ce/managers/event_manager.h"
 #include "ce/event/i_event_listener.h"
 #include <future>
+#include <iostream>
 
 void EventManager::AddEventListener(std::weak_ptr<IEventListener> p_event_listener)
 {

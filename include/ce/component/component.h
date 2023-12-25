@@ -148,10 +148,18 @@ public:
     /**
      * @brief Rotate the component in the direction.
      * 
-     * @param p_direction The direction to rotate the component.
+     * @param p_axis The axis to rotate the component.
      * @param p_angle The angle to rotate the component.
      */
-    void Rotate(Math::Vec4 p_direction, float p_angle);
+    void Rotate(Math::Vec4 p_axis, float p_angle);
+
+    /**
+     * @brief Set the rotation of the component in the direction.
+     * 
+     * @param p_axis The axis to rotate the component.
+     * @param p_angle The angle to rotate the component.
+     */
+    void SetRotate(Math::Vec4 p_axis, float p_angle);
 
     /**
      * @brief Scale the component in the direction.
@@ -254,6 +262,27 @@ public:
      * @param p_visible The visibility of the component.
      */
     FORCE_INLINE void SetVisible(bool p_visible) { visible = p_visible; }
+
+    /**
+     * @brief Get the front direction of the component.
+     * 
+     * @return Math::Vec4 The front direction of the component.
+     */
+    FORCE_INLINE Math::Vec4 GetFront() const { return Math::RotQuaternion(rotation) * Math::FRONT<4>; }
+
+    /**
+     * @brief Get the right direction of the component.
+     * 
+     * @return Math::Vec4 The right direction of the component.
+     */
+    Math::Vec4 GetUp() const { return Math::RotQuaternion(rotation) * Math::UP<4>; }
+
+    /**
+     * @brief Get the right direction of the component.
+     * 
+     * @return Math::Vec4 The right direction of the component.
+     */
+    Math::Vec4 GetRight() const { return Math::RotQuaternion(rotation) * Math::RIGHT<4>; };
 
     /**
      * @brief Draw the component.

@@ -15,16 +15,20 @@ extern "C" {
 #include "ce/materials/valued_material.h"
 #include "ce/texture/static_texture.h"
 #include "ce/component/parallel_light.h"
+#include "ce/event/window_event.h"
 #include <cmath>
 Math::Vector<bool, 3> rotate;
 
-class UserCamera : public Camera
+class UserCamera : public Camera, public IEventListener
 {
 public:
     UserCamera(Window* p_context)
         : Camera(p_context)
     {}
 
+
+    Math::Vector<double, 2> new_pos;
+    Math::Vector<double, 2> last_pos;
     virtual void Process(float p_delta) override
     {
         auto context = GetContext();
@@ -43,7 +47,7 @@ public:
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_x") == InputManager::InputState::Pressed)
         {
             if (GetDirection().Dot(Math::UP<4>) < 0.99)
-                Rotate(Math::Cross(GetDirection(), Math::UP<4>), p_delta * 1.5);
+                Rotate(GetRight(), p_delta * 1.5);
         }
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-x") == InputManager::InputState::Pressed)
         {
@@ -54,6 +58,24 @@ public:
             Rotate(Math::UP<4>, p_delta * 1.5);
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-y") == InputManager::InputState::Pressed)
             Rotate(-1 *Math::UP<4>, p_delta * 1.5);
+        auto delta = new_pos - last_pos;
+        last_pos = new_pos;
+        Rotate(Math::UP<4>, -delta[0] * 0.001);
+        Rotate(GetRight(), -delta[1] * 0.001);
+    }
+    double last_time = 0;
+
+    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override 
+    {
+        if (p_event->GetEventType() == EventType::OnMouseMove)
+        {
+            auto event = std::dynamic_pointer_cast<OnMouseMoveEvent>(p_event);
+            auto context = GetContext();
+            if (event->window == context)
+            {
+                new_pos = event->pos;
+            }
+        }
     }
 };
 
@@ -65,6 +87,7 @@ class UserWindow : public Window
     std::shared_ptr<DynamicMesh> floor;
     std::shared_ptr<PointLight> light;
     std::shared_ptr<ParallelLight> parallel_light;
+    std::shared_ptr<UserCamera> camera;
     std::string title;
 
     
@@ -98,6 +121,7 @@ public:
         {
             mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/jet.obj"));
             mesh->Position() =Math::Vec4(0, 0, 0, 1);
+            HideAndLockCursor();
         }
         mesh->Scale() =Math::Vec4(1.5, 1.5, 1.5);
         GetBaseComponent()->AddChild(mesh);
@@ -115,10 +139,12 @@ public:
         light = std::make_shared<PointLight>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);
         light->Position() =Math::Vec4(0.0f, 10.0f, 10.0f, 1.0f);
 
-        parallel_light = std::make_shared<ParallelLight>(Math::Vec4(1.0f, -1.0f, 1.0f), Math::Vec4(1, 1, 1, 1), 10, this);
-
+        //parallel_light = std::make_shared<ParallelLight>(Math::Vec4(1.0f, -1.0f, 1.0f), Math::Vec4(1, 1, 1, 1), 10, this);
+        parallel_light = std::make_shared<ParallelLight>(this);
+        parallel_light->Direction() = Math::Vec4(1, -1, 1);
+        parallel_light->Intensity() = 8;
         
-        auto camera = std::make_shared<UserCamera>(this);
+        camera = std::make_shared<UserCamera>(this);
         camera->Position() =Math::Vec4(0, 0, -20, 1.0f);
         GetBaseComponent()->AddChild(camera);
         SetUsingCamera(camera);
@@ -177,22 +203,29 @@ public:
         light->AddChild(box);
         GetBaseComponent()->AddChild(light);
         GetBaseComponent()->AddChild(parallel_light);
+
+        Game::GetInstance()->GetEventManager()->AddEventListener(camera);
     }
 
     virtual void Process(float p_delta) override
-    {        
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_left") == InputManager::InputState::Pressed)
+    {
+        auto input_manager = Game::GetInstance()->GetInputManager();
+        if (input_manager->GetInputState(this, "light_move_left") == InputManager::InputState::Pressed)
             light->Position() +=Math::Cross(Math::UP<4>, GetUsingCamera()->GetDirection()).Normalize() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_right") == InputManager::InputState::Pressed)
+        if (input_manager->GetInputState(this, "light_move_right") == InputManager::InputState::Pressed)
             light->Position() +=Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>).Normalize() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_up") == InputManager::InputState::Pressed)
+        if (input_manager->GetInputState(this, "light_move_up") == InputManager::InputState::Pressed)
             light->Position() +=Math::UP<4> * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_down") == InputManager::InputState::Pressed)
+        if (input_manager->GetInputState(this, "light_move_down") == InputManager::InputState::Pressed)
             light->Position() -=Math::UP<4> * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_forward") == InputManager::InputState::Pressed)
+        if (input_manager->GetInputState(this, "light_move_forward") == InputManager::InputState::Pressed)
             light->Position() +=Math::Cross(Math::UP<4>, Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>)).Normalize() * p_delta * 10;
-        if (Game::GetInstance()->GetInputManager()->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
+        if (input_manager->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
             light->Position() +=Math::Cross(Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>), Math::UP<4>).Normalize() * p_delta * 10;
+        if (input_manager->GetInputState(this, "esc") == InputManager::InputState::JustPressed)
+            ShowAndUnlockCursor();
+        if (input_manager->GetInputState(this, "lb") == InputManager::InputState::JustPressed)
+            HideAndLockCursor();
         if (window2 != nullptr && window2->IsClosed())
         {
             window2.reset();
@@ -226,24 +259,27 @@ int main()
     {
         Game::Init(std::make_shared<UserWindow>(""));
 
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("forward", Input::KEY_W);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("backward", Input::KEY_S);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("left", Input::KEY_A);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("right", Input::KEY_D);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("down", Input::KEY_Q);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("up", Input::KEY_E);
+        Game::GetInstance()->GetInputManager()->AddInput("forward", Input::KEY_W);
+        Game::GetInstance()->GetInputManager()->AddInput("backward", Input::KEY_S);
+        Game::GetInstance()->GetInputManager()->AddInput("left", Input::KEY_A);
+        Game::GetInstance()->GetInputManager()->AddInput("right", Input::KEY_D);
+        Game::GetInstance()->GetInputManager()->AddInput("down", Input::KEY_Q);
+        Game::GetInstance()->GetInputManager()->AddInput("up", Input::KEY_E);
 
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_x", Input::KEY_UP);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-x", Input::KEY_DOWN);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_y", Input::KEY_LEFT);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("rotate_-y", Input::KEY_RIGHT);
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_x", Input::KEY_UP);
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_-x", Input::KEY_DOWN);
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_y", Input::KEY_LEFT);
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_-y", Input::KEY_RIGHT);
 
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_left", Input::KEY_J);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_right", Input::KEY_L);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_up", Input::KEY_O);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_down", Input::KEY_U);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_forward", Input::KEY_I);
-        Game::GetInstance()->Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", Input::KEY_K);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_left", Input::KEY_J);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_right", Input::KEY_L);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_up", Input::KEY_O);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_down", Input::KEY_U);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_forward", Input::KEY_I);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", Input::KEY_K);
+    
+        Game::GetInstance()->GetInputManager()->AddInput("esc", Input::KEY_ESCAPE);
+        Game::GetInstance()->GetInputManager()->AddInput("lb", Input::MOUSE_BUTTON_LEFT);
 
         Game::GetInstance()->Run();
     }

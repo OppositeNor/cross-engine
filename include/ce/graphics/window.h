@@ -87,6 +87,8 @@ protected:
 
 private:
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
+    static void OnMouseButton(void* p_glfw_context, int p_key, int p_action, int p_mods);
+    static void OnMouseMove(void* p_glfw_context, double p_x, double p_y);
     void UpdateThreadResource();
     void ClearResource();
 
@@ -248,6 +250,18 @@ public:
      * @param p_clear_color The clear color.
      */
     void SetClearColor(const Math::Vec4& p_clear_color);
+
+    /**
+     * @brief Hide and lock the cursor.
+     * 
+     */
+    void HideAndLockCursor();
+
+    /**
+     * @brief Show and unlock the cursor.
+     * 
+     */
+    void ShowAndUnlockCursor();
 
     /**
      * @brief Get the size of the window.

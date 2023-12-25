@@ -6,6 +6,21 @@ namespace Math
 {
     struct MatrixTag{};
 
+    template<int N>
+    inline const Vec<N> UP = Vec<N>(0, 1);
+
+    template<int N>
+    inline const Vec<N> RIGHT = Vec<N>(1, 0);
+
+    template<int N>
+    inline const Vec<N> FRONT = Vec<N>(0, 0, 1);
+
+    template<int N>
+    inline const Vec<N> BACK = Vec<N>(0, 0, -1);
+    
+    template<typename T, int N>
+    inline static const Vector<T, N> ZERO = Vector<T, N>();
+
     template <typename Tm, size_t M, size_t N, typename Ts>
     auto operator*(const Matrix<Tm, M, N>& p_mat, Ts&& p_scaler)
         -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
@@ -896,20 +911,18 @@ namespace Math
         }
     }
 
-    
+    FORCE_INLINE Mat4 LookAt(const Vec4& p_from, const Vec4& p_target)
+    {
+        auto forward = (p_target - p_from).Normalize();
+        auto right = forward.Cross(UP<4>).Normalize();
+        auto up = forward.Cross(right).Normalize();
+        return Mat4({
+            right[0], right[1], right[2], -right.Dot(p_from),
+            up[0], up[1], up[2], -up.Dot(p_from),
+            forward[0], forward[1], forward[2], -forward.Dot(p_from),
+            0, 0, 0, 1
+        });
+    }
 
-    template<int N>
-    inline const Vec<N> UP = Vec<N>(0, 1);
-
-    template<int N>
-    inline const Vec<N> RIGHT = Vec<N>(1, 0);
-
-    template<int N>
-    inline const Vec<N> FRONT = Vec<N>(0, 0, 1);
-
-    template<int N>
-    inline const Vec<N> BACK = Vec<N>(0, 0, -1);
-    
-    template<typename T, int N>
-    inline static const Vector<T, N> ZERO = Vector<T, N>();
+    constexpr double PI = 3.14159265358979323846;
 }

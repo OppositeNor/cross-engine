@@ -25,3 +25,8 @@ OnKeyEvent::OnKeyEvent(Window* p_window, int p_key, int p_scancode, int p_action
     : AEvent(EventType::OnKey), window(p_window), key(p_key), scancode(p_scancode), action(p_action), mods(p_mods)
 {
 }
+
+OnMouseMoveEvent::OnMouseMoveEvent(Window* p_window, const Math::Vector<double, 2>& p_pos)
+    : AEvent(EventType::OnMouseMove), window(p_window), pos(p_pos)
+{
+}

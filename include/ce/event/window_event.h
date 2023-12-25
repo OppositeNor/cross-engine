@@ -52,3 +52,12 @@ struct OnKeyEvent : public AEvent
     OnKeyEvent(Window* p_window, int p_key, int p_scancode, int p_action, int p_mods);
     virtual ~OnKeyEvent() override {}
 };
+
+struct OnMouseMoveEvent : public AEvent
+{
+    Window* window;
+    Math::Vector<double, 2> pos;
+
+    OnMouseMoveEvent(Window* p_window, const Math::Vector<double, 2>& p_pos);
+    virtual ~OnMouseMoveEvent() override {}
+};

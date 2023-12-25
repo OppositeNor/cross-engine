@@ -129,17 +129,30 @@ void Component::Move(Math::Vec4 p_direction, float p_distance)
     Position() += p_direction * p_distance;
 }
 
-void Component::Rotate(Math::Vec4 p_direction, float p_angle)
+void Component::Rotate(Math::Vec4 p_axis, float p_angle)
 {
-    p_direction.Normalize();
+    p_axis.Normalize();
     float half_angle = p_angle / 2.0f;
     float sin_half_angle = std::sin(half_angle);
     Math::Vec4 quat;
     quat[3] = std::cos(half_angle);
-    quat[0] = p_direction[0] * sin_half_angle;
-    quat[1] = p_direction[1] * sin_half_angle;
-    quat[2] = p_direction[2] * sin_half_angle;
+    quat[0] = p_axis[0] * sin_half_angle;
+    quat[1] = p_axis[1] * sin_half_angle;
+    quat[2] = p_axis[2] * sin_half_angle;
     Rotation() = QuatProd(quat, rotation);
+}
+
+void Component::SetRotate(Math::Vec4 p_axis, float p_angle)
+{
+    p_axis.Normalize();
+    float half_angle = p_angle / 2.0f;
+    float sin_half_angle = std::sin(half_angle);
+    Math::Vec4 quat;
+    quat[3] = std::cos(half_angle);
+    quat[0] = p_axis[0] * sin_half_angle;
+    quat[1] = p_axis[1] * sin_half_angle;
+    quat[2] = p_axis[2] * sin_half_angle;
+    Rotation() = quat;
 }
 
 void Component::Scale(Math::Vec4 p_direction, float p_scale)

@@ -8,8 +8,6 @@
     template <typename dT>                              \
     inline static constexpr bool bool_var_name<dT, std::void_t<decltype(std::declval<dT>().method)>> = true;
 
-#define CE_PI 3.141592653589793238462643383279502884197169399375105820974944592307816406286
-
 using byte_t = char;
 using ubyte_t = unsigned char;
 using int32_t = int;

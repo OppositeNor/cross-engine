@@ -100,6 +100,20 @@ void Window::SetClearColor(const Math::Vec4& p_clear_color)
     glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
 }
 
+void Window::HideAndLockCursor()
+{
+    if (std::this_thread::get_id() != window_thread->get_id())
+        throw std::runtime_error("Cannot hide and lock cursor from another thread.");
+    glfwSetInputMode((GLFWwindow*)glfw_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::ShowAndUnlockCursor()
+{
+    if (std::this_thread::get_id() != window_thread->get_id())
+        throw std::runtime_error("Cannot show and unlock cursor from another thread.");
+    glfwSetInputMode((GLFWwindow*)glfw_context, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
 void Window::InitWindow()
 {
     Graphics::InitGraphics();
@@ -130,6 +144,8 @@ void Window::InitWindow()
     SetClearColor(Math::Vec4(0.2f, 0.2f, 0.2f, 1.0f));
 
     glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));
+    glfwSetCursorPosCallback((GLFWwindow*)(glfw_context), (GLFWcursorposfun)(OnMouseMove));
+    glfwSetMouseButtonCallback((GLFWwindow*)(glfw_context), (GLFWmousebuttonfun)(OnMouseButton));
     
     shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/vertex.glsl", 
                                        Resource::GetExeDirectory() + "/shaders/fragment.glsl");
@@ -230,6 +246,18 @@ void Window::OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action
 {
     Window* window = context_window_finder[p_glfw_context];
     Game::GetInstance()->DispatchEvent(std::make_shared<OnKeyEvent>(window, p_key, p_scancode, p_action, p_mods));
+}
+
+void Window::OnMouseButton(void* p_glfw_context, int p_key, int p_action, int p_mods)
+{
+    Window* window = context_window_finder[p_glfw_context];
+    Game::GetInstance()->DispatchEvent(std::make_shared<OnKeyEvent>(window, p_key, 0, p_action, p_mods));
+}
+
+void Window::OnMouseMove(void* p_glfw_context, double p_x, double p_y)
+{
+    Window* window = context_window_finder[p_glfw_context];
+    Game::GetInstance()->DispatchEvent(std::make_shared<OnMouseMoveEvent>(window, Math::Vector<double, 2>(p_x, p_y)));
 }
 
 void Window::Draw()
