@@ -59,9 +59,9 @@ public:
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-y") == InputManager::InputState::Pressed)
             Rotate(-1 *Math::UP<4>, p_delta * 1.5);
         auto delta = new_pos - last_pos;
-        last_pos = new_pos;
-        Rotate(Math::UP<4>, -delta[0] * 0.001);
-        Rotate(GetRight(), -delta[1] * 0.001);
+        last_pos = Math::Lerp(0.5, last_pos, new_pos);
+        Rotate(Math::UP<4>, -delta[0] * 0.0008);
+        Rotate(GetRight(), -delta[1] * 0.0008);
     }
     double last_time = 0;
 
