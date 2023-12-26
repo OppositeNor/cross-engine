@@ -1,0 +1,4 @@
+*.tris eol=lf
+*.norm eol=lf
+*.mtl eol=lf
+*.obj eol=lf

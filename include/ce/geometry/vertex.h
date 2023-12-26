@@ -10,8 +10,10 @@
  */
 class Vertex
 {
-    Vec4 position;
-    Vec4 normal;
+    Math::Vec4 position;
+    Math::Vec4 normal;
+    Math::Vec2 uv;
+
 
     Vertex* prev = nullptr;
     Vertex* next = nullptr;
@@ -20,18 +22,28 @@ public:
     /**
      * @brief The count of elements in the vertex array.
      */
-    static constexpr size_t ARRAY_SIZE = 8;
+    static constexpr size_t ARRAY_SIZE = 14;
 
     /**
      * @brief Constructor for Vertex.
      */
     Vertex();
+
+    /**
+     * @brief Constructor for Vertex.
+     * 
+     * @param p_position The position of the vertex.
+     * @param p_normal The normal of the vertex.
+     * @param p_uv The uv of the vertex.
+     */
+    Vertex(const Math::Vec4& p_position, const Math::Vec4& p_normal, const Math::Vec2& p_uv);
+
     /**
      * @brief Constructor for Vertex.
      * 
      * @param p_position The position of the vertex.
      */
-    Vertex(const Vec4& p_position);
+    Vertex(const Math::Vec4& p_position);
 
     /**
      * @brief Copy constructor for Vertex.
@@ -50,38 +62,66 @@ public:
     /**
      * @brief Get the normal of the vertex.
      * 
-     * @return const Vec4& The normal of the vertex.
+     * @return const Math::Vec4& The normal of the vertex.
      */
-    const Vec4& GetNormal() const { return normal; }
+    FORCE_INLINE const Math::Vec4& GetNormal() const noexcept { return normal; }
 
     /**
      * @brief Get the normal of the vertex.
      * 
-     * @return Vec4& The normal of the vertex.
+     * @return Math::Vec4& The normal of the vertex.
      */
-    Vec4& GetNormal() noexcept { return normal; }
+    FORCE_INLINE Math::Vec4& Normal() noexcept { return normal; }
+
+    /**
+     * @brief Set the normal of the vertex.
+     * 
+     * @param p_normal The normal of the vertex.
+     */
+    FORCE_INLINE void SetNormal(const Math::Vec4& p_normal) noexcept { normal = p_normal; }
 
     virtual ~Vertex();
 
     /**
      * @brief Get the position of the vertex.
      * 
-     * @return const Vec4& The position of the vertex.
+     * @return const Math::Vec4& The position of the vertex.
      */
-    const Vec4& GetPosition() const { return position; }
+    FORCE_INLINE const Math::Vec4& GetPosition() const noexcept { return position; }
 
     /**
      * @brief Get the position of the vertex.
      * 
-     * @return const Vec4& The position of the vertex.
+     * @return const Math::Vec4& The position of the vertex.
      */
-    Vec4& GetPosition() noexcept { return position; }
+    FORCE_INLINE Math::Vec4& Position() noexcept { return position; }
     /**
      * @brief Set the position of the vertex.
      * 
      * @param p_position The position of the vertex.
      */
-    void SetPosition(const Vec4& p_position) noexcept { position = p_position; }
+    FORCE_INLINE void SetPosition(const Math::Vec4& p_position) noexcept { position = p_position; }
+
+    /**
+     * @brief Get the uv of the vertex.
+     * 
+     * @return const Math::Vec2& The uv of the vertex.
+     */
+    FORCE_INLINE const Math::Vec2& GetUV() const noexcept { return uv; }
+
+    /**
+     * @brief Get the uv of the vertex.
+     * 
+     * @return Math::Vec2& The uv of the vertex.
+     */
+    FORCE_INLINE Math::Vec2& UV() noexcept { return uv; }
+
+    /**
+     * @brief Set the uv of the vertex.
+     * 
+     * @param p_uv The uv of the vertex.
+     */
+    FORCE_INLINE void SetUV(const Math::Vec2& p_uv) noexcept { uv = p_uv; }
 
     /**
      * @brief Get the previous vertex.
@@ -157,6 +197,7 @@ public:
      */
     FORCE_INLINE void ResetNormal() { normal = GetInducedNormal(); }
 
+    
     /**
      * @brief Get the vertex array.
      * 
@@ -164,12 +205,37 @@ public:
      * @param p_buff_size The size of the buffer.
      * @return float* The pointer to the buffer.
      */
-    float* GetArray(float* p_buff, size_t p_buff_size, bool p_use_incuded_normal = false) const;
+    FORCE_INLINE float* GetArray(float* p_buff, size_t p_buff_size) const { return GetArray(p_buff, p_buff_size, GetTangent()); }
+
+    /**
+     * @brief Get the vertex array.
+     * 
+     * @param p_buff The buffer to store the vertex array.
+     * @param p_buff_size The size of the buffer.
+     * @param p_tangent The tangent of the vertex.
+     * @return float* The pointer to the buffer.
+     */
+    float* GetArray(float* p_buff, size_t p_buff_size, const Math::Vec4& p_tangent) const;
 
     /**
      * @brief Get the normal based on the previous and the next vertex.
      * 
-     * @return Vec4 The normal.
+     * @return Math::Vec4 The normal.
      */
-    Vec4 GetInducedNormal() const;
+    Math::Vec4 GetInducedNormal() const;
+
+    /**
+     * @brief Is the vertex a ear.
+     * 
+     * @return true The vertex is a ear.
+     * @return false The vertex is not a ear.
+     */
+    bool IsEar() const;
+
+    /**
+     * @brief Get the tangent of the vertex.
+     * @todo Buffer the tangent.
+     * @return Math::Vec4 The tangent of the vertex.
+     */
+    Math::Vec4 GetTangent() const;
 };

@@ -1,173 +1,250 @@
+extern "C" {
+    __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+}
+
 #include "ce/geometry/triangle.h"
 #include "ce/graphics/window.h"
 #include "ce/graphics/graphics.h"
 #include "ce/resource/resource.h"
 #include "ce/component/dynamic_mesh.h"
+#include "ce/component/static_mesh.h"
 #include "ce/component/camera.h"
-#include "ce/handlers/input_handler.h"
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include "ce/managers/input_manager.h"
+#include "ce/managers/event_manager.h"
+#include "ce/game/game.h"
+#include "ce/materials/valued_material.h"
+#include "ce/texture/static_texture.h"
+#include "ce/component/parallel_light.h"
+#include "ce/event/window_event.h"
 #include <cmath>
+Math::Vector<bool, 3> rotate;
 
-Vec4 new_rot = Vec4(0, 0, 0, 1.0f);
-Vector<bool, 3> rotate;
-
-class UserCamera : public Camera
+class UserCamera : public Camera, public IEventListener
 {
 public:
     UserCamera(Window* p_context)
         : Camera(p_context)
     {}
 
+
+    Math::Vector<double, 2> new_pos;
+    Math::Vector<double, 2> last_pos;
     virtual void Process(float p_delta) override
     {
-        if (GetContext()->GetInputHandler()->GetInputState("forward") & InputHandler::InputState::Pressed)
+        auto context = GetContext();
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "forward") == InputManager::InputState::Pressed)
             Position() += GetDirection() * p_delta * 10;
-        if (GetContext()->GetInputHandler()->GetInputState("backward") & InputHandler::InputState::Pressed)
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "backward") == InputManager::InputState::Pressed)
             Position() += -1 * GetDirection() * p_delta * 10;
-        if (GetContext()->GetInputHandler()->GetInputState("left") & InputHandler::InputState::Pressed)
-            Position() += Vec4::Cross(Vec4::UP, GetDirection()).Normalized() * p_delta * 10;
-        if (GetContext()->GetInputHandler()->GetInputState("right") & InputHandler::InputState::Pressed)
-            Position() += Vec4::Cross(GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
-        if (GetContext()->GetInputHandler()->GetInputState("up") & InputHandler::InputState::Pressed)
-            Position() += Vec4::UP * p_delta * 10;
-        if (GetContext()->GetInputHandler()->GetInputState("down") & InputHandler::InputState::Pressed)
-            Position() += -1 * Vec4::UP * p_delta * 10;
-        if (GetContext()->GetInputHandler()->GetInputState("rotate_x") & InputHandler::InputState::Pressed)
-            Rotate(Vec4::Cross(GetDirection(), Vec4::UP), p_delta * 1.5);
-        if (GetContext()->GetInputHandler()->GetInputState("rotate_-x") & InputHandler::InputState::Pressed)
-            Rotate(Vec4::Cross(Vec4::UP, GetDirection()), p_delta * 1.5);
-        if (GetContext()->GetInputHandler()->GetInputState("rotate_y") & InputHandler::InputState::Pressed)
-            Rotate(Vec4::UP, p_delta * 1.5);
-        if (GetContext()->GetInputHandler()->GetInputState("rotate_-y") & InputHandler::InputState::Pressed)
-            Rotate(-1 * Vec4::UP, p_delta * 1.5);
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "left") == InputManager::InputState::Pressed)
+            Position() +=Math::Cross(Math::UP<4>, GetDirection()).Normalized() * p_delta * 10;
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "right") == InputManager::InputState::Pressed)
+            Position() +=Math::Cross(GetDirection(), Math::UP<4>).Normalized() * p_delta * 10;
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "up") == InputManager::InputState::Pressed)
+            Position() +=Math::UP<4> * p_delta * 10;
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "down") == InputManager::InputState::Pressed)
+            Position() += -1 *Math::UP<4> * p_delta * 10;
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_x") == InputManager::InputState::Pressed)
+        {
+            if (GetDirection().Dot(Math::UP<4>) < 0.99)
+                Rotate(GetRight(), p_delta * 1.5);
+        }
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-x") == InputManager::InputState::Pressed)
+        {
+            if (GetDirection().Dot(Math::UP<4>) > -0.99)
+                Rotate(Math::Cross(Math::UP<4>, GetDirection()), p_delta * 1.5);
+        }
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_y") == InputManager::InputState::Pressed)
+            Rotate(Math::UP<4>, p_delta * 1.5);
+        if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-y") == InputManager::InputState::Pressed)
+            Rotate(-1 *Math::UP<4>, p_delta * 1.5);
+        auto delta = new_pos - last_pos;
+        last_pos = Math::Lerp(0.5, last_pos, new_pos);
+        Rotate(Math::UP<4>, -delta[0] * 0.0008);
+        Rotate(GetRight(), -delta[1] * 0.0008);
+    }
+    double last_time = 0;
+
+    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override 
+    {
+        if (p_event->GetEventType() == EventType::OnMouseMove)
+        {
+            auto event = std::dynamic_pointer_cast<OnMouseMoveEvent>(p_event);
+            auto context = GetContext();
+            if (event->window == context)
+            {
+                new_pos = event->pos;
+            }
+        }
     }
 };
 
 class UserWindow : public Window
 {
-    std::unique_ptr<Window> window1;
-    std::unique_ptr<Window> window2;
+    std::shared_ptr<UserWindow> window2;
+    std::shared_ptr<VisualMesh> mesh;
+    std::shared_ptr<DynamicMesh> box;
+    std::shared_ptr<DynamicMesh> floor;
+    std::shared_ptr<PointLight> light;
+    std::shared_ptr<ParallelLight> parallel_light;
+    std::shared_ptr<UserCamera> camera;
+    std::string title;
 
     
-    DynamicMesh* mesh = nullptr;
-    DynamicMesh* mesh2 = nullptr;
-    PointLight* light = nullptr;
-    UserCamera* camera = nullptr;
-
 public:
-    UserWindow(const std::string& title)
-        : Window(1260, 720, title)
+    virtual void OnEvent(std::shared_ptr<AEvent> p_event) override {
+    }
+
+    UserWindow(const std::string& p_title)
+        : Window(Math::Vec2s(1260, 720), p_title, false, false)
     {
-        
+        title = p_title;
     }
 
     virtual void Ready() override
     {
-        mesh = new DynamicMesh(this);
-        mesh->LoadTriangles(Resource::GetExeDirectory() + "/teapot_bezier0.tris");
-        mesh->Scale() = Vec4(1.0f, 1.0f, 1.0f);
-        mesh->Position() = Vec4(0, 0, 0, 1.0f);
-        light = new PointLight(Vec4(1.0f, 1.0f, 1.0f, 1.0f), this);
-        light->Position() = Vec4(10.0f, 10.0f, 10.0f, 1.0f);
-        light->Intensity() = 8.0f;
-        camera = new UserCamera(this);
-        camera->Position() = Vec4(0, 0, -20, 1.0f);
+        if (title == "")
+        {
+            window2 = std::make_shared<UserWindow>("Window 2");
+            Game::GetInstance()->GetEventManager()->AddEventListener(window2);
+        }
+        else
+            window2 = nullptr;
+        
+        mesh = std::make_shared<StaticMesh>(this);
+        if (title == "")
+        {
+            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/monkey.obj"));
+            mesh->Position() =Math::Vec4(0, 1.5, 0, 1);
+        }
+        else
+        {
+            mesh->LoadTriangles(Resource::LoadModel(Resource::GetExeDirectory() + "/jet.obj"));
+            mesh->Position() =Math::Vec4(0, 0, 0, 1);
+            HideAndLockCursor();
+        }
+        mesh->Scale() =Math::Vec4(1.5, 1.5, 1.5);
+        GetBaseComponent()->AddChild(mesh);
+        auto mesh_material = std::make_shared<PBRMaterial>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.95f, 1.0f, this);
+        mesh_material->Albedo() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() + 
+            "/textures/monkey_albedo.png");
+        mesh_material->Roughness() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/monkey_roughness.png");
+        mesh_material->AO() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/monkey_ao.png");
+        
+        mesh->SetMaterial(mesh_material);
+        mesh->SetVisible(true);
+        
+        light = std::make_shared<PointLight>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 400, this);
+        light->Position() =Math::Vec4(0.0f, 10.0f, 10.0f, 1.0f);
 
-        mesh2 = new DynamicMesh(this);
-        // Box mesh
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, 1, 1, 1), Vec4(1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, -1, 1), Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, 1, 1), Vec4(-1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, -1, 1, 1), Vec4(1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(-1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(-1, 1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(1, 1, -1, 1), Vec4(-1, 1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, 1, 1, 1), Vec4(-1, 1, -1, 1), Vec4(-1, 1, 1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(1, -1, -1, 1), Vec4(-1, -1, -1, 1)));
-        mesh2->GetTriangles().push_back(new Triangle(Vec4(1, -1, 1, 1), Vec4(-1, -1, -1, 1), Vec4(-1, -1, 1, 1)));
+        //parallel_light = std::make_shared<ParallelLight>(Math::Vec4(1.0f, -1.0f, 1.0f), Math::Vec4(1, 1, 1, 1), 10, this);
+        parallel_light = std::make_shared<ParallelLight>(this);
+        parallel_light->Direction() = Math::Vec4(1, -1, 1);
+        parallel_light->Intensity() = 8;
+        
+        camera = std::make_shared<UserCamera>(this);
+        camera->Position() =Math::Vec4(0, 0, -20, 1.0f);
+        GetBaseComponent()->AddChild(camera);
+        SetUsingCamera(camera);
+
+        box = std::make_shared<DynamicMesh>(this);
+        // Box mesh clock wise
+        //front face
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, -1, 1, 1), Math::Vec4(-1, -1, 1, 1), Math::Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, 1, 1, 1), Math::Vec4(-1, -1, 1, 1), Math::Vec4(-1, 1, 1, 1)));
+        //back face
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(1, -1, -1, 1), Math::Vec4(1, 1, -1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(1, 1, -1, 1), Math::Vec4(-1, 1, -1, 1)));
+        //left face
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, 1, 1), Math::Vec4(-1, -1, -1, 1), Math::Vec4(-1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, 1, 1, 1), Math::Vec4(-1, -1, -1, 1), Math::Vec4(-1, 1, -1, 1)));
+        //right face
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, -1, -1, 1), Math::Vec4(1, -1, 1, 1), Math::Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, -1, -1, 1), Math::Vec4(1, 1, 1, 1), Math::Vec4(1, 1, -1, 1)));
+        //top face
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, 1, 1, 1), Math::Vec4(-1, 1, -1, 1), Math::Vec4(1, 1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(1, 1, 1, 1), Math::Vec4(-1, 1, -1, 1), Math::Vec4(1, 1, -1, 1)));
+        //bottom face
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(-1, -1, 1, 1), Math::Vec4(1, -1, 1, 1)));
+        box->Triangles().push_back(new Triangle(Math::Vec4(-1, -1, -1, 1), Math::Vec4(1, -1, 1, 1), Math::Vec4(1, -1, -1, 1)));
 
 
-        mesh2->Scale() = Vec4(1.5f, 1.5f, 1.5f);
-        light->AddChild(mesh2);
-        // mesh2->Position() = Vec4(5, 5, 5, 1.0f);
-        std::cout << mesh2->GetGlobalPosition() << std::endl;
+        light->AddChild(box);
 
-        GetInputHandler()->AddInput("forward", GLFW_KEY_W);
-        GetInputHandler()->AddInput("backward", GLFW_KEY_S);
-        GetInputHandler()->AddInput("left", GLFW_KEY_A);
-        GetInputHandler()->AddInput("right", GLFW_KEY_D);
-        GetInputHandler()->AddInput("down", GLFW_KEY_Q);
-        GetInputHandler()->AddInput("up", GLFW_KEY_E);
+        floor = std::make_shared<DynamicMesh>(this);
+        
+        floor->Triangles().push_back(new Triangle(Math::Vec4(-1, 0, -1, 1), Math::Vec4(-1, 0, 1, 1), Math::Vec4(1, 0, 1, 1)));
+        floor->Triangles().push_back(new Triangle(Math::Vec4(-1, 0, -1, 1), Math::Vec4(1, 0, 1, 1), Math::Vec4(1, 0, -1, 1)));
+        floor->Triangles()[0]->GetVertex(0)->UV() =Math::Vec2(0, 10);
+        floor->Triangles()[0]->GetVertex(1)->UV() =Math::Vec2(0, 0);
+        floor->Triangles()[0]->GetVertex(2)->UV() =Math::Vec2(10, 0);
+        floor->Triangles()[1]->GetVertex(0)->UV() =Math::Vec2(0, 10);
+        floor->Triangles()[1]->GetVertex(1)->UV() =Math::Vec2(10, 0);
+        floor->Triangles()[1]->GetVertex(2)->UV() =Math::Vec2(10, 10);
+        GetBaseComponent()->AddChild(floor);
 
-        GetInputHandler()->AddInput("rotate_x", GLFW_KEY_UP);
-        GetInputHandler()->AddInput("rotate_-x", GLFW_KEY_DOWN);
-        GetInputHandler()->AddInput("rotate_y", GLFW_KEY_LEFT);
-        GetInputHandler()->AddInput("rotate_-y", GLFW_KEY_RIGHT);
+        box->Scale() =Math::Vec4(1.5f, 1.5f, 1.5f);
+        floor->Position() =Math::Vec4(0, 0, 0, 1.0f);
+        floor->Scale() =Math::Vec4(50, 1, 50);
 
-        GetInputHandler()->AddInput("light_move_left", GLFW_KEY_J);
-        GetInputHandler()->AddInput("light_move_right", GLFW_KEY_L);
-        GetInputHandler()->AddInput("light_move_up", GLFW_KEY_O);
-        GetInputHandler()->AddInput("light_move_down", GLFW_KEY_U);
-        GetInputHandler()->AddInput("light_move_forward", GLFW_KEY_I);
-        GetInputHandler()->AddInput("light_move_backward", GLFW_KEY_K);
+        auto floor_material = std::make_shared<PBRMaterial>(Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.8f, 1.0f, this);
+        floor_material->Albedo() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() + 
+            "/textures/floor_albedo.png");
+        floor_material->Normal() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/floor_normal.png");
+        floor_material->Roughness() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/floor_roughness.png");
+        floor_material->AO() = std::make_shared<StaticTexture>(this, Resource::GetExeDirectory() +
+            "/textures/floor_ao.png");
+        floor->SetMaterial(floor_material);
+        floor->SetVisible(false);
+        light->AddChild(box);
+        GetBaseComponent()->AddChild(light);
+        GetBaseComponent()->AddChild(parallel_light);
+
+        Game::GetInstance()->GetEventManager()->AddEventListener(camera);
     }
 
     virtual void Process(float p_delta) override
     {
-        mesh->Rotation() = Lerp(p_delta * 2, mesh->GetRotation(), new_rot);
-        mesh->Update(p_delta);
-        camera->Update(p_delta);
-        light->Update(p_delta);
-        auto time = glfwGetTime();
-
-        if (rotate[0])
-            new_rot = EulerToQuat(Vec3(time, 0, 0), EulerRotOrder::PRY);
-        else if (rotate[1])
-            new_rot = EulerToQuat(Vec3(0, time, 0), EulerRotOrder::PRY);
-        else if (rotate[2])
-            new_rot = EulerToQuat(Vec3(0, 0, time), EulerRotOrder::PRY);
-        
-        if (GetInputHandler()->GetInputState("light_move_left") & InputHandler::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, camera->GetDirection()).Normalized() * p_delta * 10;
-        if (GetInputHandler()->GetInputState("light_move_right") & InputHandler::InputState::Pressed)
-            light->Position() += Vec4::Cross(camera->GetDirection(), Vec4::UP).Normalized() * p_delta * 10;
-        if (GetInputHandler()->GetInputState("light_move_up") & InputHandler::InputState::Pressed)
-            light->Position() += Vec4::UP * p_delta * 10;
-        if (GetInputHandler()->GetInputState("light_move_down") & InputHandler::InputState::Pressed)
-            light->Position() -= Vec4::UP * p_delta * 10;
-        if (GetInputHandler()->GetInputState("light_move_forward") & InputHandler::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::UP, Vec4::Cross(camera->GetDirection(), Vec4::UP)) * p_delta * 10;
-        if (GetInputHandler()->GetInputState("light_move_backward") & InputHandler::InputState::Pressed)
-            light->Position() += Vec4::Cross(Vec4::Cross(camera->GetDirection(), Vec4::UP), Vec4::UP) * p_delta * 10;
+        auto input_manager = Game::GetInstance()->GetInputManager();
+        if (input_manager->GetInputState(this, "light_move_left") == InputManager::InputState::Pressed)
+            light->Position() +=Math::Cross(Math::UP<4>, GetUsingCamera()->GetDirection()).Normalize() * p_delta * 10;
+        if (input_manager->GetInputState(this, "light_move_right") == InputManager::InputState::Pressed)
+            light->Position() +=Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>).Normalize() * p_delta * 10;
+        if (input_manager->GetInputState(this, "light_move_up") == InputManager::InputState::Pressed)
+            light->Position() +=Math::UP<4> * p_delta * 10;
+        if (input_manager->GetInputState(this, "light_move_down") == InputManager::InputState::Pressed)
+            light->Position() -=Math::UP<4> * p_delta * 10;
+        if (input_manager->GetInputState(this, "light_move_forward") == InputManager::InputState::Pressed)
+            light->Position() +=Math::Cross(Math::UP<4>, Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>)).Normalize() * p_delta * 10;
+        if (input_manager->GetInputState(this, "light_move_backward") == InputManager::InputState::Pressed)
+            light->Position() +=Math::Cross(Math::Cross(GetUsingCamera()->GetDirection(), Math::UP<4>), Math::UP<4>).Normalize() * p_delta * 10;
+        if (input_manager->GetInputState(this, "esc") == InputManager::InputState::JustPressed)
+            ShowAndUnlockCursor();
+        if (input_manager->GetInputState(this, "lb") == InputManager::InputState::JustPressed)
+            HideAndLockCursor();
+        if (window2 != nullptr && window2->IsClosed())
+        {
+            window2.reset();
+            window2 = nullptr;
+        }
         
     }
 
     virtual void Draw() override
     {
-        GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
-        GetShaderProgram()->SetUniform("view", camera->GetViewMatrix());
-        GetShaderProgram()->SetUniform("proj", Mat4::ProjPersp(7.0f, -7.0f, 4.0f, -4.0f, 10.0f, 40.0f));
-        light->SetUniform();
-        GetShaderProgram()->Use();
-
-        glBindVertexArray(mesh->GetVAO());
-        GetShaderProgram()->SetUniform("model", mesh->GetSubspaceMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
-        glBindVertexArray(mesh2->GetVAO());
-        GetShaderProgram()->SetUniform("model", mesh2->GetSubspaceMatrix());
-        glDrawArrays(GL_TRIANGLES, 0, mesh2->GetVertexCount());
-        glBindVertexArray(0);
+        Window::Draw();
     }
 
     virtual void OnClose() override
     {
-        delete mesh;
-        delete camera;
-        delete mesh2;
-        delete light;
+        if (window2 != nullptr)
+        {
+            window2->Close();
+        }
     }
 };
 
@@ -180,46 +257,31 @@ int main()
 {
     try
     {
-        Graphics::InitGraphics();
-        UserWindow* mod_window = new UserWindow("");
+        Game::Init(std::make_shared<UserWindow>(""));
 
-        while (1)
-        {
-            try
-            {
-                if (mod_window->IsClosed())
-                    break;
-                std::cout << ">";
-                std::string input;
-                std::cin >> input;
-                if (input == "EulerPitch")
-                    rotate = Vector<bool, 3>(true, false, false);
-                else if (input == "EulerYaw")
-                    rotate = Vector<bool, 3>(false, true, false);
-                else if (input == "EulerRoll")
-                    rotate = Vector<bool, 3>(false, false, true);
-                else
-                    rotate = Vector<bool, 3>(false, false, false);
+        Game::GetInstance()->GetInputManager()->AddInput("forward", Input::KEY_W);
+        Game::GetInstance()->GetInputManager()->AddInput("backward", Input::KEY_S);
+        Game::GetInstance()->GetInputManager()->AddInput("left", Input::KEY_A);
+        Game::GetInstance()->GetInputManager()->AddInput("right", Input::KEY_D);
+        Game::GetInstance()->GetInputManager()->AddInput("down", Input::KEY_Q);
+        Game::GetInstance()->GetInputManager()->AddInput("up", Input::KEY_E);
 
-                if (input == "exit")
-                    break;
-                else if (input[0] == 'x')
-                    new_rot[0] = std::stof(input.substr(2));
-                else if (input[0] == 'y')
-                    new_rot[1] = std::stof(input.substr(2));
-                else if (input[0] == 'z')
-                    new_rot[2] = std::stof(input.substr(2));
-                else if (input[0] == 'w')
-                    new_rot[3] = std::stof(input.substr(2));
-            }
-            catch(const std::exception& e)
-            {
-                std::cout << e.what() << '\n';
-            }
-        }
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_x", Input::KEY_UP);
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_-x", Input::KEY_DOWN);
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_y", Input::KEY_LEFT);
+        Game::GetInstance()->GetInputManager()->AddInput("rotate_-y", Input::KEY_RIGHT);
 
-        delete mod_window;
-        Graphics::TerminateGraphics();
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_left", Input::KEY_J);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_right", Input::KEY_L);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_up", Input::KEY_O);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_down", Input::KEY_U);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_forward", Input::KEY_I);
+        Game::GetInstance()->GetInputManager()->AddInput("light_move_backward", Input::KEY_K);
+    
+        Game::GetInstance()->GetInputManager()->AddInput("esc", Input::KEY_ESCAPE);
+        Game::GetInstance()->GetInputManager()->AddInput("lb", Input::MOUSE_BUTTON_LEFT);
+
+        Game::GetInstance()->Run();
     }
     catch(const std::exception& e)
     {

@@ -1,17 +1,16 @@
 #include "../unit_test/unit_test.h"
 #include "ce/geometry/vertex.h"
 #include "ce/geometry/triangle.h"
-#include <memory>
 
 void UnitTest::TestVertex0()
 {
     Vertex vertex = Vertex();
-    EXPECT_VALUES_EQUAL(vertex.GetPosition(), Vec4(0, 0, 0, 1));
-    auto vertex_2 = new Vertex(Vec4(1, 2, 3, 4));
-    EXPECT_VALUES_EQUAL(vertex_2->GetPosition(), Vec4(1, 2, 3, 4));
+    EXPECT_VALUES_EQUAL(vertex.GetPosition(), Math::Vec4(0, 0, 0, 1));
+    auto vertex_2 = new Vertex(Math::Vec4(1, 2, 3, 4));
+    EXPECT_VALUES_EQUAL(vertex_2->GetPosition(), Math::Vec4(1, 2, 3, 4));
     delete vertex_2;
-    std::unique_ptr<Vertex> vertex_3(new Vertex(Vec4(1, 2, 3, 4)));
-    EXPECT_VALUES_EQUAL(vertex_3->GetPosition(), Vec4(1, 2, 3, 4));
+    std::unique_ptr<Vertex> vertex_3(new Vertex(Math::Vec4(1, 2, 3, 4)));
+    EXPECT_VALUES_EQUAL(vertex_3->GetPosition(), Math::Vec4(1, 2, 3, 4));
 }
 
 void UnitTest::TestVertex1()
@@ -109,7 +108,7 @@ void UnitTest::TestVertex3()
 void UnitTest::TestVertex4()
 {
     Vertex* vertex = new Vertex();
-    vertex->SetPosition(Vec4(3.0f, 144.0f, 3.25f, 1.0f));
+    vertex->SetPosition(Math::Vec4(3.0f, 144.0f, 3.25f, 1.0f));
     float buff[Vertex::ARRAY_SIZE];
     vertex->GetArray(buff, Vertex::ARRAY_SIZE);
     EXPECT_EXPRESSION_THROW_TYPE(([&](){
@@ -125,24 +124,24 @@ void UnitTest::TestVertex4()
 void UnitTest::TestTriangle0()
 {
     Triangle triangle;
-    EXPECT_VALUES_EQUAL(triangle.GetVertex(0)->GetPosition(), Vec4(0, 0, 0, 1));
-    EXPECT_VALUES_EQUAL(triangle.GetVertex(1)->GetPosition(), Vec4(0, 0, 0, 1));
-    EXPECT_VALUES_EQUAL(triangle.GetVertex(2)->GetPosition(), Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle.GetVertex(0)->GetPosition(), Math::Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle.GetVertex(1)->GetPosition(), Math::Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle.GetVertex(2)->GetPosition(), Math::Vec4(0, 0, 0, 1));
     EXPECT_VALUES_EQUAL(triangle.GetVertex(0)->GetNext(), triangle.GetVertex(1));
     EXPECT_VALUES_EQUAL(triangle.GetVertex(1)->GetNext(), triangle.GetVertex(2));
     EXPECT_VALUES_EQUAL(triangle.GetVertex(2)->GetNext(), triangle.GetVertex(0));
     Triangle triangle1 = triangle;
     Triangle triangle2 = std::move(triangle);
-    EXPECT_VALUES_EQUAL(triangle1.GetVertex(0)->GetPosition(), Vec4(0, 0, 0, 1));
-    EXPECT_VALUES_EQUAL(triangle1.GetVertex(1)->GetPosition(), Vec4(0, 0, 0, 1));
-    EXPECT_VALUES_EQUAL(triangle1.GetVertex(2)->GetPosition(), Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle1.GetVertex(0)->GetPosition(), Math::Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle1.GetVertex(1)->GetPosition(), Math::Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle1.GetVertex(2)->GetPosition(), Math::Vec4(0, 0, 0, 1));
     EXPECT_VALUES_EQUAL(triangle1.GetVertex(0)->GetNext(), triangle1.GetVertex(1));
     EXPECT_VALUES_EQUAL(triangle1.GetVertex(1)->GetNext(), triangle1.GetVertex(2));
     EXPECT_VALUES_EQUAL(triangle1.GetVertex(2)->GetNext(), triangle1.GetVertex(0));
 
-    EXPECT_VALUES_EQUAL(triangle2.GetVertex(0)->GetPosition(), Vec4(0, 0, 0, 1));
-    EXPECT_VALUES_EQUAL(triangle2.GetVertex(1)->GetPosition(), Vec4(0, 0, 0, 1));
-    EXPECT_VALUES_EQUAL(triangle2.GetVertex(2)->GetPosition(), Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle2.GetVertex(0)->GetPosition(), Math::Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle2.GetVertex(1)->GetPosition(), Math::Vec4(0, 0, 0, 1));
+    EXPECT_VALUES_EQUAL(triangle2.GetVertex(2)->GetPosition(), Math::Vec4(0, 0, 0, 1));
     EXPECT_VALUES_EQUAL(triangle2.GetVertex(0)->GetNext(), triangle2.GetVertex(1));
     EXPECT_VALUES_EQUAL(triangle2.GetVertex(1)->GetNext(), triangle2.GetVertex(2));
     EXPECT_VALUES_EQUAL(triangle2.GetVertex(2)->GetNext(), triangle2.GetVertex(0));
@@ -153,9 +152,9 @@ void UnitTest::TestTriangle0()
 void UnitTest::TestTriangle1()
 {
     Triangle triangle;
-    triangle.GetVertex(0)->SetPosition(Vec4(1, 2, 3, 1));
-    triangle.GetVertex(1)->SetPosition(Vec4(4, 5, 6, 1));
-    triangle.GetVertex(2)->SetPosition(Vec4(7, 8, 9, 1));
+    triangle.GetVertex(0)->SetPosition(Math::Vec4(1, 2, 3, 1));
+    triangle.GetVertex(1)->SetPosition(Math::Vec4(4, 5, 6, 1));
+    triangle.GetVertex(2)->SetPosition(Math::Vec4(7, 8, 9, 1));
     float buff[3 * Vertex::ARRAY_SIZE];
     triangle.GetVertexArray(buff, 3 * Vertex::ARRAY_SIZE);
     EXPECT_EXPRESSION_THROW_TYPE(([&](){

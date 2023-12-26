@@ -1,0 +1,10 @@
+
+file (MAKE_DIRECTORY ${EXE_PATH}/textures)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/default.png DESTINATION ${EXE_PATH}/textures)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/default_normal.png DESTINATION ${EXE_PATH}/textures)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/back.jpg DESTINATION ${EXE_PATH}/textures/skybox/default)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/bottom.jpg DESTINATION ${EXE_PATH}/textures/skybox/default)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/front.jpg DESTINATION ${EXE_PATH}/textures/skybox/default)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/left.jpg DESTINATION ${EXE_PATH}/textures/skybox/default)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/right.jpg DESTINATION ${EXE_PATH}/textures/skybox/default)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/skybox/default/top.jpg DESTINATION ${EXE_PATH}/textures/skybox/default)

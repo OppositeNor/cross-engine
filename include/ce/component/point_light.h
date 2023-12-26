@@ -4,18 +4,10 @@
 class PointLight : public ALight
 {
 public:
-    /**
-     * @brief Data is a struct that is used for transfering data to
-     * the shaders.
-     */
-    struct Data
-    {
-        float position[4];
-        float color[4];
-        float intensity = 1.0f;
-    };
+
 protected:
-    struct Data data;
+     Math::Vec4 color;
+    float intensity;
 
 public:
 
@@ -30,9 +22,38 @@ public:
      * @brief Constructor for PointLight.
      * 
      * @param p_color The color of the light.
-     * @param p_context 
+     * @param p_intensity The intensity of the light.
+     * @param p_context The context of this light.
      */
-    PointLight(const Vec4& p_color, Window* p_context);
+    PointLight(const Math::Vec4& p_color, float p_intensity, Window* p_context);
+
+    /**
+     * @brief Get the color of the light.
+     * 
+     * @return const Math::Vec4& The color of the light
+     */
+    FORCE_INLINE const Math::Vec4& GetColor() const noexcept { return color; }
+
+    /**
+     * @brief Get the color of the light.
+     * 
+     * @return Math::Vec4& The color of the light
+     */
+    FORCE_INLINE Math::Vec4& Color() noexcept { return color; }
+
+    /**
+     * @brief Get the intensity of the light
+     * 
+     * @return float The intensity of the light. 
+     */
+    FORCE_INLINE float GetIntensity() const noexcept { return intensity; }
+
+    /**
+     * @brief Get the intensity of the light
+     * 
+     * @return float& The intensity of the light. 
+     */
+    FORCE_INLINE float& Intensity() noexcept { return intensity; }
 
     /**
      * @brief Get the name of the uniform variable.
@@ -45,5 +66,11 @@ public:
      * @brief Set the uniform of the light's data.
      * 
      */
-    virtual void SetUniform() override;
+    virtual void SetUniform(size_t p_index) override;
+
+    /**
+     * @brief Draw the light.
+     * 
+     */
+    virtual void Draw() override;
 };

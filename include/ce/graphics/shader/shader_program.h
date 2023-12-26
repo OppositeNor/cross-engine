@@ -4,14 +4,16 @@
 #include "ce/graphics/shader/a_shader.h"
 #include "ce/math/math.hpp"
 #include "ce/component/point_light.h"
+#include <memory>
 
 class ShaderProgram
 {
-    unsigned int program_id;
+    unsigned int program_id = 0;
     std::shared_ptr<AShader> vert_shader;
     std::shared_ptr<AShader> frag_shader;
     std::mutex compile_mutex;
     bool usable = false;
+    mutable int sampler_count = 0;
 public:
 
     /**
@@ -49,20 +51,58 @@ public:
     ShaderProgram(ShaderProgram&& p_other) noexcept;
 
     /**
-     * @brief Set the uniform for the shader.
+     * @brief Destroy the Shader Program object.
      * 
-     * @param p_name The name of the uniform.
-     * @param p_mat4 The Mat4f to set the uniform to.
      */
-    void SetUniform(const std::string& p_name, const Mat4& p_mat4) const;
+    virtual ~ShaderProgram();
 
     /**
      * @brief Set the uniform for the shader.
      * 
      * @param p_name The name of the uniform.
-     * @param p_light The PointLight to set the uniform to.
+     * @param p_float The float to set the uniform to.
      */
-    void SetUniform(const std::string& p_name, const PointLight::Data& p_light) const;
+    void SetUniform(const std::string& p_name, float p_float) const;
+
+    /**
+     * @brief Set the uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_data The integer to set the uniform to.
+     */
+    void SetUniform(const std::string& p_name, int p_int) const;
+
+    /**
+     * @brief Set the uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_mat4 The Math::Mat4f to set the uniform to.
+     */
+    void SetUniform(const std::string& p_name, const Math::Mat4& p_mat4) const;
+
+    /**
+     * @brief Set the uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_vec4 TheMath::Vec4f to set the uniform to.
+     */
+    void SetUniform(const std::string& p_name, const Math::Vec4& p_vec4) const;
+
+    /**
+     * @brief Set the sampler uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_texture_id The texture id to set the uniform to.
+     */
+    void SetSampler2DUniform(const std::string& p_name, unsigned int p_texture_id) const;
+
+    /**
+     * @brief Set the sampler uniform for the shader.
+     * 
+     * @param p_name The name of the uniform.
+     * @param p_texture_id The texture id to set the uniform to.
+     */
+    void SetSamplerCubeUniform(const std::string& p_name, unsigned int p_texture_id) const;
 
     /**
      * @brief Compile the shader program.
@@ -80,10 +120,11 @@ public:
     void Use();
 
     /**
-     * @brief Destroy the Shader Program object.
+     * @brief Refresh the shader program.
      * 
      */
-    virtual ~ShaderProgram();
+    void Refresh();
+
     /**
      * @brief Returns whether or not this shader program is usable.
      * The shader program will be usable if it has been successfully
@@ -107,4 +148,6 @@ public:
      * @return std::shared_ptr<AShader> The fragment shader.
      */
     FORCE_INLINE std::shared_ptr<AShader> GetFragShader() const { return frag_shader; }
+
+    FORCE_INLINE int GetSamplerNewIndex() const { return sampler_count++; }
 };

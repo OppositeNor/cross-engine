@@ -10,6 +10,9 @@ class DynamicMesh : public VisualMesh
     std::vector<Triangle*> triangles;
     bool triangles_dirty = true;
     std::mutex triangles_mutex;
+
+protected:
+    void SetTrianglesDirty(bool p_dirty);
 public:
 
     /**
@@ -28,17 +31,9 @@ public:
     DynamicMesh(std::vector<Triangle*>&& p_triangles, Window* p_context);
 
     /**
-     * @brief Construct a new mesh.
-     * 
-     * @param p_file The file to load the mesh from.
-     * @param p_context The context to load the mesh in.
+     * @brief Copy constructor for DynamicMesh.
      */
-    DynamicMesh(const std::string& p_file, Window* p_context);
-
-    /**
-     * @brief Dynamic meshes cannot be copied.
-     */
-    DynamicMesh(const DynamicMesh& p_other) = delete;
+    DynamicMesh(const DynamicMesh& p_other);
 
     /**
      * @brief Move constructor for DynamicMesh.
@@ -65,7 +60,7 @@ public:
      * 
      * @return std::vector<Triangle*>& The triangles of this mesh.
      */
-    std::vector<Triangle*>& GetTriangles();
+    std::vector<Triangle*>& Triangles();
 
     /**
      * @brief Get the triangles of this mesh.
@@ -75,11 +70,25 @@ public:
     const std::vector<Triangle*>& GetTriangles() const { return triangles; }
 
     /**
+     * @brief Load the triangles.
+     * 
+     * @param p_triangles The triangles to load.
+     */
+    virtual void LoadTriangles(std::vector<Triangle*>&& p_triangles) override;
+
+    /**
      * @brief Load the triangles from a file.
      * 
      * @param p_file The file to load the triangles from.
      */
-    void LoadTriangles(const std::string& p_file);
+    virtual void LoadTriangles(const std::string& p_file) override;
+
+    /**
+     * @brief Load the triangles from a file.
+     * 
+     * @param p_file The file to load the triangles from.
+     */
+    virtual void LoadTrisWithNormal(const std::string& p_file) override;
 
     /**
      * @brief Get the vertex count of this mesh.
