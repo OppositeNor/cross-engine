@@ -52,7 +52,6 @@ void EventManager::FEventDispatch(std::shared_ptr<AEvent> p_event)
 {
     std::shared_lock<std::shared_mutex> lock(event_listeners_mutex);
     std::future<void> handle;
-    std::clog << '\r' << event_listeners.size();
     for (auto& event_listener : event_listeners)
     {
         if (event_listener.expired())
