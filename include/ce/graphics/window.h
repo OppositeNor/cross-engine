@@ -199,6 +199,25 @@ public:
      */
     Window();
 
+    /**
+     * @brief Get the title of this window.
+     * 
+     * @return const std::string& The title of this window.
+     */
+    FORCE_INLINE const std::string& GetWindowTitle() const noexcept { return window_title; }
+
+    /**
+     * @brief Set the title of the window.
+     * 
+     * @param p_title The title of the window.
+     */
+    void SetWindowTitle(const std::string& p_title);
+
+    /**
+     * @brief Get the default material of the context.
+     * 
+     * @return const std::shared_ptr<AMaterial>& The default material of this context.
+     */
     FORCE_INLINE const std::shared_ptr<AMaterial>& GetDefaultMaterial() const noexcept { return default_material; }
 
     /**

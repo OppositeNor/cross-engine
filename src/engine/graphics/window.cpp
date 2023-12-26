@@ -52,6 +52,12 @@ Window::~Window()
     Close();
 }
 
+void Window::SetWindowTitle(const std::string& p_title)
+{
+    window_title = p_title;
+    glfwSetWindowTitle(static_cast<GLFWwindow*>(glfw_context), p_title.c_str());
+}
+
 void Window::UpdateThreadResource()
 {
     for (size_t i = 0; i < queued_thread_resources.size(); ++i)

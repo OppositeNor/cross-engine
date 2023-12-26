@@ -17,6 +17,7 @@ extern "C" {
 #include "ce/component/parallel_light.h"
 #include "ce/event/window_event.h"
 #include <cmath>
+#include <sstream>
 Math::Vector<bool, 3> rotate;
 
 class UserCamera : public Camera, public IEventListener
@@ -59,11 +60,10 @@ public:
         if (Game::GetInstance()->GetInputManager()->GetInputState(GetContext(), "rotate_-y") == InputManager::InputState::Pressed)
             Rotate(-1 *Math::UP<4>, p_delta * 1.5);
         auto delta = new_pos - last_pos;
-        last_pos = Math::Lerp(0.5, last_pos, new_pos);
+        last_pos = Math::Lerp(0.7, last_pos, new_pos);
         Rotate(Math::UP<4>, -delta[0] * 0.0008);
         Rotate(GetRight(), -delta[1] * 0.0008);
     }
-    double last_time = 0;
 
     virtual void OnEvent(std::shared_ptr<AEvent> p_event) override 
     {
@@ -231,7 +231,6 @@ public:
             window2.reset();
             window2 = nullptr;
         }
-        
     }
 
     virtual void Draw() override

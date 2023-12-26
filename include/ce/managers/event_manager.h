@@ -1,16 +1,19 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <mutex>
+#include <shared_mutex>
 
 class IEventListener;
 class AEvent;
 class EventManager
 {
     std::vector<std::weak_ptr<IEventListener>> event_listeners;
-    std::mutex event_listeners_mutex;
+    
+    std::shared_mutex event_listeners_mutex;
 
     void UpdateEventListeners();
+
+    void FEventDispatch(std::shared_ptr<AEvent> p_event);
 
 public:
     /**
