@@ -35,12 +35,11 @@ void EventManager::DispatchEvent(std::shared_ptr<AEvent> p_event)
 {
     UpdateEventListeners();
     std::lock_guard<std::mutex> lock(event_listeners_mutex);
-    std::future<void> handle;
     for (auto& event_listener : event_listeners)
     {
         if (event_listener.expired())
             continue;
-        handle = std::async(std::launch::async, &IEventListener::OnEvent, event_listener.lock().get(), p_event);
+        event_listener.lock()->OnEvent(p_event);
     }
 }
 

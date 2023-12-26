@@ -1,2 +1,3 @@
-# crossroad-engine
-A 3D Game Engine that is currently underdeveloped
+# cross-engine
+
+A 3D Rendering Engine that is currently underdeveloped
