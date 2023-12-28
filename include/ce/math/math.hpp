@@ -49,9 +49,22 @@ namespace Math
         return result;
     }
 
+    template <typename Tm, size_t M, size_t N, typename Ts>
+    auto operator/(const Matrix<Tm, M, N>& p_mat, Ts&& p_scaler)
+        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
+            std::remove_reference_t<Ts>>::value, 
+            Matrix<decltype(std::declval<Tm>() / std::declval<Ts>()), M, N>>
+    {
+        using result_val_type = decltype(std::declval<Tm>() / std::declval<Ts>());
+        constexpr size_t SIZE = M * N;
+        Matrix<result_val_type, M, N> result;
+        for (size_t i = 0; i < SIZE; ++i)
+            result(i) = p_mat(i) / std::forward<Ts>(p_scaler);
+        return result;
+    }
+
     template <typename Tm, typename Tv, size_t M, size_t N>
     auto operator*(const Matrix<Tm, M, N>& p_matrix, const Vector<Tv, N>& p_vector)
-        -> Vector<decltype(std::declval<Tm>() * std::declval<Tv>()), M>
     {
         Vector<decltype(std::declval<Tm>() * std::declval<Tv>()), M> result;
         for (size_t i = 0; i < M; ++i)
@@ -67,7 +80,6 @@ namespace Math
 
     template <typename Tm, typename Tv, size_t M, size_t N>
     auto operator*(const Vector<Tv, M>& p_vector, const Matrix<Tm, M, N>& p_matrix)
-        -> Vector<decltype(std::declval<Tm>() * std::declval<Tv>()), N>
     {
         Vector<decltype(std::declval<Tm>() * std::declval<Tv>()), N> result;
         for (size_t i = 0; i < N; ++i)
@@ -83,7 +95,6 @@ namespace Math
 
     template <typename T1, typename T2, size_t M1, size_t N, size_t N1>
     auto operator*(const Matrix<T1, M1, N>& p_mat1, const Matrix<T2, N, N1>& p_mat2)
-        -> Matrix<decltype(std::declval<T1>() * std::declval<T2>()), M1, N1>
     {
         using result_val_type = decltype(std::declval<T1>() * std::declval<T2>());
         auto result = Matrix<result_val_type, M1, N1>();
@@ -123,6 +134,18 @@ namespace Math
         auto result = Vector<decltype(std::declval<Ts>() * std::declval<Tv>()), N>();
         for (size_t i = 0; i < N; ++i)
             result[i] = std::forward<Ts>(p_scaler) * p_vec[i];
+        return result;
+    }
+
+    template <typename Tv, size_t N, typename Ts>
+    auto operator/(const Vector<Tv, N>& p_vec, Ts&& p_scaler)
+        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
+            std::remove_reference_t<Ts>>::value, 
+            Vector<decltype(std::declval<Tv>() / std::declval<Ts>()), N>>
+    {
+        auto result = Vector<decltype(std::declval<Tv>() / std::declval<Ts>()), N>();
+        for (size_t i = 0; i < N; ++i)
+            result[i] = p_vec[i] / std::forward<Ts>(p_scaler);
         return result;
     }
 
@@ -756,10 +779,6 @@ namespace Math
 
     template <typename Tr, typename T1, typename T2>
     FORCE_INLINE auto Lerp(Tr&& p_ratio, T1&& p_start, T2&& p_end)
-        -> decltype(std::declval<std::remove_reference_t<T1>>()
-            + std::declval<std::remove_reference_t<Tr>>() * 
-            (std::declval<std::remove_reference_t<T2>>() - 
-            std::declval<std::remove_reference_t<T1>>()))
     {
         return std::forward<T1>(p_start) + std::forward<Tr>(p_ratio) 
             * (std::forward<T2>(p_end) - std::forward<T1>(p_start));
@@ -922,6 +941,58 @@ namespace Math
             forward[0], forward[1], forward[2], -forward.Dot(p_from),
             0, 0, 0, 1
         });
+    }
+
+    /**
+     * @brief Reflect the vector across a normal vector.
+     * 
+     * @tparam T The type of the vectors.
+     * @tparam N The dimension of the vectors.
+     * @param p_vec The vector to get reflected.
+     * @param p_norm The normal vector.
+     * @return The reflected vector.
+     */
+    template<typename T, size_t N>
+    FORCE_INLINE auto Reflect(const Vector<T, N>& p_vec, const Vector<T, N>& p_norm)
+    {
+        auto norm = p_norm.Normalized();
+        return p_vec - 2 * Dot(p_vec, norm) * norm;
+    }
+
+    /**
+     * @brief Refract the vector across a normal vector.
+     * 
+     * @tparam T The type of the vectors.
+     * @tparam N The dimension of the vectors.
+     * @param p_vec The vector to get refracted.
+     * @param p_norm The normal vector.
+     * @param p_eta The refractive index of the material that the vector is going inward.
+     * @param p_eta_prime The refractive index of the material that the vector is going outward.
+     * @return The refracted vector.
+     */
+    template<typename T, size_t N>
+    FORCE_INLINE auto Refract(const Vector<T, N>& p_vec, const Vector<T, N>& p_norm, double p_eta, double p_eta_prime)
+    {
+        return Refract(p_vec, p_norm, p_eta / p_eta_prime);
+    }
+
+    /**
+     * @brief Refract the vector across a normal vector.
+     * 
+     * @tparam T The type of the vectors.
+     * @tparam N The dimension of the vectors.
+     * @param p_vec The vector to get refracted.
+     * @param p_norm The normal vector.
+     * @param p_eta_fraction The fraction of the refractive index going inward 
+     * over the refractive index going outward.
+     * @return The refracted vector.
+     */
+    template<typename T, size_t N>
+    FORCE_INLINE auto Refract(const Vector<T, N>& p_vec, const Vector<T, N>& p_norm, double p_eta_fraction)
+    {
+        auto perp = p_eta_fraction * (p_vec + Math::Dot(p_vec, p_norm) * p_norm);
+        auto parallel = -sqrt(abs(1.0 - perp.LengthSquared())) * p_norm;
+        return perp + parallel;
     }
 
     constexpr double PI = 3.14159265358979323846;

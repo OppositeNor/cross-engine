@@ -123,7 +123,6 @@ namespace Math
          */
         template<typename T1>
         FORCE_INLINE auto Dot(const Vector<T1, N>& p_other) const
-            -> decltype(std::declval<T>() * std::declval<T1>())
         {
             auto result = decltype(std::declval<T>() * std::declval<T1>())();
             for (size_t i = 0; i < N; ++i)
@@ -140,7 +139,6 @@ namespace Math
          */
         template<typename T1>
         auto Cross(const Vector<T1, N>& p_other) const
-            -> Vector<decltype(std::declval<T>() * std::declval<T1>() - std::declval<T>() * std::declval<T1>()), N>
         {
             static_assert(N == 3 || N == 4, "The vector dimension is not valid for dot product.");
             if constexpr (N == 4)
@@ -164,7 +162,6 @@ namespace Math
 
         template <typename T1>
         FORCE_INLINE static auto Dot(const Vector<T, N>& p_vec1, const Vector<T1, N>& p_vec2)
-            -> decltype(std::declval<T>() * std::declval<T1>())
         {
             return p_vec1.Dot(p_vec2);
         }
@@ -172,7 +169,7 @@ namespace Math
         /**
          * @brief The length of the vector.
          * 
-         * @return T The length of the vector.
+         * @return The length of the vector.
          */
         auto Length() const
         {
@@ -184,6 +181,24 @@ namespace Math
                 for (size_t i = 0; i < N; ++i)
                     result += data[i] * data[i];
                 return std::sqrt(result);
+            }
+        }
+
+        /**
+         * @brief Get the length squared.
+         * 
+         * @return The length squared of the vector.
+         */
+        auto LengthSquared() const
+        {
+            if constexpr (!has_times<T, T>)
+                throw std::domain_error("The type of the elements is not able to get the length.");
+            else
+            {
+                auto result = decltype(std::declval<T>() * std::declval<T>())();
+                for (size_t i = 0; i < N; ++i)
+                    result += data[i] * data[i];
+                return result;
             }
         }
         
@@ -221,7 +236,6 @@ namespace Math
 
         template <typename T1>
         FORCE_INLINE auto operator+(const Vector<T1, N>& p_other) const
-            -> Vector<decltype(std::declval<T>() + std::declval<T1>()), N>
         {
             using result_val_type = decltype(std::declval<T>() + std::declval<T1>());
             Vector<result_val_type, N> result;
@@ -240,7 +254,6 @@ namespace Math
 
         template <typename T1>
         FORCE_INLINE auto operator-(const Vector<T1, N>& p_other) const
-            -> Vector<decltype(std::declval<T>() - std::declval<T1>()), N>
         {
             using result_val_type = decltype(std::declval<T>() - std::declval<T1>());
             Vector<result_val_type, N> result;
@@ -271,6 +284,15 @@ namespace Math
         {
             for (size_t i = 0; i < N; ++i)
                 data[i] *= p_other[i];
+            return *this;
+        }
+
+        template <typename T1>
+        FORCE_INLINE auto operator/= (T1&& p_scaler)
+            -> std::enable_if_t<!std::is_base_of_v<MathTypeBase, std::remove_reference_t<T1>>, Vector<T, N>&>
+        {
+            for (size_t i = 0; i < N; ++i)
+                data[i] /= std::forward<T1>(p_scaler);
             return *this;
         }
 

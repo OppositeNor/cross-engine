@@ -92,7 +92,7 @@ namespace Math
             return result;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE bool operator ==(const Matrix<T1, M, N>& p_other) const
         {
             for (size_t i = 0; i < SIZE; ++i)
@@ -103,7 +103,7 @@ namespace Math
             return true;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE bool operator !=(const Matrix<T1, M, N>& p_other) const
         {
             for (size_t i = 0; i < SIZE; ++i)
@@ -114,7 +114,7 @@ namespace Math
             return false;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE auto operator +(const Matrix<T1, M, N>& p_other) const
             -> Matrix<decltype(std::declval<T>() + std::declval<T1>()), M, N>
         {
@@ -126,7 +126,7 @@ namespace Math
             return result;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE Matrix<T, M, N>& operator +=(const Matrix<T1, M, N>& p_other)
         {
             for (size_t i = 0; i < SIZE; ++i)
@@ -136,7 +136,7 @@ namespace Math
             return *this;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE auto operator -(const Matrix<T1, M, N>& p_other) const
             -> Matrix<decltype(std::declval<T>() - std::declval<T1>()), M, N>
         {
@@ -148,7 +148,7 @@ namespace Math
             return result;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE Matrix<T, M, N>& operator -=(const Matrix<T1, M, N>& p_other)
         {
             for (size_t i = 0; i < SIZE; ++i)
@@ -158,7 +158,7 @@ namespace Math
             return *this;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE Matrix<T, M, N>& operator *=(const Matrix<T1, N, N>& p_other)
         {
             using result_val_type = decltype(std::declval<T>() * std::declval<T1>());
@@ -178,13 +178,23 @@ namespace Math
             return *this;
         }
 
-        template<typename T1>
+        template <typename T1>
         FORCE_INLINE auto operator*=(T1&& p_scaler)
             -> std::enable_if_t<!std::is_base_of_v<MathTypeBase, std::remove_reference_t<T1>>, 
                 decltype(std::declval<T>() * std::declval<T1>(), *this)>
         {
             for (size_t i = 0; i < SIZE; ++i)
                 data[i] *= std::forward<T1>(p_scaler);
+            return *this;
+        }
+
+        template <typename T1>
+        FORCE_INLINE auto operator /=(T1&& p_scaler)
+            -> std::enable_if_t<!std::is_base_of_v<MathTypeBase, std::remove_reference_t<T1>>, 
+                decltype(std::declval<T>() / std::declval<T1>(), *this)>
+        {
+            for (size_t i = 0; i < SIZE; ++i)
+                data[i] /= std::forward<T1>(p_scaler);
             return *this;
         }
 
