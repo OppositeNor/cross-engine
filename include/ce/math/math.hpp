@@ -747,7 +747,8 @@ namespace Math
      */
     FORCE_INLINE Mat4 View(const Vec4& p_translation, const Vec4& p_rotation) noexcept
     {
-        return RotQuaternion(Vec4(-p_rotation[0], -p_rotation[1], -p_rotation[2], p_rotation[3])) * Trans(-1 * p_translation);
+        return RotQuaternion(Vec4(-p_rotation[0], -p_rotation[1], -p_rotation[2], p_rotation[3]))
+             * Trans(-1 * p_translation);
     }
 
     FORCE_INLINE Mat4 ProjOrtho(
@@ -947,7 +948,7 @@ namespace Math
      * @brief Reflect the vector across a normal vector.
      * 
      * @tparam T The type of the vectors.
-     * @tparam N The dimension of the vectors.
+     * @tparam N The dimension of the vectors. This will be treated as a unit vector.
      * @param p_vec The vector to get reflected.
      * @param p_norm The normal vector.
      * @return The reflected vector.
@@ -955,8 +956,7 @@ namespace Math
     template<typename T, size_t N>
     FORCE_INLINE auto Reflect(const Vector<T, N>& p_vec, const Vector<T, N>& p_norm)
     {
-        auto norm = p_norm.Normalized();
-        return p_vec - 2 * Dot(p_vec, norm) * norm;
+        return p_vec - 2 * Dot(p_vec, p_norm) * p_norm;
     }
 
     /**
@@ -964,8 +964,8 @@ namespace Math
      * 
      * @tparam T The type of the vectors.
      * @tparam N The dimension of the vectors.
-     * @param p_vec The vector to get refracted.
-     * @param p_norm The normal vector.
+     * @param p_vec The vector to get refracted. This will be treated as a unit vector.
+     * @param p_norm The normal vector. This will be treated as a unit vector.
      * @param p_eta The refractive index of the material that the vector is going inward.
      * @param p_eta_prime The refractive index of the material that the vector is going outward.
      * @return The refracted vector.
@@ -981,8 +981,8 @@ namespace Math
      * 
      * @tparam T The type of the vectors.
      * @tparam N The dimension of the vectors.
-     * @param p_vec The vector to get refracted.
-     * @param p_norm The normal vector.
+     * @param p_vec The vector to get refracted. This will be treated as a unit vector.
+     * @param p_norm The normal vector. This will be treated as a unit vector.
      * @param p_eta_fraction The fraction of the refractive index going inward 
      * over the refractive index going outward.
      * @return The refracted vector.
@@ -990,7 +990,7 @@ namespace Math
     template<typename T, size_t N>
     FORCE_INLINE auto Refract(const Vector<T, N>& p_vec, const Vector<T, N>& p_norm, double p_eta_fraction)
     {
-        auto perp = p_eta_fraction * (p_vec + Math::Dot(p_vec, p_norm) * p_norm);
+        auto perp = p_eta_fraction * (p_vec + Math::Dot(-1 * p_vec, p_norm) * p_norm);
         auto parallel = -sqrt(abs(1.0 - perp.LengthSquared())) * p_norm;
         return perp + parallel;
     }
