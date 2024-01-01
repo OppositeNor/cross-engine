@@ -164,7 +164,7 @@ void Window::InitWindow()
 
     float aspect_ratio = (float)window_size[0] / (float)window_size[1];
     proj_matrix = Math::ProjPersp(
-        1.0f * aspect_ratio, -1.0f * aspect_ratio, 1.0f, -1.0f, 2.5f, 1000.0f);
+        0.2f * aspect_ratio, -0.2f * aspect_ratio, 0.2f, -0.2f, 0.5f, 1000.0f);
 
     skybox = new Skybox(this, {Resource::GetExeDirectory() + "/textures/skybox/default/right.jpg",
                                Resource::GetExeDirectory() + "/textures/skybox/default/left.jpg",

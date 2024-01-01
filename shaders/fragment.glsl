@@ -83,11 +83,11 @@ void main()
     }
     for (int i = 0; i < parallel_light_count; ++i)
     {
-        temp_color += ShadeColor(to_camera, normalize(-1 * parallel_light[i].direction), 1, normal, 
+        temp_color += ShadeColor(to_camera, normalize(-1 * parallel_light[i].direction), 50, normal, 
             parallel_light[i].color, parallel_light[i].intensity);
     }
     temp_color *= ao;
-    temp_color += vec4(0.04, 0.04, 0.06, 1.0);
+    temp_color += vec4(0.08, 0.08, 0.09, 1.0);
 
     temp_color.w = 1.0;
     FragColor = temp_color;
