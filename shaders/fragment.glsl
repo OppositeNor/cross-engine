@@ -65,7 +65,7 @@ void main()
     vec4 to_camera = normalize(camera_position - frag_position);
 
     albedo = scaler_albedo * texture(material.albedo, frag_texture_uv);
-    normal = texture(material.normal, frag_texture_uv) * 2.0 - 1.0;
+    normal = texture(material.normal, frag_texture_uv) * 2.0 - vec4(1.0);
     normal.w = 0.0;
     normal = normalize(frag_tbn * normal);
     metallic = scaler_metallic * texture(material.metallic, frag_texture_uv).r;
