@@ -78,7 +78,7 @@ public:
      *
      * @return std::shared_ptr<ATexture> The metallic of the material.
      */
-    FORCE_INLINE std::shared_ptr<ATexture>& Matallic() noexcept { return metallic; }
+    FORCE_INLINE std::shared_ptr<ATexture>& Metallic() noexcept { return metallic; }
 
     /**
      * @brief Get the roughness of the material.
