@@ -22,7 +22,7 @@ public:
     /**
      * @brief The count of elements in the vertex array.
      */
-    static constexpr size_t ARRAY_SIZE = 14;
+    static constexpr size_t ARRAY_SIZE = 11;
 
     /**
      * @brief Constructor for Vertex.

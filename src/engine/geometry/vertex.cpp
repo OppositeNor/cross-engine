@@ -130,24 +130,24 @@ float* Vertex::GetArray(float* p_buff, size_t p_buff_size, const Math::Vec4& p_t
 {
     if (p_buff_size < ARRAY_SIZE)
         throw std::out_of_range("The buffer size is too small.");
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < 3; ++i)
         p_buff[i] = position[i];
     
     if (normal ==Math::Vec4())
     {
         Math::Vec4 temp_normal = GetInducedNormal();
-        for (size_t i = 0; i < 4; ++i)
-            p_buff[i + 4] = temp_normal[i];
+        for (size_t i = 0; i < 3; ++i)
+            p_buff[i + 3] = temp_normal[i];
     }
     else
     {
-        for (size_t i = 0; i < 4; ++i)
-            p_buff[i + 4] = normal[i];
+        for (size_t i = 0; i < 3; ++i)
+            p_buff[i + 3] = normal[i];
     }
     for (size_t i = 0; i < 2; ++i)
-        p_buff[i + 8] = uv[i];
-    for (size_t i = 0; i < 4; ++i)
-        p_buff[i + 10] = p_tangent[i];
+        p_buff[i + 6] = uv[i];
+    for (size_t i = 0; i < 3; ++i)
+        p_buff[i + 8] = p_tangent[i];
     return p_buff;
 }
 
@@ -162,6 +162,7 @@ Math::Vec4 Vertex::GetInducedNormal() const
 
 bool Vertex::IsEar() const
 {
+    // todo: buggy
     if (prev == nullptr || next == nullptr)
         throw std::domain_error("The vertex is not fully connected.");
     auto prev_vec = position - prev->position;

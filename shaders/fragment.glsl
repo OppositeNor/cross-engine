@@ -55,8 +55,8 @@ const float PI = 3.141592653589793;
 vec4 ShadeColor(vec4 p_to_camera, vec4 p_to_light, float p_d_to_light, vec4 p_normal, vec4 p_color, float p_intensity);
 
 float TRGGX(vec4 p_normal, vec4 p_half);
-float SchlickGGX(vec4 p_normal, vec4 p_vec, float p_k);
-float GSmith(vec4 p_normal, vec4 p_to_camera, vec4 p_to_light);
+float SchlickGGX(float p_dot_norm_vec, float p_k);
+float GSmith(float p_dot_normal_cam, float p_dot_normal_light, vec4 p_to_light);
 vec4 FresnelSchlick(vec4 p_half, vec4 p_to_camera, vec4 f0);
 
 vec4 f0;
@@ -83,13 +83,13 @@ void main()
     }
     for (int i = 0; i < parallel_light_count; ++i)
     {
-        temp_color += ShadeColor(to_camera, normalize(-1 * parallel_light[i].direction), 50, normal, 
+        temp_color += ShadeColor(to_camera, normalize(-1 * parallel_light[i].direction), 1, normal, 
             parallel_light[i].color, parallel_light[i].intensity);
     }
     temp_color *= ao;
-    temp_color += vec4(0.08, 0.08, 0.09, 1.0);
+    temp_color += vec4(0.1, 0.1, 0.1, 0.0) * albedo;
 
-    temp_color.w = 1.0;
+    temp_color[3] = 1.0;
     FragColor = temp_color;
 }
 
@@ -99,12 +99,14 @@ vec4 ShadeColor(vec4 p_to_camera, vec4 p_to_light, float p_d_to_light, vec4 p_no
 
     vec4 F = FresnelSchlick(half, p_to_camera, f0);
 
-    vec4 specular = TRGGX(p_normal, half) * F * GSmith(p_normal, p_to_camera, p_to_light) 
-        / (4.0 * max(dot(p_normal, p_to_camera), 0.0) * max(dot(p_normal, p_to_light), 0.0) + 0.001);
+    float dot_normal_light = max(dot(p_normal, p_to_light), 0.0);
+    float dot_normal_cam = max(dot(p_normal, p_to_camera), 0.0);
+    vec4 specular = TRGGX(p_normal, half) * F * GSmith(dot_normal_cam, dot_normal_light, p_to_light)
+        / (4.0 * dot_normal_cam * dot_normal_light + 0.001);
     vec4 kD = (vec4(1.0) - F) * (1 - metallic);
 
-    vec4 radiance = p_color * p_intensity / (p_d_to_light * p_d_to_light);
-    return (kD * albedo / PI + specular) * radiance * max(dot(p_normal, p_to_light), 0.0);
+    vec4 irradiance = p_color * p_intensity / (p_d_to_light * p_d_to_light);
+    return (kD * albedo / PI + specular) * irradiance * dot_normal_light;
 }
 
 float TRGGX(vec4 p_normal, vec4 p_half)
@@ -113,16 +115,15 @@ float TRGGX(vec4 p_normal, vec4 p_half)
     return alpha2 / (PI * pow(pow(max(dot(p_normal, p_half), 0.0), 2) * (alpha2 - 1) + 1, 2));
 }
 
-float SchlickGGX(vec4 p_normal, vec4 p_vec, float p_k)
+float SchlickGGX(float p_dot_norm_vec, float p_k)
 {
-    float ndotv = max(dot(p_normal, p_vec), 0.0);
-    return ndotv / (ndotv * (1 - p_k) + p_k);
+    return p_dot_norm_vec / (p_dot_norm_vec * (1 - p_k) + p_k);
 }
 
-float GSmith(vec4 p_normal, vec4 p_to_camera, vec4 p_to_light)
+float GSmith(float p_dot_normal_cam, float p_dot_normal_light, vec4 p_to_light)
 {
     float k = roughness * roughness / 2;
-    return SchlickGGX(p_normal, p_to_camera, k) * SchlickGGX(p_normal, p_to_light, k);
+    return SchlickGGX(p_dot_normal_cam, k) * SchlickGGX(p_dot_normal_light, k);
 }
 
 vec4 FresnelSchlick(vec4 p_half, vec4 p_to_camera, vec4 f0)

@@ -115,6 +115,16 @@ namespace Math
             return data[p_index];
         }
 
+        template<size_t N1>
+        FORCE_INLINE Vector<T, N1> Clamp() const
+        {
+            static_assert(N1 <= N, "The dimension of the new vector is larger than the original vector.");
+            Vector<T, N1> result;
+            for (size_t i = 0; i < N1; ++i)
+                result[i] = data[i];
+            return result;
+        }
+
         /**
          * @brief Dot product of this vector and another vector.
          * 
