@@ -4,7 +4,7 @@ A 3D Rendering Engine that is currently underdeveloped
 
 - [ ] Shadow casting
 
-- [ ] Multi-thread based multi-window support
+- [x] Multi-thread based multi-window support
 
 - [ ] Math support
 
