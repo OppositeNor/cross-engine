@@ -56,7 +56,7 @@ vec4 ShadeColor(vec4 p_to_camera, vec4 p_to_light, float p_d_to_light, vec4 p_no
 
 float TRGGX(vec4 p_normal, vec4 p_half);
 float SchlickGGX(float p_dot_norm_vec, float p_k);
-float GSmith(float p_dot_normal_cam, float p_dot_normal_light, vec4 p_to_light);
+float GSmith(float p_dot_normal_cam, float p_dot_normal_light);
 vec4 FresnelSchlick(vec4 p_half, vec4 p_to_camera, vec4 f0);
 
 vec4 f0;
@@ -95,13 +95,13 @@ void main()
 
 vec4 ShadeColor(vec4 p_to_camera, vec4 p_to_light, float p_d_to_light, vec4 p_normal, vec4 p_color, float p_intensity)
 {
-    vec4 half = normalize(p_to_camera + p_to_light);
+    vec4 half_vec = normalize(p_to_camera + p_to_light);
 
-    vec4 F = FresnelSchlick(half, p_to_camera, f0);
+    vec4 F = FresnelSchlick(half_vec, p_to_camera, f0);
 
     float dot_normal_light = max(dot(p_normal, p_to_light), 0.0);
     float dot_normal_cam = max(dot(p_normal, p_to_camera), 0.0);
-    vec4 specular = TRGGX(p_normal, half) * F * GSmith(dot_normal_cam, dot_normal_light, p_to_light)
+    vec4 specular = TRGGX(p_normal, half_vec) * F * GSmith(dot_normal_cam, dot_normal_light)
         / (4.0 * dot_normal_cam * dot_normal_light + 0.001);
     vec4 kD = (vec4(1.0) - F) * (1 - metallic);
 
@@ -120,7 +120,7 @@ float SchlickGGX(float p_dot_norm_vec, float p_k)
     return p_dot_norm_vec / (p_dot_norm_vec * (1 - p_k) + p_k);
 }
 
-float GSmith(float p_dot_normal_cam, float p_dot_normal_light, vec4 p_to_light)
+float GSmith(float p_dot_normal_cam, float p_dot_normal_light)
 {
     float k = roughness * roughness / 2;
     return SchlickGGX(p_dot_normal_cam, k) * SchlickGGX(p_dot_normal_light, k);
