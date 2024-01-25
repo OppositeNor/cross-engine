@@ -6,9 +6,9 @@ class Camera : public Component
 
 public:
 
-    Camera(Window* p_context);
+    Camera();
 
-     Math::Mat4 GetViewMatrix() const;
+    Math::Mat4 GetViewMatrix() const;
 
     /**
      * @brief Rotate the camera to look at a target.

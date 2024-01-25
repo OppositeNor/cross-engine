@@ -2,19 +2,42 @@
 #include <mutex>
 #include "ce/defs.hpp"
 #include "ce/math/math.hpp"
+#include "ce/materials/material.h"
 #include <vector>
 #include <mutex>
 
 class Window;
 class Triangle;
 class TextureConfig;
+class AMaterial;
+class ATexture;
 class Graphics
 {
+private:
     Graphics() = delete;
     inline static bool initialized = false;
     inline static std::mutex init_mutex;
 
+    static std::shared_ptr<ATexture> default_albedo;
+    static std::shared_ptr<ATexture> default_normal;
+    static std::shared_ptr<ATexture> default_metallic;
+    static std::shared_ptr<ATexture> default_roughness;
+    static std::shared_ptr<ATexture> default_ao;
+    static std::shared_ptr<AMaterial> default_material;
+
 public:
+
+    inline static const ubyte_t WHITE_IMAGE[] = {
+        0xFF, 0xFF, 0xFF, 0xFF
+    };
+
+    FORCE_INLINE static std::shared_ptr<ATexture> GetDefaultAlbedo() noexcept { return default_albedo; }
+    FORCE_INLINE static std::shared_ptr<ATexture> GetDefaultNormal() noexcept { return default_normal; }
+    FORCE_INLINE static std::shared_ptr<ATexture> GetDefaultMetallic() noexcept { return default_metallic; }
+    FORCE_INLINE static std::shared_ptr<ATexture> GetDefaultRoughness() noexcept { return default_roughness; }
+    FORCE_INLINE static std::shared_ptr<ATexture> GetDefaultAO() noexcept { return default_ao; }
+    FORCE_INLINE static std::shared_ptr<AMaterial> GetDefaultMaterial() noexcept { return default_material; }
+
     /**
      * @brief Initialize graphics.
      * @throw std::runtime_error Failed to initialize GLFW.

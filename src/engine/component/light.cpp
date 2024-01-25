@@ -1,8 +1,8 @@
 #include "ce/component/light.h"
 #include "ce/graphics/window.h"
 
-ALight::ALight(Window* p_context)
-    : Component(p_context)
+ALight::ALight()
+    : Component()
 {
 
 }
@@ -12,7 +12,7 @@ ALight::~ALight()
 
 }
 
-void ALight::Draw()
+void ALight::Draw(Window* p_context)
 {
-    Component::Draw();
+    Component::Draw(p_context);
 }

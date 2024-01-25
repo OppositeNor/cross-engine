@@ -1,8 +1,8 @@
 #include "ce/component/camera.h"
 #include "ce/graphics/window.h"
 
-Camera::Camera(Window* p_context)
-    : Component(p_context)
+Camera::Camera()
+    : Component()
 {
 }
 

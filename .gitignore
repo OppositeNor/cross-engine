@@ -1,6 +1,7 @@
 .vscode
 build
 bin
+test_resource
 test_resource/*.jpg
 test_resource/*.png
 test_resource/*.tif

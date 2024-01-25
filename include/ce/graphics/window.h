@@ -19,10 +19,6 @@ class Skybox;
 class ATexture;
 class Window : public IEventListener
 {
-
-    inline static const ubyte_t WHITE_IMAGE[] = {
-        0xFF, 0xFF, 0xFF, 0xFF
-    };
 private:
     using ReleaseFunction = void(*)(int, const unsigned int*);
     
@@ -39,12 +35,6 @@ private:
 
     mutable std::vector<ThreadResource> queued_thread_resources;
     mutable std::mutex queued_thread_resources_mutex;
-
-    std::shared_ptr<ATexture> default_albedo;
-    std::shared_ptr<ATexture> default_normal;
-    std::shared_ptr<ATexture> default_metallic;
-    std::shared_ptr<ATexture> default_roughness;
-    std::shared_ptr<ATexture> default_ao;
     
     mutable size_t point_light_count = 0;
     mutable size_t parallel_light_count = 0;
@@ -58,7 +48,6 @@ protected:
     bool is_resizable = false;
 
     std::string window_title = "";
-    std::shared_ptr<AMaterial> default_material;
 
 #ifdef _WIN32
     HWND hwnd = nullptr;
@@ -80,10 +69,9 @@ protected:
     void InitWindow();
     void UpdateWindowSize(const Math::Vec2s& p_new_window_size);
 
-    std::shared_ptr<Component> base_component;
     std::shared_ptr<Camera> using_camera;
 
-     Math::Mat4 proj_matrix;
+    Math::Mat4 proj_matrix;
 
 private:
     static void OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods);
@@ -94,17 +82,7 @@ private:
 
 public:
 
-    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultAlbedo() const noexcept { return default_albedo; }
-    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultNormal() const noexcept { return default_normal; }
-    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultMetallic() const noexcept { return default_metallic; }
-    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultRoughness() const noexcept { return default_roughness; }
-    FORCE_INLINE const std::shared_ptr<ATexture>& GetDefaultAO() const noexcept { return default_ao; }
-
-    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultAlbedo() noexcept { return default_albedo; }
-    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultNormal() noexcept { return default_normal; }
-    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultMetallic() noexcept { return default_metallic; }
-    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultRoughness() noexcept { return default_roughness; }
-    FORCE_INLINE std::shared_ptr<ATexture> GetDefaultAO() noexcept { return default_ao; }
+    std::shared_ptr<Component> GetBaseComponent();
 
     /**
      * @brief Get the GLFW context.
@@ -112,21 +90,6 @@ public:
      * @return void* The GLFW context.
      */
     FORCE_INLINE const void* GetGLFWContext() const noexcept { return glfw_context; }
-
-
-    /**
-     * @brief Get the base component.
-     * 
-     * @return Component* The base component.
-     */
-    FORCE_INLINE std::shared_ptr<Component> GetBaseComponent() { return base_component; }
-
-    /**
-     * @brief Get the base component.
-     *
-     * @return const Component* The base component.
-     */
-    FORCE_INLINE const std::shared_ptr<Component> GetBaseComponent() const { return base_component; }
 
     /**
      * @brief Get the camera that is being used.
@@ -212,13 +175,6 @@ public:
      * @param p_title The title of the window.
      */
     void SetWindowTitle(const std::string& p_title);
-
-    /**
-     * @brief Get the default material of the context.
-     * 
-     * @return const std::shared_ptr<AMaterial>& The default material of this context.
-     */
-    FORCE_INLINE const std::shared_ptr<AMaterial>& GetDefaultMaterial() const noexcept { return default_material; }
 
     /**
      * @brief Destroy the Window object

@@ -2,9 +2,8 @@
 #include "ce/graphics/window.h"
 
 
-Component::Component(Window* p_context)
-    : position(0.0f, 0.0f, 0.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f),
-        context(p_context)
+Component::Component()
+    : position(0.0f, 0.0f, 0.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f)
 {
 
 }
@@ -32,9 +31,6 @@ Component::Component(Component&& p_other) noexcept
         p_other.parent.lock()->AddChild(shared_from_this());
     p_other.parent.reset();
     children = std::move(p_other.children);
-
-    context = p_other.context;
-    p_other.context = nullptr;
 }
 
 Component::~Component()
@@ -278,7 +274,7 @@ Math::Vec4 Component::GetRotationEuler() const
     return Math::Vec4();
 }
 
-void Component::Draw()
+void Component::Draw(Window* p_context)
 {
     if (!visible)
         return;
@@ -286,6 +282,6 @@ void Component::Draw()
     {
         if (child.expired())
             continue;
-        child.lock()->Draw();
+        child.lock()->Draw(p_context);
     }
 }

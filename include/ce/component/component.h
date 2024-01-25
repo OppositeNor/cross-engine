@@ -13,7 +13,6 @@ class Component
 {
 private:
     using WPComponent = std::weak_ptr<Component>;
-    Window* context = nullptr;
 
      Math::Vec4 position;
      Math::Vec4 rotation;
@@ -40,7 +39,7 @@ private:
     bool visible = true;
 
 public:
-    Component(Window* p_context);
+    Component();
     Component(const Component& p_other);
     Component(Component&& p_other) noexcept;
     virtual ~Component();
@@ -235,20 +234,6 @@ public:
     void SetGlobalPosition(const Math::Vec4& p_position);
 
     /**
-     * @brief Get the context of this mesh.
-     * 
-     * @return Window* The context of this mesh.
-     */
-    Window* GetContext() { return context; }
-
-    /**
-     * @brief Get the context of this mesh.
-     * 
-     * @return const Window* The context of this mesh.
-     */
-    const Window* GetContext() const { return context; }
-
-    /**
      * @brief Is the component visible.
      * 
      * @return true The component is visible.
@@ -288,5 +273,5 @@ public:
      * @brief Draw the component.
      * The parent function must be called when overriding this function.
      */
-    virtual void Draw();
+    virtual void Draw(Window* p_context);
 };

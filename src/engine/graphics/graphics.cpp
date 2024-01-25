@@ -1,9 +1,19 @@
 #include "ce/graphics/graphics.h"
 #include "ce/geometry/triangle.h"
 #include "ce/graphics/window.h"
+#include "ce/texture/static_texture.h"
+#include "ce/resource/resource.h"
+#include "ce/materials/valued_material.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "ce/defs.hpp"
+
+std::shared_ptr<ATexture> Graphics::default_albedo;
+std::shared_ptr<ATexture> Graphics::default_normal;
+std::shared_ptr<ATexture> Graphics::default_metallic;
+std::shared_ptr<ATexture> Graphics::default_roughness;
+std::shared_ptr<ATexture> Graphics::default_ao;
+std::shared_ptr<AMaterial> Graphics::default_material;
 
 void Graphics::InitGraphics()
 {
@@ -12,6 +22,21 @@ void Graphics::InitGraphics()
         std::lock_guard<std::mutex> lock(init_mutex);
         if (!initialized)
         {
+            
+            default_albedo = std::make_shared<StaticTexture>();
+            default_normal = std::make_shared<StaticTexture>();
+            default_metallic = std::make_shared<StaticTexture>();
+            default_roughness = std::make_shared<StaticTexture>();
+            default_ao = std::make_shared<StaticTexture>();
+
+            default_albedo->LoadTexture(Resource::GetExeDirectory() + "/textures/default.png");
+            default_normal->LoadTexture(Resource::GetExeDirectory() + "/textures/default_normal.png");
+            default_metallic->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+            default_roughness->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+            default_ao->LoadTexture(WHITE_IMAGE, 2, 2, 1);
+            
+            default_material = std::shared_ptr<AMaterial>(new PBRMaterial());
+        
             if (!glfwInit())
                 throw std::runtime_error("Failed to initialize GLFW.");
             
@@ -95,7 +120,7 @@ unsigned int Graphics::GenerateTexture(const Window* p_context)
 
 void Graphics::DeleteTexture(unsigned int p_texture_id, const Window* p_context)
 {
-    p_context->FreeThreadResource(p_texture_id);
+    // p_context->FreeThreadResource(p_texture_id);
 }
 
 void Graphics::ConfigTexture(unsigned int p_texture_id, const TextureConfig& p_config)

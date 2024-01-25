@@ -3,6 +3,7 @@
 #include "ce/managers/input_manager.h"
 #include "ce/managers/event_manager.h"
 #include "ce/graphics/graphics.h"
+#include "ce/component/component.h"
 #include <GLFW/glfw3.h>
 
 Game* Game::instance = nullptr;
@@ -13,6 +14,7 @@ Game::Game(std::shared_ptr<Window> p_window)
     main_window = p_window;
     input_manager = std::make_shared<InputManager>();
     event_manager = std::make_shared<EventManager>();
+    base_component = std::make_shared<Component>();
 
     event_manager->AddEventListener(input_manager);
 }
@@ -28,7 +30,9 @@ void Game::Init(std::shared_ptr<Window> p_window)
     {
         std::lock_guard<std::mutex> lock(initialize_mutex);
         if (instance == nullptr)
+        {
             instance = new Game(p_window);
+        }
     }
 }
 
@@ -50,6 +54,11 @@ void Game::Init(const Math::Vec2s& p_size, const std::string& p_title)
 void Game::Init(size_t p_width, size_t p_height, const std::string& p_title)
 {
     Init(std::make_shared<Window>(p_width, p_height, p_title));
+}
+
+std::shared_ptr<Component> Game::GetBaseComponent()
+{
+    return base_component;
 }
 
 void Game::Init()
@@ -84,10 +93,12 @@ void Game::Run()
 {
     float frame_start;
     float delta = 0.01;
+    base_component->Ready();
     while (!main_window->IsClosed())
     {
         frame_start = (float)glfwGetTime();
         Process(delta);
+        base_component->Update(delta);
         Graphics::Update();
         Sleep(1);
         delta = (float)glfwGetTime() - frame_start;

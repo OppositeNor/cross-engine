@@ -4,12 +4,14 @@
 class Window;
 class ParallelLight : public ALight
 {
+private:
     Math::Vec4 direction;
     Math::Vec4 color;
     float intensity;
+    
 public:
-    ParallelLight(Window* p_context);
-    ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, float p_intensity, Window* p_context);
+    ParallelLight();
+    ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, float p_intensity);
     
     /**
      * @brief Get the direction of the light.
@@ -66,12 +68,12 @@ public:
      * @brief Set the uniform of the light's data.
      * 
      */
-    virtual void SetUniform(size_t p_index) override;
+    virtual void SetUniform(Window* p_context, size_t p_index) override;
 
     /**
      * @brief Draw the light.
      * 
      */
-    virtual void Draw() override;
+    virtual void Draw(Window* p_context) override;
 
 };

@@ -8,6 +8,7 @@
 
 class ShaderProgram
 {
+private:
     unsigned int program_id = 0;
     std::shared_ptr<AShader> vert_shader;
     std::shared_ptr<AShader> frag_shader;

@@ -9,14 +9,14 @@ void DynamicMesh::SetTrianglesDirty(bool p_dirty)
     triangles_dirty = p_dirty;
 }
 
-DynamicMesh::DynamicMesh(Window* p_context)
-    : VisualMesh(p_context)
+DynamicMesh::DynamicMesh()
+    : VisualMesh()
 {
     
 }
 
-DynamicMesh::DynamicMesh(std::vector<Triangle*>&& p_triangles, Window* p_context)
-    : DynamicMesh(p_context)
+DynamicMesh::DynamicMesh(std::vector<Triangle*>&& p_triangles)
+    : DynamicMesh()
 {
     triangles = std::move(p_triangles);
 }
@@ -42,22 +42,12 @@ DynamicMesh::~DynamicMesh()
 
 std::vector<Triangle*>& DynamicMesh::Triangles()
 {
-    triangles_dirty = true;
+    SetTrianglesDirty(true);
     return triangles;
 }
 
 void DynamicMesh::Update(float p_delta)
 {
-    VisualMesh::Update(p_delta);
-    if (triangles_dirty)
-    {
-        std::lock_guard<std::mutex> lock(triangles_mutex);
-        if (triangles_dirty)
-        {
-            triangles_dirty = false;
-            UpdateVAO(triangles);
-        }
-    }
 }
 
 void DynamicMesh::LoadTriangles(std::vector<Triangle*>&& p_triangles)
@@ -82,4 +72,18 @@ void DynamicMesh::LoadTrisWithNormal(const std::string& p_file)
         delete i;
     Resource::LoadTrisWithNormal(p_file, triangles);
     SetTrianglesDirty(true);
+}
+
+void DynamicMesh::Draw(Window* p_context)
+{
+    VisualMesh::Draw(p_context);
+    if (triangles_dirty)
+    {
+        std::lock_guard<std::mutex> lock(triangles_mutex);
+        if (triangles_dirty)
+        {
+            UpdateVAO(triangles, GetVAOs()[p_context], GetVBOs()[p_context]);
+            triangles_dirty = false;
+        }
+    }
 }

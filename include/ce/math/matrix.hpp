@@ -18,6 +18,7 @@ namespace Math
     template <typename T, size_t tM, size_t tN>
     class Matrix : public MathTypeBase
     {
+    private:
         union{
             T data[tM * tN];
             T data2[tM][tN];

@@ -1,31 +1,39 @@
 #include "ce/component/point_light.h"
 #include "ce/graphics/window.h"
+#include "ce/component/camera.h"
 #include <type_traits>
 #include <sstream>
 
-PointLight::PointLight(Window* p_context)
-    : PointLight(Math::Pos(), 20, p_context)
+const float PointLight::MAX_LIGHT_RENDER_DISTANCE = 150.0f;
+
+const float PointLight::MAX_LIGHT_RENDER_DISTANCE_SQ = 
+    PointLight::MAX_LIGHT_RENDER_DISTANCE * PointLight::MAX_LIGHT_RENDER_DISTANCE;
+
+PointLight::PointLight()
+    : PointLight(Math::Pos(), 20)
 {
 }
-PointLight::PointLight(const Math::Vec4& p_color, float p_intensity, Window* p_context)
-    : ALight(p_context)
+PointLight::PointLight(const Math::Vec4& p_color, float p_intensity)
+    : ALight()
 {
     color = p_color;
     intensity = p_intensity;
 }
 
-void PointLight::SetUniform(size_t p_index)
+void PointLight::SetUniform(Window* p_context, size_t p_index)
 {
     auto global_position = GetGlobalPosition();
     std::stringstream ss;
     ss << UniformName() << "[" << p_index << "]";
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".position", global_position);
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".color", color);
-    GetContext()->GetShaderProgram()->SetUniform(ss.str() + ".intensity", intensity);
+    p_context->GetShaderProgram()->SetUniform(ss.str() + ".position", global_position);
+    p_context->GetShaderProgram()->SetUniform(ss.str() + ".color", color);
+    p_context->GetShaderProgram()->SetUniform(ss.str() + ".intensity", intensity);
 }
 
-void PointLight::Draw()
+void PointLight::Draw(Window* p_context)
 {
-    ALight::Draw();
-    SetUniform(GetContext()->GetPointLightNextIndex());
+    ALight::Draw(p_context);
+    float to_camera_sq = (GetPosition() - p_context->GetUsingCamera()->GetPosition()).LengthSquared();
+    if (MAX_LIGHT_RENDER_DISTANCE_SQ > to_camera_sq)
+        SetUniform(p_context, p_context->GetPointLightNextIndex());
 }

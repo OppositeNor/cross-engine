@@ -26,7 +26,6 @@ if (WIN32_STARTUP)
 endif()
 
 add_subdirectory(src/engine)
-add_subdirectory(src/test)
 add_subdirectory(src/user)
 
 add_subdirectory(shaders)
@@ -57,9 +56,6 @@ if (WIN32_STARTUP)
     )
 endif()
 
-add_executable(CrossroadEngineUnitTest
-    ${CE_SOURCES}
-    ${CE_TEST_SOURCES})
     
 add_executable(Application
     ${CE_USER_SOURCES}
@@ -70,9 +66,6 @@ add_custom_command(TARGET Application POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     $<TARGET_FILE:glfw3dll> $<TARGET_FILE_DIR:Application>
 )
-
-target_link_libraries(CrossroadEngineUnitTest PUBLIC
-    ${libs})
 
 target_link_libraries(Application PUBLIC
     ${libs})

@@ -7,6 +7,7 @@ class IEventListener;
 class AEvent;
 class EventManager
 {
+private:
     std::vector<std::weak_ptr<IEventListener>> event_listeners;
     
     std::shared_mutex event_listeners_mutex;

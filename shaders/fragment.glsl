@@ -75,19 +75,19 @@ void main()
 
     f0 = mix(vec4(0.04), albedo, metallic);
     vec4 temp_color;
-    for (int i = 0; i < point_light_count; ++i)
+    for (int i = 0; i < max(point_light_count, MAX_POINT_LIGHTS); ++i)
     {
         vec4 to_light = normalize(point_light[i].position - frag_position);
         temp_color += ShadeColor(to_camera, to_light, length(point_light[i].position - frag_position), 
             normal, point_light[i].color, point_light[i].intensity);
     }
-    for (int i = 0; i < parallel_light_count; ++i)
+    for (int i = 0; i < max(parallel_light_count, MAX_PARALLEL_LIGHTS); ++i)
     {
         temp_color += ShadeColor(to_camera, normalize(-1 * parallel_light[i].direction), 1, normal, 
             parallel_light[i].color, parallel_light[i].intensity);
     }
     temp_color *= ao;
-    temp_color += vec4(0.1, 0.1, 0.1, 0.0) * albedo;
+    temp_color += vec4(0.05, 0.05, 0.05, 0.0) * albedo;
 
     temp_color[3] = 1.0;
     FragColor = temp_color;

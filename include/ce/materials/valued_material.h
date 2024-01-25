@@ -4,6 +4,7 @@
 
 class PBRMaterial : public AMaterial
 {
+private:
     Math::Vec4 scaler_albedo;
     float scaler_roughness;
     float scaler_metallic;
@@ -12,7 +13,7 @@ public:
     /**
      * @brief Construct a new PBRMaterial object.
      */
-    PBRMaterial(const Window* p_context);
+    PBRMaterial();
 
     /**
      * @brief Construct a new PBRMaterial object.
@@ -22,7 +23,7 @@ public:
      * @param p_metallic Metallic.
      * @param p_ao Ambient occlusion.
      */
-    PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic, const Window* p_context);
+    PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic);
 
     /**
      * @brief Get the albedo of the material.
@@ -167,7 +168,8 @@ public:
     /**
      * @brief Set the uniform for this material.
      * 
+     * @param p_context The context to set the uniform on.
      * @param p_shader_program The shader program.
      */
-    virtual void SetUniform(const ShaderProgram* p_shader_program) const override;
+    virtual void SetUniform(Window* p_context) const override;
 };

@@ -1,18 +1,19 @@
 #pragma once
 #include "ce/component/component.h"
+#include <map>
 
 class Triangle;
 class AMaterial;
 class VisualMesh : public Component
 {
 protected:
-    unsigned int vao = 0;
-    unsigned int vbo = 0;
-    void UpdateVAO(const std::vector<Triangle*>& p_triangles);
+    std::map<Window*, unsigned int> vaos;
+    std::map<Window*, unsigned int> vbos;
+    void UpdateVAO(const std::vector<Triangle*>& p_triangles, unsigned int p_vao, unsigned int p_vbo);
 
     std::shared_ptr<AMaterial> material;
 public:
-    VisualMesh(Window* p_context);
+    VisualMesh();
     ~VisualMesh();
 
     VisualMesh(const VisualMesh& p_other) 
@@ -42,18 +43,18 @@ public:
     FORCE_INLINE void SetMaterial(std::shared_ptr<AMaterial> p_material) { material = p_material; } 
 
     /**
-     * @brief Get the Vertex Array Object of this mesh.
+     * @brief Return the map of the context correspond to it's vao.
      * 
-     * @return unsigned int The Vertex Array Object of this mesh.
+     * @return std::map<const Window*, unsigned int> The map of the vaos.
      */
-    FORCE_INLINE unsigned int GetVAO() const { return vao; }
+    FORCE_INLINE std::map<Window*, unsigned int> GetVAOs() const { return vaos; }
 
     /**
-     * @brief Get the Vertex Buffer Object of this mesh.
+     * @brief Return the map of the context correspond to it's vbo.
      * 
-     * @return unsigned int The Vertex Buffer Object of this mesh.
+     * @return std::map<Window*, unsigned int> The map of the vbos.
      */
-    FORCE_INLINE unsigned int GetVBO() const { return vbo; }
+    FORCE_INLINE std::map<Window*, unsigned int> GetVBOs() const { return vbos; }
 
     /**
      * @brief Get the vertex count of this mesh.
@@ -87,5 +88,7 @@ public:
      * @brief Draw the mesh.
      * 
      */
-    virtual void Draw() override;
+    virtual void Draw(Window* p_context) override;
+
+    virtual const std::vector<Triangle*>& GetTriangles() = 0;
 };

@@ -1,51 +1,59 @@
 #include "ce/texture/static_texture.h"
 #include "ce/resource/resource.h"
-#include "ce/graphics/shader/shader_program.h"
+#include "ce/graphics/window.h"
 
-void StaticTexture::CreateTexture()
-{
-    texture = Graphics::GenerateTexture(context);
-    Graphics::ConfigTexture(texture, config);
-}
-
-StaticTexture::StaticTexture(const Window* p_context, const TextureConfig& p_config)
-    : context(p_context), ATexture(p_config)
+StaticTexture::StaticTexture(const TextureConfig& p_config)
+    : ATexture(p_config)
 {
 
 }
 
-StaticTexture::StaticTexture(const Window* p_context, const std::string& p_path, const TextureConfig& p_config)
-    : context(p_context), ATexture(p_config)
+StaticTexture::StaticTexture(const std::string& p_path, const TextureConfig& p_config)
+    : ATexture(p_config)
 {
     LoadTexture(p_path);
 }
 
 StaticTexture::~StaticTexture()
 {
-    if (texture != 0)
-        Graphics::DeleteTexture(texture, context);
+    for (auto& i : texture_ids)
+    {
+        Graphics::DeleteTexture(i.second, i.first);
+    }
 }
 
 void StaticTexture::LoadTexture(const std::string& p_path)
 {
-    if (texture == 0)
-        CreateTexture();
-    auto data = std::unique_ptr<ubyte_t[]>(Resource::LoadTextureImage(p_path, nullptr, 0, width, height, channels));
-    LoadTexture(data.get(), width, height, channels);
+    data = std::unique_ptr<ubyte_t[]>(Resource::LoadTextureImage(p_path, nullptr, 0, width, height, channels));
 };
 
-void StaticTexture::LoadTexture(const ubyte_t* p_data, size_t p_width, size_t p_height, size_t p_channels)
+void StaticTexture::LoadTexture(ubyte_t*&& p_data, size_t p_width, size_t p_height, size_t p_channels)
 {
-    if (texture == 0)
-        CreateTexture();
     width = p_width;
     height = p_height;
     channels = p_channels;
-    
-    Graphics::SetTexture(texture, width, height, channels, p_data, config.mipmap);
+    data = std::unique_ptr<ubyte_t[]>(p_data);
+    p_data = nullptr;
 }
 
-void StaticTexture::BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name) const
+void StaticTexture::LoadTexture(const ubyte_t* p_data, size_t p_width, size_t p_height, size_t p_channels)
 {
-    shader_program->SetSampler2DUniform(p_uniform_name, texture);
+    width = p_width;
+    height = p_height;
+    channels = p_channels;
+    auto size = width * height * channels;
+    data = std::unique_ptr<ubyte_t[]>(new ubyte_t[size]);
+    memcpy(data.get(), p_data, size);
+}
+
+void StaticTexture::BindTexture(Window* p_context, const std::string& p_uniform_name)
+{
+    if (!texture_ids.contains(p_context))
+    {
+        unsigned int texture = Graphics::GenerateTexture(p_context);
+        Graphics::SetTexture(texture, width, height, channels, data.get(), config.mipmap);
+        Graphics::ConfigTexture(texture, config);
+        texture_ids[p_context] = texture;
+    }
+    p_context->GetShaderProgram()->SetSampler2DUniform(p_uniform_name, texture_ids[p_context]);
 }

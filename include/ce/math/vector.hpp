@@ -17,6 +17,7 @@ namespace Math
     template <typename T, size_t N>
     class Vector : public MathTypeBase
     {
+    private:
         T data[N];
     public:
         inline static constexpr size_t DIMENSION = N;
@@ -71,6 +72,19 @@ namespace Math
             static_assert(N >= 2, "The vector dimension is less than 2");
             for (size_t i = 2; i < N; ++i)
                 data[i] = T();
+        }
+
+        /**
+         * @brief Construct or for Vector.
+         * 
+         * @param p_x The x component.
+         * @param p_y The y component.
+         */
+        Vector(const T& p_val)
+        {
+            static_assert(N >= 1, "The vector dimension is less than 1");
+            for (size_t i = 2; i < N; ++i)
+                data[i] = p_val;
         }
 
         /**

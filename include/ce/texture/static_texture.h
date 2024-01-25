@@ -1,20 +1,21 @@
 #pragma once
 #include "ce/texture/texture.h"
+#include <map>
 
 class ShaderProgram;
 class Window;
 class StaticTexture : public ATexture
 {
 private:
-    unsigned int texture = 0;
+    std::unique_ptr<ubyte_t[]> data;
+    std::map<Window*, unsigned int> texture_ids;
     void CreateTexture();
-    const Window* context = nullptr;
 
 public:
 
-    StaticTexture(const Window* p_context, const TextureConfig& p_config = TextureConfig());
+    StaticTexture(const TextureConfig& p_config = TextureConfig());
 
-    StaticTexture(const Window* p_context, const std::string& p_path, const TextureConfig& p_config = TextureConfig());
+    StaticTexture(const std::string& p_path, const TextureConfig& p_config = TextureConfig());
 
     /**
      * @brief Get the number of channels of the texture.
@@ -28,12 +29,19 @@ public:
      * 
      * @param p_path The path to the texture file.
      */
+    virtual void LoadTexture(ubyte_t*&& p_data, size_t p_width, size_t p_height, size_t p_channels) override;
+    
+    /**
+     * @brief Load a texture from a file.
+     * 
+     * @param p_path The path to the texture file.
+     */
     virtual void LoadTexture(const ubyte_t* p_data, size_t p_width, size_t p_height, size_t p_channels) override;
 
     /**
      * @brief Bind the texture.
      */
-    virtual void BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name) const override;
+    virtual void BindTexture(Window* p_context, const std::string& p_uniform_name) override;
 
     virtual ~StaticTexture() override;
 };

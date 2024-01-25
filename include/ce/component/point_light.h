@@ -3,29 +3,32 @@
 
 class PointLight : public ALight
 {
-public:
-
 protected:
-     Math::Vec4 color;
+    Math::Vec4 color;
     float intensity;
+    static const float MAX_LIGHT_RENDER_DISTANCE_SQ;
 
 public:
 
     /**
+     * @brief The maximum distance form the camera
+     * that the light can be visualized.
+     */
+    static const float MAX_LIGHT_RENDER_DISTANCE;
+
+    /**
      * @brief Constructor for PointLight.
      * 
-     * @param p_context 
      */
-    PointLight(Window* p_context);
+    PointLight();
 
     /**
      * @brief Constructor for PointLight.
      * 
      * @param p_color The color of the light.
      * @param p_intensity The intensity of the light.
-     * @param p_context The context of this light.
      */
-    PointLight(const Math::Vec4& p_color, float p_intensity, Window* p_context);
+    PointLight(const Math::Vec4& p_color, float p_intensity);
 
     /**
      * @brief Get the color of the light.
@@ -66,11 +69,11 @@ public:
      * @brief Set the uniform of the light's data.
      * 
      */
-    virtual void SetUniform(size_t p_index) override;
+    virtual void SetUniform(Window* p_context, size_t p_index) override;
 
     /**
      * @brief Draw the light.
      * 
      */
-    virtual void Draw() override;
+    virtual void Draw(Window* p_context) override;
 };

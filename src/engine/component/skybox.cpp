@@ -55,19 +55,12 @@ const float Skybox::vertices[108] = {
      1.0f,  1.0f, -1.0f
 };
 
-void Skybox::SetSkyboxTexture(const std::vector<std::string>& p_faces)
+void Skybox::SetSkyboxTexture(const std::vector<std::string>& p_faces, unsigned int p_texture_id)
 {
     if (p_faces.size() != 6)
         throw std::runtime_error("Skybox must have 6 faces.");
-    if (GetContext()->GetThreadId() != std::this_thread::get_id())
-        throw std::runtime_error("Skybox must be created on the main thread.");
-    if (texture_cube == 0)
-    {
-        glGenTextures(1, &texture_cube);
-        GetContext()->RegisterThreadResource(texture_cube, glDeleteTextures);
-    }
     
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture_cube);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, p_texture_id);
     size_t img_width, img_height, img_channels;
     Resource::GetImageSize(p_faces[0], img_width, img_height, img_channels);
     size_t buffer_size = img_width * img_height * img_channels;
@@ -102,47 +95,60 @@ void Skybox::SetSkyboxTexture(const std::vector<std::string>& p_faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-Skybox::Skybox(Window* p_context, const std::vector<std::string>& p_faces)
-    : Component(p_context)
+Skybox::Skybox(const std::vector<std::string>& p_faces)
+    : faces(p_faces)
 {
-    Scale() =Math::Vec4(10.0f, 10.0f, 10.0f);
-    if (p_context->GetThreadId() != std::this_thread::get_id())
-        throw std::runtime_error("Skybox must be created on the main thread.");
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), vertices, GL_STATIC_DRAW);
-    GetContext()->RegisterThreadResource(vbo, glDeleteBuffers);
+    Scale() = Math::Vec4(10.0f, 10.0f, 10.0f);
+}
 
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+void Skybox::SetupSkybox(unsigned int p_vao, unsigned int p_vbo, unsigned int p_texture_id)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, p_vbo);
+    glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), vertices, GL_STATIC_DRAW);
+    
+    glBindVertexArray(p_vao);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    GetContext()->RegisterThreadResource(vao, glDeleteVertexArrays);
-
-    glGenTextures(1, &texture_cube);
-    GetContext()->RegisterThreadResource(texture_cube, glDeleteTextures);
-    SetSkyboxTexture(p_faces);
-
+    SetSkyboxTexture(faces, p_texture_id);
 }
 
 Skybox::~Skybox()
 {
-    GetContext()->FreeThreadResource(vbo);
-    GetContext()->FreeThreadResource(vbo);
-    GetContext()->FreeThreadResource(texture_cube);
-    vbo = 0;
-    vao = 0;
-    texture_cube = 0;
+    // for (auto& i : vbos)
+    // {
+    //     i.first->FreeThreadResource(i.second);
+    // }
+    // for (auto& i : vaos)
+    // {
+    //     i.first->FreeThreadResource(i.second);
+    // }
+    // for (auto& i : texture_cube_ids)
+    // {
+    //     i.first->FreeThreadResource(i.second);
+    // }
 }
 
-void Skybox::Draw() const
+void Skybox::Draw(Window* p_context)
 {
-    if (GetContext()->GetThreadId() != std::this_thread::get_id())
-        throw std::runtime_error("Skybox must be drawn on the main thread.");
+    if (!vbos.contains(p_context))
+    {
+        unsigned int vbo, vao, texture_id;
+        
+        glGenBuffers(1, &vbo);
+        p_context->RegisterThreadResource(vbo, glDeleteBuffers);
+        glGenVertexArrays(1, &vao);
+        p_context->RegisterThreadResource(vao, glDeleteVertexArrays);
+        glGenTextures(1, &texture_id);
+        p_context->RegisterThreadResource(texture_id, glDeleteTextures);
+        SetupSkybox(vao, vbo, texture_id);
+        vbos[p_context] = vbo;
+        vaos[p_context] = vao;
+        texture_cube_ids[p_context] = texture_id;
+    }
     glDepthMask(GL_FALSE);
-    GetContext()->GetSkyboxShaderProgram()->SetUniform("model", GetSubspaceMatrix());
-    glBindVertexArray(vao);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture_cube);
+    p_context->GetSkyboxShaderProgram()->SetUniform("model", GetSubspaceMatrix());
+    glBindVertexArray(vaos[p_context]);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture_cube_ids[p_context]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDepthMask(GL_TRUE);
 }

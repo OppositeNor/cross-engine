@@ -7,7 +7,7 @@ class Window;
 class EventManager;
 class InputManager;
 class AEvent;
-
+class Component;
 class Game
 {
 protected:
@@ -20,8 +20,24 @@ protected:
     Game(std::shared_ptr<Window> p_window);
 
     static Game* instance;
+    std::shared_ptr<Component> base_component;
 
 public:
+
+
+    /**
+     * @brief Get the base component.
+     * 
+     * @return Component* The base component.
+     */
+    std::shared_ptr<Component> GetBaseComponent();
+
+    /**
+     * @brief Get the base component.
+     *
+     * @return const Component* The base component.
+     */
+    const std::shared_ptr<Component>& GetBaseComponent() const { return base_component; }
 
     /**
      * @brief Initialize the game with the default window.

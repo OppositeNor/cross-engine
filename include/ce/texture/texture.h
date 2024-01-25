@@ -52,11 +52,21 @@ public:
      * @param p_height The height of the texture.
      * @param p_channels The channels of the texture.
      */
+    virtual void LoadTexture(ubyte_t*&& p_data, size_t p_width, size_t p_height, size_t p_channels) = 0;
+
+    /**
+     * @brief Load a texture.
+     * 
+     * @param p_data The texture data.
+     * @param p_width The width of the texture.
+     * @param p_height The height of the texture.
+     * @param p_channels The channels of the texture.
+     */
     virtual void LoadTexture(const ubyte_t* p_data, size_t p_width, size_t p_height, size_t p_channels) = 0;
 
     /**
      * @brief Bind the texture.
      * 
      */
-    virtual void BindTexture(const ShaderProgram* shader_program, const std::string& p_uniform_name) const = 0;
+    virtual void BindTexture(Window* p_context, const std::string& p_uniform_name) = 0;
 };

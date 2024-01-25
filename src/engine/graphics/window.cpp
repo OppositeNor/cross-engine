@@ -18,6 +18,11 @@
 
 std::map<void*, Window*> Window::context_window_finder;
 
+std::shared_ptr<Component> Window::GetBaseComponent()
+{
+    return Game::GetInstance()->GetBaseComponent();
+}
+
 Window::Window(const Math::Vec2s& p_size, const std::string& p_title)
     : window_title(p_title), window_size(p_size)
 {
@@ -160,32 +165,17 @@ void Window::InitWindow()
                                               Resource::GetExeDirectory() + "/shaders/skybox_fragment.glsl");
     skybox_shader_program->Compile();
 
-    base_component = std::make_shared<Component>(this);
-
     float aspect_ratio = (float)window_size[0] / (float)window_size[1];
     proj_matrix = Math::ProjPersp(
         0.2f * aspect_ratio, -0.2f * aspect_ratio, 0.2f, -0.2f, 0.5f, 1000.0f);
 
-    skybox = new Skybox(this, {Resource::GetExeDirectory() + "/textures/skybox/default/right.jpg",
-                               Resource::GetExeDirectory() + "/textures/skybox/default/left.jpg",
-                               Resource::GetExeDirectory() + "/textures/skybox/default/top.jpg",
-                               Resource::GetExeDirectory() + "/textures/skybox/default/bottom.jpg",
-                               Resource::GetExeDirectory() + "/textures/skybox/default/front.jpg",
-                               Resource::GetExeDirectory() + "/textures/skybox/default/back.jpg"});
+    skybox = new Skybox({Resource::GetExeDirectory() + "/textures/skybox/default/right.jpg",
+                        Resource::GetExeDirectory() + "/textures/skybox/default/left.jpg",
+                        Resource::GetExeDirectory() + "/textures/skybox/default/top.jpg",
+                        Resource::GetExeDirectory() + "/textures/skybox/default/bottom.jpg",
+                        Resource::GetExeDirectory() + "/textures/skybox/default/front.jpg",
+                        Resource::GetExeDirectory() + "/textures/skybox/default/back.jpg"});
     
-    default_albedo = std::make_shared<StaticTexture>(this);
-    default_normal = std::make_shared<StaticTexture>(this);
-    default_metallic = std::make_shared<StaticTexture>(this);
-    default_roughness = std::make_shared<StaticTexture>(this);
-    default_ao = std::make_shared<StaticTexture>(this);
-
-    default_albedo->LoadTexture(Resource::GetExeDirectory() + "/textures/default.png");
-    default_normal->LoadTexture(Resource::GetExeDirectory() + "/textures/default_normal.png");
-    default_metallic->LoadTexture(WHITE_IMAGE, 2, 2, 1);
-    default_roughness->LoadTexture(WHITE_IMAGE, 2, 2, 1);
-    default_ao->LoadTexture(WHITE_IMAGE, 2, 2, 1);
-    
-    default_material = std::shared_ptr<AMaterial>(new PBRMaterial(this));
 }
 
 void Window::UpdateWindowSize(const Math::Vec2s& p_new_window_size)
@@ -200,7 +190,6 @@ void Window::ThreadFunc()
     try {
         InitWindow();
         Ready();
-        base_component->Ready();
         float frame_start;
         float delta = 0.01;
         while (!glfwWindowShouldClose((GLFWwindow*)glfw_context) && !should_close)
@@ -210,7 +199,6 @@ void Window::ThreadFunc()
             glfwPollEvents();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             Process(delta);
-            base_component->Update(delta);
             Draw();
             shader_program->Refresh();
             auto error = glGetError();
@@ -276,7 +264,7 @@ void Window::Draw()
             skybox_shader_program->SetUniform("view", Math::Mat4());
         else
             skybox_shader_program->SetUniform("view", using_camera->GetViewMatrix());
-        skybox->Draw();
+        skybox->Draw(this);
     }
     shader_program->Use();
     shader_program->SetUniform("proj", proj_matrix);
@@ -291,8 +279,8 @@ void Window::Draw()
         shader_program->SetUniform("camera_position", using_camera->GetGlobalPosition());
     }
     if (skybox != nullptr)
-        shader_program->SetSamplerCubeUniform("skybox", skybox->GetTextureCube());
-    base_component->Draw();
+        shader_program->SetSamplerCubeUniform("skybox", skybox->GetTextureCubeIDs()[this]);
+    Game::GetInstance()->GetBaseComponent()->Draw(this);
     GetShaderProgram()->SetUniform("point_light_count", GetPointLightCount());
     GetShaderProgram()->SetUniform("parallel_light_count", GetParallelLightCount());
 }

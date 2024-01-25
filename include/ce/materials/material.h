@@ -14,15 +14,13 @@ protected:
     std::shared_ptr<ATexture> metallic;
     std::shared_ptr<ATexture> roughness;
     std::shared_ptr<ATexture> ao;
-
-    const Window* context;
 public:
     /**
      * @brief Constructor of AMaterial.
      * 
      * @param p_context The context of the material.
      */
-    AMaterial(const Window* p_context);
+    AMaterial();
 
     /**
      * @brief Destructor of AMaterial.
@@ -39,7 +37,8 @@ public:
     /**
      * @brief Set the uniform of the material.
      * 
+     * @param p_context The context to set the uniform on.
      * @param p_shader_program The shader program to set the uniform.
      */
-    virtual void SetUniform(const ShaderProgram* p_shader_program) const = 0;
+    virtual void SetUniform(Window* p_context) const = 0;
 };

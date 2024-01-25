@@ -12,6 +12,7 @@ enum class EventType
 
 class AEvent
 {
+private:
     EventType event_type;
 protected:
     AEvent(EventType p_event_type);

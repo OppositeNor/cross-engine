@@ -51,11 +51,11 @@ void EventManager::UpdateEventListeners()
 void EventManager::FEventDispatch(std::shared_ptr<AEvent> p_event)
 {
     std::shared_lock<std::shared_mutex> lock(event_listeners_mutex);
-    std::future<void> handle;
     for (auto& event_listener : event_listeners)
     {
         if (event_listener.expired())
             continue;
         event_listener.lock()->OnEvent(p_event);
     }
+    UpdateEventListeners();
 }
