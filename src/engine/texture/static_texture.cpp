@@ -1,6 +1,7 @@
 #include "ce/texture/static_texture.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/window.h"
+#include "ce/game/game.h"
 
 StaticTexture::StaticTexture(const TextureConfig& p_config)
     : ATexture(p_config)
@@ -16,9 +17,12 @@ StaticTexture::StaticTexture(const std::string& p_path, const TextureConfig& p_c
 
 StaticTexture::~StaticTexture()
 {
+    if (!Game::IsInitialized())
+        return;
     for (auto& i : texture_ids)
     {
-        Graphics::DeleteTexture(i.second, i.first);
+        if (Game::GetInstance()->IsContextAvailable(i.first))
+            Graphics::DeleteTexture(i.second, i.first);
     }
 }
 

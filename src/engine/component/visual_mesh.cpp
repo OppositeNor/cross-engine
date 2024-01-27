@@ -4,6 +4,7 @@
 #include "ce/resource/resource.h"
 #include "ce/texture/texture.h"
 #include "ce/materials/material.h"
+#include "ce/game/game.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -13,12 +14,16 @@ VisualMesh::VisualMesh()
 
 VisualMesh::~VisualMesh()
 {
-    // for (auto& i : vbos) {
-    //     i.first->FreeThreadResource(i.second);
-    // }
-    // for (auto& i : vaos) {
-    //     i.first->FreeThreadResource(i.second);
-    // }
+    if (!Game::IsInitialized())
+        return;
+    for (auto& i : vbos) {
+        if (Game::GetInstance()->IsContextAvailable(i.first))
+            i.first->FreeThreadResource(i.second);
+    }
+    for (auto& i : vaos) {
+        if (Game::GetInstance()->IsContextAvailable(i.first))
+            i.first->FreeThreadResource(i.second);
+    }
 }
 
 

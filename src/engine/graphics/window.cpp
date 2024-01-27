@@ -189,6 +189,7 @@ void Window::ThreadFunc()
 {
     try {
         InitWindow();
+        Game::GetInstance()->SetContextAvailable(this);
         Ready();
         float frame_start;
         float delta = 0.01;
@@ -210,6 +211,7 @@ void Window::ThreadFunc()
             parallel_light_count = 0;
             delta = glfwGetTime() - frame_start;
         }
+        Game::GetInstance()->SetContextUnAvailable(this);
         OnClose();
         Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
         delete shader_program;

@@ -120,7 +120,7 @@ unsigned int Graphics::GenerateTexture(const Window* p_context)
 
 void Graphics::DeleteTexture(unsigned int p_texture_id, const Window* p_context)
 {
-    // p_context->FreeThreadResource(p_texture_id);
+    p_context->FreeThreadResource(p_texture_id);
 }
 
 void Graphics::ConfigTexture(unsigned int p_texture_id, const TextureConfig& p_config)

@@ -2,6 +2,7 @@
 #include "ce/math/math.hpp"
 #include <memory>
 #include <mutex>
+#include <set>
 
 class Window;
 class EventManager;
@@ -21,23 +22,9 @@ protected:
 
     static Game* instance;
     std::shared_ptr<Component> base_component;
-
+    std::set<Window*> available_contexts;
+    std::mutex available_context_mutex;
 public:
-
-
-    /**
-     * @brief Get the base component.
-     * 
-     * @return Component* The base component.
-     */
-    std::shared_ptr<Component> GetBaseComponent();
-
-    /**
-     * @brief Get the base component.
-     *
-     * @return const Component* The base component.
-     */
-    const std::shared_ptr<Component>& GetBaseComponent() const { return base_component; }
 
     /**
      * @brief Initialize the game with the default window.
@@ -81,6 +68,51 @@ public:
      * 
      */
     static Game* GetInstance();
+
+    /**
+     * @brief Check if the game is initialized or not.
+     * 
+     * @return true The game is initialized.
+     * @return false The game is not initialized.
+     */
+    static bool IsInitialized() { return instance != nullptr; }
+
+    /**
+     * @brief Get the base component.
+     * 
+     * @return Component* The base component.
+     */
+    std::shared_ptr<Component> GetBaseComponent();
+
+    /**
+     * @brief Get the base component.
+     *
+     * @return const Component* The base component.
+     */
+    const std::shared_ptr<Component>& GetBaseComponent() const { return base_component; }
+
+    /**
+     * @brief Check if a context is available
+     * 
+     * @param p_context The context to check availability.
+     * @return true The context is available.
+     * @return false The context is not available.
+     */
+    bool IsContextAvailable(Window* p_context);
+
+    /**
+     * @brief Make a context available.
+     * 
+     * @param p_context The context to be set to available
+     */
+    void SetContextAvailable(Window* p_context);
+
+    /**
+     * @brief Make a context unavailable.
+     * 
+     * @param p_context The context to be set to unavailable
+     */
+    void SetContextUnAvailable(Window* p_context);
 
     /**
      * @brief Get the main window.

@@ -2,6 +2,7 @@
 #include "ce/graphics/window.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/graphics.h"
+#include "ce/game/game.h"
 
 #include <glad/glad.h>
 
@@ -114,18 +115,23 @@ void Skybox::SetupSkybox(unsigned int p_vao, unsigned int p_vbo, unsigned int p_
 
 Skybox::~Skybox()
 {
-    // for (auto& i : vbos)
-    // {
-    //     i.first->FreeThreadResource(i.second);
-    // }
-    // for (auto& i : vaos)
-    // {
-    //     i.first->FreeThreadResource(i.second);
-    // }
-    // for (auto& i : texture_cube_ids)
-    // {
-    //     i.first->FreeThreadResource(i.second);
-    // }
+    if (!Game::IsInitialized())
+        return;
+    for (auto& i : vbos)
+    {
+        if (Game::GetInstance()->IsContextAvailable(i.first))
+            i.first->FreeThreadResource(i.second);
+    }
+    for (auto& i : vaos)
+    {
+        if (Game::GetInstance()->IsContextAvailable(i.first))
+            i.first->FreeThreadResource(i.second);
+    }
+    for (auto& i : texture_cube_ids)
+    {
+        if (Game::GetInstance()->IsContextAvailable(i.first))
+            i.first->FreeThreadResource(i.second);
+    }
 }
 
 void Skybox::Draw(Window* p_context)

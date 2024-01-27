@@ -9,7 +9,6 @@ class StaticTexture : public ATexture
 private:
     std::unique_ptr<ubyte_t[]> data;
     std::map<Window*, unsigned int> texture_ids;
-    void CreateTexture();
 
 public:
 

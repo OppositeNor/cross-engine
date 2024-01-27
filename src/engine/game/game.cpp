@@ -73,6 +73,29 @@ Game* Game::GetInstance()
     return instance;
 }
 
+bool Game::IsContextAvailable(Window* p_context)
+{
+    std::lock_guard<std::mutex> lock(available_context_mutex);
+    for (auto i : available_contexts)
+    {
+        if (i == p_context)
+            return true;
+    }
+    return false;
+}
+
+void Game::SetContextAvailable(Window* p_context)
+{
+    std::lock_guard<std::mutex> lock(available_context_mutex);
+    available_contexts.insert(p_context);
+}
+
+void Game::SetContextUnAvailable(Window* p_context)
+{
+    std::lock_guard<std::mutex> lock(available_context_mutex);
+    available_contexts.erase(p_context);
+}
+
 Game::~Game()
 {
     main_window.reset();
