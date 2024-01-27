@@ -2,6 +2,7 @@
 #include <thread>
 #include <memory>
 #ifdef _WIN32
+#define NOMINMAX
 #include <windows.h>
 #endif
 #include <vector>
@@ -82,6 +83,11 @@ private:
 
 public:
 
+    /**
+     * @brief Get the base compoennt.
+     * 
+     * @return std::shared_ptr<Component> The base component.
+     */
     std::shared_ptr<Component> GetBaseComponent();
 
     /**

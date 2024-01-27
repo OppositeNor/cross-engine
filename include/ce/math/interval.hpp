@@ -12,8 +12,8 @@ namespace Math
     template<typename T>
     class Interval : public MathTypeBase {
     private:
-        T min;
-        T max;
+        T min_val;
+        T max_val;
 
     public:
 
@@ -24,21 +24,21 @@ namespace Math
          * @param p_max The maximum of the interval.
          */
         Interval(const T& p_min, const T& p_max)
-            : min(p_min), max(p_max) {}
+            : min_val(p_min), max_val(p_max) {}
 
         /**
          * @brief Get the minimum of the interval
          * 
          * @return const T& The minimum of the interval. 
          */
-        FORCE_INLINE const T& GetMin() { return min; }
+        FORCE_INLINE const T& GetMin() { return min_val; }
 
         /**
          * @brief Get the maximum of the interval
          * 
          * @return const T& The maximum of the interval. 
          */
-        FORCE_INLINE const T& GetMax() { return max; }
+        FORCE_INLINE const T& GetMax() { return max_val; }
         
         /**
          * @brief Test weather the interval contains a value.
@@ -51,7 +51,7 @@ namespace Math
         template<typename T1>
         FORCE_INLINE bool Contains(T1&& p_value)
         {
-            return (std::forward(p_value) >= min) && (std::forward(p_value) <= max);
+            return (std::forward(p_value) >= min_val) && (std::forward(p_value) <= max_val);
         }
 
         /**
@@ -65,7 +65,7 @@ namespace Math
         template<typename T1>
         FORCE_INLINE bool Surrounds(T1&& p_value)
         {
-            return (std::forward(p_value) > min) && (std::forward(p_value) < max);
+            return (std::forward(p_value) > min_val) && (std::forward(p_value) < max_val);
         }
 
         /**
@@ -75,7 +75,7 @@ namespace Math
          */
         FORCE_INLINE auto Size()
         {
-            return max - min;
+            return max_val - min_val;
         }
 
         /**
@@ -85,7 +85,7 @@ namespace Math
          */
         FORCE_INLINE void SetMin(const T& p_min)
         {
-            min = p_min;
+            min_val = p_min;
         }
 
         /**
@@ -95,7 +95,7 @@ namespace Math
          */
         FORCE_INLINE void SetMax(const T& p_max)
         {
-            max = p_max;
+            max_val = p_max;
         }
 
         /**
@@ -106,18 +106,22 @@ namespace Math
          */
         FORCE_INLINE bool IsEmpty()
         {
-            return max < min;
+            return max_val < min_val;
         }
 
         /**
-         * @brief Find the union of this interval and another interval.
+         * @brief Find the union of this interval and another interval. 
+         * @warning The result will be a interval with the minimum of 
+         * this and the argument to the maximum. So if you have two
+         * intervals that don't intersect, the result interval may contains
+         * part that both intervals don't contain.
          * 
          * @param p_other The other interval.
          * @return Interval<T> The union interval.
          */
         FORCE_INLINE Interval<T> Union(const Interval<T>& p_other)
         {
-            return Interval<T>(std::min(min, p_other.min), std::max(max, p_other.max));
+            return Interval<T>(std::min(min_val, p_other.min_val), std::max(max_val, p_other.max_val));
         }
 
         /**
@@ -126,9 +130,9 @@ namespace Math
          * @param p_other The other interval.
          * @return Interval<T> The intersect interval.
          */
-        Interval<T> Intersect(const Interval<T>& p_other)
+        FORCE_INLINE Interval<T> Intersect(const Interval<T>& p_other)
         {
-            return Interval<T>(std::max(min, p_other.min), std::min(max, p_other.max));
+            return Interval<T>(std::max(min_val, p_other.min_val), std::min(max_val, p_other.max_val));
         }
 
         /**
@@ -138,10 +142,10 @@ namespace Math
          * @param p_value The value to be clamped
          * @return T The clamped value.
          */
-        T Clamped(const T& p_value)
+        FORCE_INLINE T Clamped(const T& p_value)
         {
-            if (p_value < min) return min;
-            if (p_value > max) return max;
+            if (p_value < min_val) return min_val;
+            if (p_value > max_val) return max_val;
             return p_value;
         }
 
@@ -152,10 +156,10 @@ namespace Math
          * @param p_value The value to be clamped.
          * @return T& The reference of the value.
          */
-        T& Clamp(T& p_value)
+        FORCE_INLINE T& Clamp(T& p_value)
         {
-            if (p_value < min) p_value = min;
-            if (p_value > max) p_value = max;
+            if (p_value < min_val) p_value = min_val;
+            else if (p_value > max_val) p_value = max_val;
             return p_value;
         }
     };

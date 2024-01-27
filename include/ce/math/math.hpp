@@ -1,6 +1,7 @@
 #pragma once
 #include "ce/math/matrix.hpp"
 #include "ce/math/vector.hpp"
+#include "ce/math/interval.hpp"
 
 namespace Math
 {
