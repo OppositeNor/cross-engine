@@ -1,4 +1,5 @@
 set(CE_USER_SOURCES
     ${CE_USER_SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/user_main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/main2.cpp
     PARENT_SCOPE)

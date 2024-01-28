@@ -84,48 +84,6 @@ private:
 public:
 
     /**
-     * @brief Get the base compoennt.
-     * 
-     * @return std::shared_ptr<Component> The base component.
-     */
-    std::shared_ptr<Component> GetBaseComponent();
-
-    /**
-     * @brief Get the GLFW context.
-     * 
-     * @return void* The GLFW context.
-     */
-    FORCE_INLINE const void* GetGLFWContext() const noexcept { return glfw_context; }
-
-    /**
-     * @brief Get the camera that is being used.
-     * 
-     * @return std::shared_ptr<Camera> The camera that is being used.
-     */
-    FORCE_INLINE std::shared_ptr<Camera> GetUsingCamera() { return using_camera; }
-
-    /**
-     * @brief Get the camera that is being used.
-     * 
-     * @return const std::shared_ptr<Camera>& The camera that is being used.
-     */
-    FORCE_INLINE const std::shared_ptr<Camera>& GetUsingCamera() const { return using_camera; }
-
-    /**
-     * @brief Set the camera that is being used.
-     * 
-     * @param p_camera The camera that is being used.
-     */
-    FORCE_INLINE void SetUsingCamera(std::shared_ptr<Camera> p_camera) { using_camera = p_camera; }
-
-    /**
-     * @brief Get the projection matrix.
-     * 
-     * @return const Math::Mat4& The projection matrix.
-     */
-    FORCE_INLINE const Math::Mat4& GetProjMatrix() const { return proj_matrix; }
-
-    /**
      * @brief Constructor for window.
      * 
      * @param p_size The size of the window.
@@ -169,6 +127,53 @@ public:
     Window();
 
     /**
+     * @brief Destroy the Window object
+     */
+    virtual ~Window();
+
+    /**
+     * @brief Get the base compoennt.
+     * 
+     * @return std::shared_ptr<Component> The base component.
+     */
+    std::shared_ptr<Component> GetBaseComponent();
+
+    /**
+     * @brief Get the GLFW context.
+     * 
+     * @return void* The GLFW context.
+     */
+    FORCE_INLINE const void* GetGLFWContext() const noexcept { return glfw_context; }
+
+    /**
+     * @brief Get the camera that is being used.
+     * 
+     * @return std::shared_ptr<Camera> The camera that is being used.
+     */
+    FORCE_INLINE std::shared_ptr<Camera> GetUsingCamera() { return using_camera; }
+
+    /**
+     * @brief Get the camera that is being used.
+     * 
+     * @return const std::shared_ptr<Camera>& The camera that is being used.
+     */
+    FORCE_INLINE const std::shared_ptr<Camera>& GetUsingCamera() const { return using_camera; }
+
+    /**
+     * @brief Set the camera that is being used.
+     * 
+     * @param p_camera The camera that is being used.
+     */
+    FORCE_INLINE void SetUsingCamera(std::shared_ptr<Camera> p_camera) { using_camera = p_camera; }
+
+    /**
+     * @brief Get the projection matrix.
+     * 
+     * @return const Math::Mat4& The projection matrix.
+     */
+    FORCE_INLINE const Math::Mat4& GetProjMatrix() const { return proj_matrix; }
+
+    /**
      * @brief Get the title of this window.
      * 
      * @return const std::string& The title of this window.
@@ -181,11 +186,6 @@ public:
      * @param p_title The title of the window.
      */
     void SetWindowTitle(const std::string& p_title);
-
-    /**
-     * @brief Destroy the Window object
-     */
-    virtual ~Window();
 
     /**
      * @brief Get the id of the window thread.

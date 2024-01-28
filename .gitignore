@@ -5,5 +5,4 @@ test_resource
 test_resource/*.jpg
 test_resource/*.png
 test_resource/*.tif
-src/user/user_main.cpp
-src/user/user.cpp
+src/user

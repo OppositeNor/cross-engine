@@ -11,7 +11,13 @@ namespace Math
     inline const Vec<N> UP = Vec<N>(0, 1);
 
     template<int N>
+    inline const Vec<N> DOWN = Vec<N>(0, -1);
+
+    template<int N>
     inline const Vec<N> RIGHT = Vec<N>(1, 0);
+
+    template<int N>
+    inline const Vec<N> LEFT = Vec<N>(-1, 0);
 
     template<int N>
     inline const Vec<N> FRONT = Vec<N>(0, 0, 1);
