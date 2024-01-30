@@ -3,6 +3,7 @@
 #include "ce/event/i_event_listener.h"
 #include <map>
 #include <vector>
+#include <shared_mutex>
 
 
 class AEvent;
@@ -59,6 +60,7 @@ private:
     using InputStateMap = std::map<std::string, InputState>;
     std::map<Input, std::vector<std::string>> input_map;
     std::map <const Window*, InputStateMap> context_map;
+    mutable std::shared_mutex key_state_mutex;
 
     /**
      * @brief Set the key state to pressed.
@@ -89,11 +91,18 @@ public:
      * @brief Get the input state of a key.
      * 
      * @param p_context The context of the input.
-     * @param p_context The context of the input.
      * @param p_key The key to get the state.
      * @return InputState The state of the key.
      */
     InputState GetInputState(const Window* p_context, const std::string& p_key) const;
+
+    /**
+     * @brief Get the input state of a key of all contexts.
+     * 
+     * @param p_key The key to get the state.
+     * @return InputState The state of the key.
+     */
+    InputState GetInputState(const std::string& p_key) const;
 
     /**
      * @brief Add a input to the input manager.

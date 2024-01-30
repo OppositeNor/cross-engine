@@ -64,7 +64,7 @@ void Component::RemoveChild(Component* p_child)
 
 void Component::AddChild(WPComponent p_child)
 {
-    for (auto i : children)
+    for (auto& i : children)
     {
         if (i.lock().get() == p_child.lock().get())
             return;
