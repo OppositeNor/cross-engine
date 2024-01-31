@@ -7,11 +7,13 @@ class ParallelLight : public ALight
 private:
     Math::Vec4 direction;
     Math::Vec4 color;
+    Math::Vec4 ambient;
     float intensity;
     
 public:
     ParallelLight();
     ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, float p_intensity);
+    ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, const Math::Vec4& p_ambient, float p_intensity);
     
     /**
      * @brief Get the direction of the light.
@@ -40,6 +42,20 @@ public:
      * @return Math::Vec4& The color of the light
      */
     FORCE_INLINE Math::Vec4& Color() noexcept { return color; }
+
+    /**
+     * @brief Get the ambient of the light.
+     * 
+     * @return const Math::Vec4& The ambient of the light.
+     */
+    FORCE_INLINE const Math::Vec4& GetAmbient() const noexcept { return ambient; }
+
+    /**
+     * @brief Get the ambient of the light.
+     * 
+     * @return Math::Vec4& The ambient of the light
+     */
+   FORCE_INLINE  Math::Vec4& Ambient() noexcept { return ambient; }
 
     /**
      * @brief Get the intensity of the light

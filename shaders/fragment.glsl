@@ -16,6 +16,7 @@ uniform int point_light_count;
 struct ParallelLight {
     vec4 direction;
     vec4 color;
+    vec4 ambient;
     float intensity;
 };
 
@@ -85,9 +86,9 @@ void main()
     {
         temp_color += ShadeColor(to_camera, normalize(-1 * parallel_light[i].direction), 1, normal, 
             parallel_light[i].color, parallel_light[i].intensity);
+        temp_color += parallel_light[i].ambient * albedo;
     }
     temp_color *= ao;
-    temp_color += vec4(0.05, 0.05, 0.05, 0.0) * albedo;
 
     temp_color[3] = 1.0;
     FragColor = temp_color;
