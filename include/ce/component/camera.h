@@ -1,6 +1,10 @@
 #pragma once
 #include "ce/component/component.h"
 
+/**
+ * @brief A camera of the scene.
+ * 
+ */
 class Camera : public Component
 {
 

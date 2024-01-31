@@ -4,11 +4,6 @@
 #include <type_traits>
 #include <sstream>
 
-const float PointLight::MAX_LIGHT_RENDER_DISTANCE = 150.0f;
-
-const float PointLight::MAX_LIGHT_RENDER_DISTANCE_SQ = 
-    PointLight::MAX_LIGHT_RENDER_DISTANCE * PointLight::MAX_LIGHT_RENDER_DISTANCE;
-
 PointLight::PointLight()
     : PointLight(Math::Pos(), 20)
 {
@@ -18,6 +13,13 @@ PointLight::PointLight(const Math::Vec4& p_color, float p_intensity)
 {
     color = p_color;
     intensity = p_intensity;
+    SetMaxLightRenderDistance(1000);
+}
+
+void PointLight::SetMaxLightRenderDistance(float p_distance)
+{
+    max_light_render_distance = p_distance;
+    max_light_render_distance_sq = p_distance * p_distance;
 }
 
 void PointLight::SetUniform(Window* p_context, size_t p_index)
@@ -34,6 +36,6 @@ void PointLight::Draw(Window* p_context)
 {
     ALight::Draw(p_context);
     float to_camera_sq = (GetPosition() - p_context->GetUsingCamera()->GetPosition()).LengthSquared();
-    if (MAX_LIGHT_RENDER_DISTANCE_SQ > to_camera_sq)
+    if (max_light_render_distance_sq > to_camera_sq)
         SetUniform(p_context, p_context->GetPointLightNextIndex());
 }

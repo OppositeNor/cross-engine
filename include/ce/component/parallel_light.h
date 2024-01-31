@@ -2,6 +2,11 @@
 #include "ce/component/light.h"
 
 class Window;
+
+/**
+ * @brief Parallel light.
+ * 
+ */
 class ParallelLight : public ALight
 {
 private:

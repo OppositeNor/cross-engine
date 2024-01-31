@@ -1,6 +1,10 @@
 #pragma once
 #include "ce/component/component.h"
 class Window;
+
+/**
+ * @brief A light in the scene.
+ */
 class ALight : public Component
 {
     bool cast_shadow = true;

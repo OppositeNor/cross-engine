@@ -1,20 +1,24 @@
 #pragma once
 #include "ce/component/light.h"
 
+/**
+ * @brief Point light.
+ * 
+ */
 class PointLight : public ALight
 {
 protected:
     Math::Vec4 color;
     float intensity;
-    static const float MAX_LIGHT_RENDER_DISTANCE_SQ;
-
-public:
 
     /**
      * @brief The maximum distance form the camera
      * that the light can be visualized.
      */
-    static const float MAX_LIGHT_RENDER_DISTANCE;
+    float max_light_render_distance;
+    float max_light_render_distance_sq;
+
+public:
 
     /**
      * @brief Constructor for PointLight.
@@ -29,6 +33,20 @@ public:
      * @param p_intensity The intensity of the light.
      */
     PointLight(const Math::Vec4& p_color, float p_intensity);
+
+    /**
+     * @brief Get the maximum distance that the light can be fisible to the camera.
+     * 
+     * @return float 
+     */
+    FORCE_INLINE float GetMaxLightRenderDistance() { return max_light_render_distance; }
+
+    /**
+     * @brief Set the maximum distance that the light can be fisible to the camera.
+     * 
+     * @param p_distance The distance to be set to.
+     */
+    void SetMaxLightRenderDistance(float p_distance);
 
     /**
      * @brief Get the color of the light.
