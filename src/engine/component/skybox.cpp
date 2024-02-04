@@ -99,7 +99,7 @@ namespace CrossEngine
     }
 
     Skybox::Skybox(const std::vector<std::string>& p_faces)
-        : faces(p_faces)
+        : faces(p_faces), Component3D()
     {
         Scale() = Math::Vec4(10.0f, 10.0f, 10.0f);
     }

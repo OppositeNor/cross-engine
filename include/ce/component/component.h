@@ -14,32 +14,18 @@ namespace CrossEngine
         : public std::enable_shared_from_this<Component>
     {
     private:
+        inline static Math::Mat4 identity = Math::Mat4();
+
         using WPComponent = std::weak_ptr<Component>;
-
-        Math::Vec4 position;
-        Math::Vec4 rotation;
-        Math::Vec4 scale;
-        void SetSubspaceMatrixDirty();
-
-        mutable Math::Mat4 subspace_matrix;
-        mutable bool subspace_matrix_dirty = true;
-        mutable std::mutex subspace_matrix_mutex;
-        void SetChildrenSubspaceMatrixDirty();
-
-        mutable Math::Mat4 subspace_matrix_inverse;
-        mutable bool subspace_matrix_inverse_dirty = true;
-        mutable std::mutex subspace_matrix_inverse_mutex;
-        void SetChildrenSubspaceMatrixInverseDirty();
-
-
         WPComponent parent;
         std::vector<WPComponent> children;
 
-        void UpdateSubspaceMatrix() const;
-        void UpdateSubspaceMatrixInverse() const;
-
         bool visible = true;
-
+    protected:
+        
+        virtual void SetSubspaceMatrixDirty();
+        void SetChildrenSubspaceMatrixDirty();
+        void SetChildrenSubspaceMatrixInverseDirty();
     public:
         Component();
         Component(const Component& p_other);
@@ -70,107 +56,7 @@ namespace CrossEngine
          */
         virtual void Leave() {}
 
-        /**
-         * @brief Get the position of the component.
-         * 
-         * @return const Math::Vec3& The position of the component.
-         */
-        FORCE_INLINE const Math::Vec4& GetPosition() const { return position; }
 
-        /**
-         * @brief Get the reference of the position of the component.
-         * 
-         * @return Math::Vec3& The reference of the position of the component.
-         */
-        Math::Vec4& Position();
-
-        /**
-         * @brief Get the rotation of the component. The rotation
-         * is ordered as pitch, yaw, roll.
-         * 
-         * @return const Math::Vec3& The rotation of the component.
-         */
-        FORCE_INLINE Math::Vec4 GetRotation() const { return rotation.Normalized(); }
-
-        /**
-         * @brief Get the rotation of the component. The rotation
-         * is ordered as pitch, yaw, roll.
-         * 
-         * @return Math::Vec3& The rotation of the component.
-         */
-        Math::Vec4& Rotation();
-
-        /**
-         * @brief Set the rotation of the component in Euler angle.
-         * The rotation is ordered as pitch, yaw, roll.
-         * 
-         * @param p_rotation The rotation of the component.
-         */
-        void SetRotationEuler(const Math::Vec4& p_rotation, EulerRotOrder p_order);
-
-        /**
-         * @brief Set the rotation of the component in Euler angle.
-         * The rotation is ordered as pitch, yaw, roll.
-         * 
-         * @param p_rotation The rotation of the component.
-         */
-        void SetRotationEuler(const Math::Vec3& p_rotation, EulerRotOrder p_order);
-
-        /**
-         * @brief Get the rotation of the component in Euler angle.
-         * The rotation is ordered as pitch, yaw, roll.
-         * 
-         * @return const Math::Vec3& The rotation of the component.
-         */
-        Math::Vec4 GetRotationEuler() const;
-
-        /**
-         * @brief Get the scale of the component.
-         * 
-         * @return const Math::Vec3& The scale of the component.
-         */
-        FORCE_INLINE const Math::Vec4& GetScale() const { return scale; }
-
-        /**
-         * @brief Get the scale of the component.
-         * 
-         * @return Math::Vec3& The scale of the component.
-         */
-        Math::Vec4& Scale();
-
-        /**
-         * @brief Move the component in the direction.
-         * 
-         * @param p_direction The direction to move the component.
-         * @param p_distance The distance to move the component.
-         */
-        void Move(Math::Vec4 p_direction, float p_distance);
-
-        /**
-         * @brief Rotate the component in the direction.
-         * 
-         * @param p_axis The axis to rotate the component.
-         * @param p_angle The angle to rotate the component.
-         */
-        void Rotate(Math::Vec4 p_axis, float p_angle);
-
-        /**
-         * @brief Set the rotation of the component in the direction.
-         * 
-         * @param p_axis The axis to rotate the component.
-         * @param p_angle The angle to rotate the component.
-         */
-        void SetRotate(Math::Vec4 p_axis, float p_angle);
-
-        /**
-         * @brief Scale the component in the direction.
-         * 
-         * @param p_direction The direction to scale the component.
-         * @param p_scale The scale to scale the component.
-         */
-        void Scale(Math::Vec4 p_direction, float p_scale);
-
-        Math::Vec4 GetDirection() const;
 
         /**
          * @brief Remove a child from this component.
@@ -205,14 +91,14 @@ namespace CrossEngine
          * 
          * @return const Math::Mat4& The subspace matrix of this component.
          */
-        const Math::Mat4& GetSubspaceMatrix() const;
+        virtual const Math::Mat4& GetSubspaceMatrix() const;
 
         /**
          * @brief Get the inverse subspace matrix of this component.
          * 
          * @return Math::Mat4 The inverse subspace matrix of this component.
          */
-        const Math::Mat4& GetSubspaceMatrixInverse() const;
+        virtual const Math::Mat4& GetSubspaceMatrixInverse() const;
 
         /**
          * @brief Get the model matrix of this component.
@@ -220,20 +106,6 @@ namespace CrossEngine
          * @return const Math::Mat4& The model matrix of this component.
          */
         const Math::Mat4& GetModelMatrix();
-
-        /**
-         * @brief Get the global position of this component.
-         * 
-         * @return const Math::Vec4& The global position of this component.
-         */
-        Math::Vec4 GetGlobalPosition() const;
-
-        /**
-         * @brief Set the position of this component.
-         * 
-         * @param p_position The new position of this component.
-         */
-        void SetGlobalPosition(const Math::Vec4& p_position);
 
         /**
          * @brief Is the component visible.
@@ -249,27 +121,6 @@ namespace CrossEngine
          * @param p_visible The visibility of the component.
          */
         FORCE_INLINE void SetVisible(bool p_visible) { visible = p_visible; }
-
-        /**
-         * @brief Get the front direction of the component.
-         * 
-         * @return Math::Vec4 The front direction of the component.
-         */
-        FORCE_INLINE Math::Vec4 GetFront() const { return Math::RotQuaternion(rotation) * Math::FRONT<4>; }
-
-        /**
-         * @brief Get the right direction of the component.
-         * 
-         * @return Math::Vec4 The right direction of the component.
-         */
-        Math::Vec4 GetUp() const { return Math::RotQuaternion(rotation) * Math::UP<4>; }
-
-        /**
-         * @brief Get the right direction of the component.
-         * 
-         * @return Math::Vec4 The right direction of the component.
-         */
-        Math::Vec4 GetRight() const { return Math::RotQuaternion(rotation) * Math::RIGHT<4>; };
 
         /**
          * @brief Draw the component.

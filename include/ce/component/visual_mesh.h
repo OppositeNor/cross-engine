@@ -1,12 +1,12 @@
 #pragma once
-#include "ce/component/component.h"
+#include "ce/component/component3D.h"
 #include <map>
 
 namespace CrossEngine
 {
     class Triangle;
     class AMaterial;
-    class VisualMesh : public Component
+    class VisualMesh : public Component3D
     {
     protected:
         std::map<Window*, unsigned int> vaos;
@@ -19,7 +19,7 @@ namespace CrossEngine
         ~VisualMesh();
 
         VisualMesh(const VisualMesh& p_other) 
-            : Component(p_other) {};
+            : Component3D(p_other) {};
 
         VisualMesh(VisualMesh&& p_other) noexcept;
 

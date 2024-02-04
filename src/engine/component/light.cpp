@@ -4,7 +4,7 @@
 namespace CrossEngine
 {
     ALight::ALight()
-        : Component()
+        : Component3D()
     {
 
     }

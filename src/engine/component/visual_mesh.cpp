@@ -30,7 +30,7 @@ namespace CrossEngine
 
 
     VisualMesh::VisualMesh(VisualMesh&& p_other) noexcept
-        : Component(std::move(p_other))
+        : Component3D(std::move(p_other))
     {
         vaos = std::move(p_other.vaos);
         vbos = std::move(p_other.vbos);

@@ -1,5 +1,5 @@
 #pragma once
-#include "ce/component/component.h"
+#include "ce/component/component3D.h"
 
 namespace CrossEngine
 {
@@ -7,7 +7,7 @@ namespace CrossEngine
      * @brief A camera of the scene.
      * 
      */
-    class Camera : public Component
+    class Camera : public Component3D
     {
 
     public:

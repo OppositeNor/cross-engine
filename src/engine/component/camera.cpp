@@ -4,7 +4,7 @@
 namespace CrossEngine
 {
     Camera::Camera()
-        : Component()
+        : Component3D()
     {
     }
 

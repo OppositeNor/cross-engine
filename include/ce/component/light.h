@@ -1,5 +1,5 @@
 #pragma once
-#include "ce/component/component.h"
+#include "ce/component/component3D.h"
 
 namespace CrossEngine
 {
@@ -7,7 +7,7 @@ namespace CrossEngine
     /**
      * @brief A light in the scene.
      */
-    class ALight : public Component
+    class ALight : public Component3D
     {
         bool cast_shadow = true;
     public:

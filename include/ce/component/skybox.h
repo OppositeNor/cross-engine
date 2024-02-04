@@ -1,13 +1,13 @@
 #pragma once
 
-#include "ce/component/component.h"
+#include "ce/component/component3D.h"
 #include "ce/graphics/shader/shader_program.h"
 #include <map>
 
 namespace CrossEngine
 {
     class Skybox
-        : public Component
+        : public Component3D
     {
     private:
         const static float vertices[108];
