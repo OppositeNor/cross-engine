@@ -2,7 +2,8 @@
 #include <utility>
 #include <stdexcept>
 
-namespace Math
+
+namespace CrossEngine::Math
 {
     /**
      * @brief An interval object.

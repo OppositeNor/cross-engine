@@ -6,5 +6,4 @@ set(CE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/window_event.cpp
     
     ${PROJECT_SOURCE_DIR}/include/ce/event/i_event_listener.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/i_event_listener.cpp
     PARENT_SCOPE)

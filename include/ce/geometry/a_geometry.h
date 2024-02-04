@@ -2,10 +2,13 @@
 
 #include "ce/defs.hpp"
 
-class AGeometry
+namespace CrossEngine
 {
-public:
-    AGeometry() = default;
-    virtual ~AGeometry() = default;
+    class AGeometry
+    {
+    public:
+        AGeometry() = default;
+        virtual ~AGeometry() = default;
 
-};
+    };
+}

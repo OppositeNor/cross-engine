@@ -6,7 +6,7 @@
 #include "ce/math/math_type_base.hpp"
 #include "ce/defs.hpp"
 
-namespace Math
+namespace CrossEngine::Math
 {
     /**
      * @brief Vector class.

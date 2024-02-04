@@ -2,10 +2,13 @@
 #include "ce/graphics/graphics.h"
 #include "ce/texture/static_texture.h"
 
-AMaterial::AMaterial()
+namespace CrossEngine
 {
-}
+    AMaterial::AMaterial()
+    {
+    }
 
-AMaterial::~AMaterial()
-{
+    AMaterial::~AMaterial()
+    {
+    }
 }

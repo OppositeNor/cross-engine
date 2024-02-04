@@ -8,10 +8,6 @@
     template <typename dT>                              \
     inline static constexpr bool bool_var_name<dT, std::void_t<decltype(std::declval<dT>().method)>> = true;
 
-using byte_t = char;
-using ubyte_t = unsigned char;
-using int32_t = int;
-
 #if __GNUC__
     #define FORCE_INLINE inline __attribute__((always_inline))
 #elif defined _MSC_VER
@@ -20,10 +16,16 @@ using int32_t = int;
     #define FORCE_INLINE inline
 #endif
 
-template <typename dT1, typename dT2, typename = void>
-inline constexpr bool has_times = false;
-template <typename dT1, typename dT2>
-inline constexpr bool has_times<dT1, dT2, std::void_t<decltype(std::declval<dT1>() * std::declval<dT2>())>> = true;
+namespace CrossEngine
+{
+    using byte_t = char;
+    using ubyte_t = unsigned char;
+    using int32_t = int;
+
+    template <typename dT1, typename dT2, typename = void>
+    inline constexpr bool has_times = false;
+    template <typename dT1, typename dT2>
+    inline constexpr bool has_times<dT1, dT2, std::void_t<decltype(std::declval<dT1>() * std::declval<dT2>())>> = true;
 
 enum class EulerRotOrder
 {
@@ -45,4 +47,6 @@ template <typename T>
 FORCE_INLINE EulerRotOrder operator *(T&& p_value, EulerRotOrder p_order)
 {
     return static_cast<EulerRotOrder>(static_cast<int>(p_order) * p_value);
+}
+
 }

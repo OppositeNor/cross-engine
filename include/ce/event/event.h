@@ -1,23 +1,26 @@
 #pragma once
 
-enum class EventType
+namespace CrossEngine
 {
-    OnWindowClose,
-    OnWindowFocus,
-    OnWindowResize,
-    OnWindowMove,
-    OnKey,
-    OnMouseMove
-};
+    enum class EventType
+    {
+        OnWindowClose,
+        OnWindowFocus,
+        OnWindowResize,
+        OnWindowMove,
+        OnKey,
+        OnMouseMove
+    };
 
-class AEvent
-{
-private:
-    EventType event_type;
-protected:
-    AEvent(EventType p_event_type);
-public:
-    virtual ~AEvent();
+    class AEvent
+    {
+    private:
+        EventType event_type;
+    protected:
+        AEvent(EventType p_event_type);
+    public:
+        virtual ~AEvent();
 
-    EventType GetEventType() const { return event_type; }
-};
+        EventType GetEventType() const { return event_type; }
+    };
+}

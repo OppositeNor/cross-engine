@@ -1,2 +1,6 @@
 #pragma once
-class MathTypeBase {};
+
+namespace CrossEngine::Math
+{
+    class MathTypeBase {};
+}

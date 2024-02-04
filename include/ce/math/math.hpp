@@ -3,7 +3,7 @@
 #include "ce/math/vector.hpp"
 #include "ce/math/interval.hpp"
 
-namespace Math
+namespace CrossEngine::Math
 {
     struct MatrixTag{};
 

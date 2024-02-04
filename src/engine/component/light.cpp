@@ -1,18 +1,21 @@
 #include "ce/component/light.h"
 #include "ce/graphics/window.h"
 
-ALight::ALight()
-    : Component()
+namespace CrossEngine
 {
+    ALight::ALight()
+        : Component()
+    {
 
-}
+    }
 
-ALight::~ALight()
-{
+    ALight::~ALight()
+    {
 
-}
+    }
 
-void ALight::Draw(Window* p_context)
-{
-    Component::Draw(p_context);
+    void ALight::Draw(Window* p_context)
+    {
+        Component::Draw(p_context);
+    }
 }
