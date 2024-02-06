@@ -74,7 +74,12 @@ namespace CrossEngine
     void* Graphics::CreateGLFWContext(size_t p_width, size_t p_height, const std::string& p_title, bool p_fullscreen, bool p_resizable, void* p_shared)
     {
         if (!initialized)
-            throw std::runtime_error("Graphics not initialized.");
+        {
+            std::lock_guard<std::mutex> lock(init_mutex);
+            if (!initialized)
+                throw std::runtime_error("Graphics not initialized.");
+        }
+        std::lock_guard<std::mutex> lock(create_window_mutex);
         if (p_width == 0)
         {
             auto size = GetScreenSize();

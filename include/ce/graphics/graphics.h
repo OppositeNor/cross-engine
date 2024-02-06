@@ -19,6 +19,7 @@ namespace CrossEngine
         Graphics() = delete;
         inline static bool initialized = false;
         inline static std::mutex init_mutex;
+        inline static std::mutex create_window_mutex;
 
         static std::shared_ptr<ATexture> default_albedo;
         static std::shared_ptr<ATexture> default_normal;

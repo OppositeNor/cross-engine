@@ -21,11 +21,17 @@ namespace CrossEngine
         std::vector<WPComponent> children;
 
         bool visible = true;
+
+        bool activated = false;
+        mutable std::mutex activation_mutex;
     protected:
         
         virtual void SetSubspaceMatrixDirty();
         void SetChildrenSubspaceMatrixDirty();
         void SetChildrenSubspaceMatrixInverseDirty();
+
+        void Activate();
+        bool IsActivated() const;
     public:
         Component();
         Component(const Component& p_other);

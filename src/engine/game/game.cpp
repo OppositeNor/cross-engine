@@ -118,7 +118,6 @@ namespace CrossEngine
     {
         float frame_start;
         float delta = 0.01;
-        base_component->Ready();
         while (!main_window->IsClosed())
         {
             frame_start = (float)glfwGetTime();

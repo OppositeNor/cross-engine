@@ -35,6 +35,7 @@ namespace CrossEngine
 
     void Component::Update(float p_delta)
     {
+        Activate();
         Process(p_delta);
         for (auto& child : children)
         {
@@ -70,7 +71,6 @@ namespace CrossEngine
             child->parent.lock()->RemoveChild(child.get());
         child->SetSubspaceMatrixDirty();
         child->parent = shared_from_this();
-        child->Ready();
     }
 
     const Math::Mat4& Component::GetSubspaceMatrix() const
@@ -96,6 +96,24 @@ namespace CrossEngine
             child.lock()->SetSubspaceMatrixDirty();
         }
     }
+
+    void Component::Activate()
+    {
+        if (!activated)
+        {
+            std::lock_guard<std::mutex> lock(activation_mutex);
+            if (!activated)
+            {
+                activated = true;
+                Ready();
+            }
+        }
+    }
+    bool Component::IsActivated() const
+    {
+        std::lock_guard<std::mutex> lock(activation_mutex);
+        return activated;
+    } 
 
     void Component::SetChildrenSubspaceMatrixInverseDirty()
     {
