@@ -14,6 +14,7 @@ namespace CrossEngine
         : public std::enable_shared_from_this<Component>
     {
     private:
+        std::string component_name;
         inline static Math::Mat4 identity = Math::Mat4();
 
         using WPComponent = std::weak_ptr<Component>;
@@ -33,7 +34,7 @@ namespace CrossEngine
         void Activate();
         bool IsActivated() const;
     public:
-        Component();
+        Component(const std::string& p_component_name = "component");
         Component(const Component& p_other);
         Component(Component&& p_other) noexcept;
         virtual ~Component();
@@ -62,7 +63,19 @@ namespace CrossEngine
          */
         virtual void Leave() {}
 
+        /**
+         * @brief Get the name of the component.
+         * 
+         * @return const std::string& The name of the component.
+         */
+        FORCE_INLINE const std::string& GetName() const noexcept { return component_name; }
 
+        /**
+         * @brief Set the name of the component.
+         * 
+         * @param p_component_name The name of the component;
+         */
+        FORCE_INLINE void SetName(const std::string& p_component_name) { component_name = p_component_name; }
 
         /**
          * @brief Remove a child from this component.
@@ -77,6 +90,13 @@ namespace CrossEngine
          * @param p_child The child to be added.
          */
         void AddChild(WPComponent p_child);
+
+        /**
+         * @brief Get the child of the corresponding name first appears.
+         * 
+         * @param p_child_name The name of the child. Returns NULL if not found.
+         */
+        std::shared_ptr<Component> GetChild(const std::string& p_child_name);
 
         /**
          * @brief Get the parent of this component.

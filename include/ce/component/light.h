@@ -11,7 +11,7 @@ namespace CrossEngine
     {
         bool cast_shadow = true;
     public:
-        ALight();
+        ALight(const std::string& p_component_name = "light");
         virtual ~ALight();
 
         /**

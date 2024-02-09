@@ -98,8 +98,8 @@ namespace CrossEngine
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
 
-    Skybox::Skybox(const std::vector<std::string>& p_faces)
-        : faces(p_faces), Component3D()
+    Skybox::Skybox(const std::vector<std::string>& p_faces, const std::string& p_component_name)
+        : faces(p_faces), Component3D(p_component_name)
     {
         Scale() = Math::Vec4(10.0f, 10.0f, 10.0f);
     }

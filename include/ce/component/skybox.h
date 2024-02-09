@@ -27,7 +27,7 @@ namespace CrossEngine
          * @param p_context The context of the skybox.
          * @param p_faces The path to the images of faces of the skybox.
          */
-        Skybox(const std::vector<std::string>& p_faces);
+        Skybox(const std::vector<std::string>& p_faces, const std::string& p_component_name = "skybox");
         
         /**
          * @brief Destroy the Skybox object

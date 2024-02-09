@@ -42,8 +42,8 @@ namespace CrossEngine
         subspace_matrix_inverse_dirty = false;
     }
 
-    Component3D::Component3D()
-        : position(0.0f, 0.0f, 0.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f), Component()
+    Component3D::Component3D(const std::string& p_component_name)
+        : position(0.0f, 0.0f, 0.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f), Component(p_component_name)
     {
 
     }

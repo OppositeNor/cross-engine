@@ -26,7 +26,7 @@ namespace CrossEngine
         void UpdateSubspaceMatrixInverse() const;
 
     public:
-        Component3D();
+        Component3D(const std::string& p_component_name = "component 3d");
 
         Component3D(const Component3D& p_other);
         

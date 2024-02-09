@@ -15,7 +15,7 @@ namespace CrossEngine
 
         std::shared_ptr<AMaterial> material;
     public:
-        VisualMesh();
+        VisualMesh(const std::string& p_component_name = "visual mesh");
         ~VisualMesh();
 
         VisualMesh(const VisualMesh& p_other) 

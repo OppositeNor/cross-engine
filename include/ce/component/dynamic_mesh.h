@@ -23,7 +23,7 @@ namespace CrossEngine
          * 
          * @param p_context The context to load the mesh in.
          */
-        explicit DynamicMesh();
+        explicit DynamicMesh(const std::string& p_component_name = "dynamic mesh");
 
         /**
          * @brief Construct a new mesh.
@@ -31,7 +31,7 @@ namespace CrossEngine
          * @param p_triangles The triangles of this mesh.
          * @param p_context The context to load the mesh in.
          */
-        DynamicMesh(std::vector<Triangle*>&& p_triangles);
+        explicit DynamicMesh(std::vector<Triangle*>&& p_triangles, const std::string& p_component_name = "dynamic mesh");
 
         /**
          * @brief Copy constructor for DynamicMesh.

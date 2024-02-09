@@ -11,14 +11,14 @@ namespace CrossEngine
         triangles_dirty = p_dirty;
     }
 
-    DynamicMesh::DynamicMesh()
-        : VisualMesh()
+    DynamicMesh::DynamicMesh(const std::string& p_component_name)
+        : VisualMesh(p_component_name)
     {
         
     }
 
-    DynamicMesh::DynamicMesh(std::vector<Triangle*>&& p_triangles)
-        : DynamicMesh()
+    DynamicMesh::DynamicMesh(std::vector<Triangle*>&& p_triangles, const std::string& p_component_name)
+        : DynamicMesh(p_component_name)
     {
         triangles = std::move(p_triangles);
     }

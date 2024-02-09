@@ -12,7 +12,7 @@ namespace CrossEngine
 
     public:
 
-        Camera();
+        Camera(const std::string& p_component_name = "camera");
 
         Math::Mat4 GetViewMatrix() const;
 

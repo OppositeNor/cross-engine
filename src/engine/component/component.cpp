@@ -4,15 +4,16 @@
 
 namespace CrossEngine
 {
-    Component::Component()
+    Component::Component(const std::string& p_component_name)
+        : component_name(p_component_name)
     {
-
+        
     }
 
     Component::Component(const Component& p_other)
     {
         SetSubspaceMatrixDirty();
-
+        component_name = p_other.component_name;
         if (!p_other.parent.expired())
             p_other.parent.lock()->AddChild(shared_from_this());
         
@@ -21,7 +22,7 @@ namespace CrossEngine
     Component::Component(Component&& p_other) noexcept
     {
         SetSubspaceMatrixDirty();
-
+        component_name = p_other.component_name;
         if (!p_other.parent.expired())
             p_other.parent.lock()->AddChild(shared_from_this());
         p_other.parent.reset();
@@ -65,12 +66,27 @@ namespace CrossEngine
             if (i.lock().get() == p_child.lock().get())
                 return;
         }
+        if (activated)
+        {
+            p_child.lock()->Activate();
+        }
         children.push_back(p_child);
         auto child = p_child.lock();
         if (!child->parent.expired())
             child->parent.lock()->RemoveChild(child.get());
         child->SetSubspaceMatrixDirty();
         child->parent = shared_from_this();
+    }
+
+    std::shared_ptr<Component> Component::GetChild(const std::string& p_child_name)
+    {
+        for (auto& i : children)
+        {
+            auto shared = i.lock();
+            if (shared->GetName() == p_child_name)
+                return shared;
+        }
+        return nullptr;
     }
 
     const Math::Mat4& Component::GetSubspaceMatrix() const

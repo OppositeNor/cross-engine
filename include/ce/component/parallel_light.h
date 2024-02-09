@@ -18,9 +18,9 @@ namespace CrossEngine
         float intensity;
         
     public:
-        ParallelLight();
-        ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, float p_intensity);
-        ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, const Math::Vec4& p_ambient, float p_intensity);
+        ParallelLight(const std::string& p_component_name = "parallel light");
+        ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, float p_intensity, const std::string& p_component_name = "parallel light");
+        ParallelLight(const Math::Vec4& p_direction, const Math::Vec4& p_color, const Math::Vec4& p_ambient, float p_intensity, const std::string& p_component_name = "parallel light");
         
         /**
          * @brief Get the direction of the light.

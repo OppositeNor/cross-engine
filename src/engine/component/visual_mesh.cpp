@@ -10,7 +10,8 @@
 
 namespace CrossEngine
 {
-    VisualMesh::VisualMesh()
+    VisualMesh::VisualMesh(const std::string& p_component_name)
+        : Component3D(p_component_name)
     {
     }
 

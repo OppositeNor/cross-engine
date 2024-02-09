@@ -3,8 +3,8 @@
 
 namespace CrossEngine
 {
-    Camera::Camera()
-        : Component3D()
+    Camera::Camera(const std::string& p_component_name)
+        : Component3D(p_component_name)
     {
     }
 

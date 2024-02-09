@@ -6,12 +6,12 @@
 
 namespace CrossEngine
 {
-    PointLight::PointLight()
-        : PointLight(Math::Pos(), 20)
+    PointLight::PointLight(const std::string& p_component_name)
+        : PointLight(Math::Pos(), 20, p_component_name)
     {
     }
-    PointLight::PointLight(const Math::Vec4& p_color, float p_intensity)
-        : ALight()
+    PointLight::PointLight(const Math::Vec4& p_color, float p_intensity, const std::string& p_component_name)
+        : ALight(p_component_name)
     {
         color = p_color;
         intensity = p_intensity;

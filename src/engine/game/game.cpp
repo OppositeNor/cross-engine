@@ -19,6 +19,7 @@ namespace CrossEngine
         base_component = std::make_shared<Component>();
 
         event_manager->AddEventListener(input_manager);
+        Ready();
     }
 
     Game::Game(Window*&& p_window)

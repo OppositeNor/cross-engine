@@ -26,7 +26,7 @@ namespace CrossEngine
          * @brief Constructor for PointLight.
          * 
          */
-        PointLight();
+        PointLight(const std::string& p_component_name = "point light");
 
         /**
          * @brief Constructor for PointLight.
@@ -34,7 +34,7 @@ namespace CrossEngine
          * @param p_color The color of the light.
          * @param p_intensity The intensity of the light.
          */
-        PointLight(const Math::Vec4& p_color, float p_intensity);
+        PointLight(const Math::Vec4& p_color, float p_intensity, const std::string& p_component_name = "point light");
 
         /**
          * @brief Get the maximum distance that the light can be fisible to the camera.
