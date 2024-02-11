@@ -11,6 +11,7 @@ namespace CrossEngine
     protected:
         std::map<Window*, unsigned int> vaos;
         std::map<Window*, unsigned int> vbos;
+        mutable std::shared_mutex context_resource_mutex;
         void UpdateVAO(const std::vector<Triangle*>& p_triangles, unsigned int p_vao, unsigned int p_vbo);
 
         std::shared_ptr<AMaterial> material;
@@ -22,6 +23,7 @@ namespace CrossEngine
             : Component3D(p_other) {};
 
         VisualMesh(VisualMesh&& p_other) noexcept;
+        
 
         /**
          * @brief Get the material of this component.
@@ -45,18 +47,18 @@ namespace CrossEngine
         FORCE_INLINE void SetMaterial(std::shared_ptr<AMaterial> p_material) { material = p_material; } 
 
         /**
-         * @brief Return the map of the context correspond to it's vao.
+         * @brief Return the vao corresponding to the context
          * 
-         * @return std::map<const Window*, unsigned int> The map of the vaos.
+         * @return unsigned int the corresponding vao
          */
-        FORCE_INLINE std::map<Window*, unsigned int> GetVAOs() const { return vaos; }
+        unsigned int GetVAO(Window* p_context) const;
 
         /**
-         * @brief Return the map of the context correspond to it's vbo.
+         * @brief Return the vbo corresponding to the context
          * 
-         * @return std::map<Window*, unsigned int> The map of the vbos.
+         * @return unsigned int the corresponding vbo
          */
-        FORCE_INLINE std::map<Window*, unsigned int> GetVBOs() const { return vbos; }
+        unsigned int GetVBO(Window* p_context) const;
 
         /**
          * @brief Get the vertex count of this mesh.

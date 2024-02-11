@@ -138,10 +138,21 @@ namespace CrossEngine
 
     void Skybox::Draw(Window* p_context)
     {
-        if (!vbos.contains(p_context))
+        bool should_add_context_resource = false;
+        
         {
-            unsigned int vbo, vao, texture_id;
+            std::shared_lock<std::shared_mutex> lock(context_resource_mutex);
+            if (!vbos.contains(p_context))
+            {
+                should_add_context_resource = true;
+            }
+        }
+
+        if (should_add_context_resource)
+        {
+            std::unique_lock<std::shared_mutex> lock(context_resource_mutex);
             
+            unsigned int vbo, vao, texture_id;
             glGenBuffers(1, &vbo);
             p_context->RegisterThreadResource(vbo, glDeleteBuffers);
             glGenVertexArrays(1, &vao);
@@ -153,10 +164,14 @@ namespace CrossEngine
             vaos[p_context] = vao;
             texture_cube_ids[p_context] = texture_id;
         }
+        
         glDepthMask(GL_FALSE);
         p_context->GetSkyboxShaderProgram()->SetUniform("model", GetSubspaceMatrix());
-        glBindVertexArray(vaos[p_context]);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, texture_cube_ids[p_context]);
+        {
+            std::shared_lock<std::shared_mutex> lock(context_resource_mutex);
+            glBindVertexArray(vaos[p_context]);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, texture_cube_ids[p_context]);
+        }
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthMask(GL_TRUE);
     }

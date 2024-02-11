@@ -3,7 +3,7 @@
 #include "ce/graphics/window.h"
 #include "ce/texture/static_texture.h"
 #include "ce/resource/resource.h"
-#include "ce/materials/valued_material.h"
+#include "ce/materials/pbr_material.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "ce/defs.hpp"

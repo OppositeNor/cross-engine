@@ -19,8 +19,7 @@ namespace CrossEngine
         std::shared_ptr<InputManager> input_manager;
 
         static std::mutex initialize_mutex;
-        Game(Window*&& p_window);
-        Game(std::shared_ptr<Window> p_window);
+        Game();
 
         static Game* instance;
         std::shared_ptr<Component> base_component;
@@ -33,37 +32,6 @@ namespace CrossEngine
          * 
          */
         static void Init();
-        
-        /**
-         * @brief Initialize the game.
-         * 
-         * @param p_window The window to use.
-         */
-        static void Init(std::shared_ptr<Window> p_window);
-
-        /**
-         * @brief Initialize the game.
-         * 
-         * @param p_window The window to use.
-         */
-        static void Init(Window*&& p_window);
-
-        /**
-         * @brief Initialize the game.
-         * 
-         * @param p_size The size of the main window.
-         * @param p_title The title of the main window.
-         */
-        static void Init(const Math::Vec2s& p_size, const std::string& p_title = "");
-
-        /**
-         * @brief Initialize the game.
-         * 
-         * @param p_width The width of the main window.
-         * @param p_height The height of the main window.
-         * @param p_title The title of the main window.
-         */
-        static void Init(size_t p_width, size_t p_height, const std::string& p_title = "");
 
         /**
          * @brief Get the instance of the game.
@@ -78,6 +46,19 @@ namespace CrossEngine
          * @return false The game is not initialized.
          */
         static bool IsInitialized() { return instance != nullptr; }
+
+        /**
+         * @brief Set the main window of the game
+         * 
+         */
+        void SetMainWindow(std::shared_ptr<Window> p_main_window);
+
+        /**
+         * @brief Set the main window of the game.
+         * 
+         * @param p_main_window The main window of the game.
+         */
+        void SetMainWindow(Window*&& p_main_window);
 
         /**
          * @brief Get the base component.

@@ -15,6 +15,7 @@ namespace CrossEngine
         std::map<Window*, unsigned int> vbos;
         std::map<Window*, unsigned int> vaos;
         std::map<Window*, unsigned int> texture_cube_ids;
+        mutable std::shared_mutex context_resource_mutex;
 
         void SetupSkybox(unsigned int p_vao, unsigned int p_vbo, unsigned int p_texture_id);
 

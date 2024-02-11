@@ -2,6 +2,7 @@
 #include "ce/math/math.hpp"
 #include <vector>
 #include <mutex>
+#include <shared_mutex>
 
 namespace CrossEngine
 {

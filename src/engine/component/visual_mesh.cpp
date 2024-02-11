@@ -37,13 +37,37 @@ namespace CrossEngine
         vbos = std::move(p_other.vbos);
     }
 
+    unsigned int VisualMesh::GetVAO(Window* p_context) const
+    {
+        std::shared_lock<std::shared_mutex> context_resource_mutex;
+        return vaos.at(p_context);
+    }
+
+    unsigned int VisualMesh::GetVBO(Window* p_context) const
+    {
+        std::shared_lock<std::shared_mutex> context_resource_mutex;
+        return vbos.at(p_context);
+    }
+
     void VisualMesh::Draw(Window* p_context)
     {
         Component::Draw(p_context);
         if (!IsVisible())
             return;
-        if (!vaos.contains(p_context))
+        
+        bool should_add_context_resource = false;
+
         {
+            std::shared_lock<std::shared_mutex> lock(context_resource_mutex);
+            if (!vaos.contains(p_context))
+            {
+                should_add_context_resource = true;
+            }
+        }
+        
+        if (should_add_context_resource)
+        {
+            std::unique_lock<std::shared_mutex> lock(context_resource_mutex);
             unsigned int vao, vbo;
             glGenBuffers(1, &vbo);
             p_context->RegisterThreadResource(vbo, glDeleteBuffers);
@@ -53,10 +77,15 @@ namespace CrossEngine
             vaos[p_context] = vao;
             vbos[p_context] = vbo;
         }
+
         if (p_context->GetThreadId() != std::this_thread::get_id())
             throw std::runtime_error("Skybox must be drawn on the main thread.");
         
-        glBindVertexArray(vaos[p_context]);
+        {
+            std::shared_lock<std::shared_mutex> lock(context_resource_mutex);
+            glBindVertexArray(vaos[p_context]);
+        }
+        
         p_context->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
         if (material)
             material->SetUniform(p_context);

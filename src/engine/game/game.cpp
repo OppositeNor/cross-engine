@@ -11,9 +11,8 @@ namespace CrossEngine
     Game* Game::instance = nullptr;
     std::mutex Game::initialize_mutex;
 
-    Game::Game(std::shared_ptr<Window> p_window)
+    Game::Game()
     {
-        main_window = p_window;
         input_manager = std::make_shared<InputManager>();
         event_manager = std::make_shared<EventManager>();
         base_component = std::make_shared<Component>();
@@ -22,51 +21,33 @@ namespace CrossEngine
         Ready();
     }
 
-    Game::Game(Window*&& p_window)
-        : Game(std::shared_ptr<Window>(p_window))
-    {
-    }
-
-    void Game::Init(std::shared_ptr<Window> p_window)
+    void Game::Init()
     {
         if (instance == nullptr)
         {
             std::lock_guard<std::mutex> lock(initialize_mutex);
             if (instance == nullptr)
             {
-                instance = new Game(p_window);
+                Graphics::InitGraphics();
+                instance = new Game();
             }
         }
     }
 
-    void Game::Init(Window*&& p_window)
+    void Game::SetMainWindow(std::shared_ptr<Window> p_main_window)
     {
-        if (instance == nullptr)
-        {
-            std::lock_guard<std::mutex> lock(initialize_mutex);
-            if (instance == nullptr)
-                instance = new Game(std::move(p_window));
-        }
+        main_window = p_main_window;
     }
 
-    void Game::Init(const Math::Vec2s& p_size, const std::string& p_title)
+    void Game::SetMainWindow(Window*&& p_main_window)
     {
-        Init(std::make_shared<Window>(p_size, p_title));
-    }
-
-    void Game::Init(size_t p_width, size_t p_height, const std::string& p_title)
-    {
-        Init(std::make_shared<Window>(p_width, p_height, p_title));
+        main_window = std::shared_ptr<Window>(p_main_window);
+        p_main_window = nullptr;
     }
 
     std::shared_ptr<Component> Game::GetBaseComponent()
     {
         return base_component;
-    }
-
-    void Game::Init()
-    {
-        Init(std::make_shared<Window>());
     }
 
     Game* Game::GetInstance()

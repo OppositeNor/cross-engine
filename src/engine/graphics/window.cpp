@@ -5,7 +5,7 @@
 #include "ce/managers/event_manager.h"
 #include "ce/event/window_event.h"
 #include "ce/game/game.h"
-#include "ce/materials/valued_material.h"
+#include "ce/materials/pbr_material.h"
 #include "ce/texture/static_texture.h"
 #include "ce/component/camera.h"
 #include "ce/component/skybox.h"

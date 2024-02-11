@@ -84,7 +84,7 @@ namespace CrossEngine
             std::lock_guard<std::mutex> lock(triangles_mutex);
             if (triangles_dirty)
             {
-                UpdateVAO(triangles, GetVAOs()[p_context], GetVBOs()[p_context]);
+                UpdateVAO(triangles, GetVAO(p_context), GetVBO(p_context));
                 triangles_dirty = false;
             }
         }

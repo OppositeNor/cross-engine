@@ -1,4 +1,4 @@
-#include "ce/materials/valued_material.h"
+#include "ce/materials/pbr_material.h"
 #include "ce/graphics/shader/shader_program.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/graphics.h"
