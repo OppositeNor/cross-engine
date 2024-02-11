@@ -21,6 +21,7 @@ namespace CrossEngine
         using WPComponent = std::weak_ptr<Component>;
         WPComponent parent;
         std::vector<WPComponent> children;
+        mutable std::shared_mutex children_mutex;
 
         bool visible = true;
 

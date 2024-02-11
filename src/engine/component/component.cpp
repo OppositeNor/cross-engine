@@ -38,22 +38,29 @@ namespace CrossEngine
     {
         Activate();
         Process(p_delta);
-        for (auto& child : children)
         {
-            if (child.expired())
-                continue;
-            child.lock()->Update(p_delta);
+            std::shared_lock<std::shared_mutex> lock(children_mutex);
+            for (auto& child : children)
+            {
+                if (child.expired())
+                    continue;
+                child.lock()->Update(p_delta);
+            }
         }
     }
 
     void Component::RemoveChild(Component* p_child)
     {
-        for (auto it = children.begin(); it != children.end(); ++it)
         {
-            if ((*it).lock().get() == p_child)
+            std::unique_lock<std::shared_mutex> lock(children_mutex);
+            
+            for (auto it = children.begin(); it != children.end(); ++it)
             {
-                children.erase(it);
-                break;
+                if ((*it).lock().get() == p_child)
+                {
+                    children.erase(it);
+                    break;
+                }
             }
         }
         p_child->parent.reset();
@@ -61,25 +68,32 @@ namespace CrossEngine
 
     void Component::AddChild(WPComponent p_child)
     {
-        for (auto& i : children)
         {
-            if (i.lock().get() == p_child.lock().get())
-                return;
+            std::shared_lock<std::shared_mutex> lock(children_mutex);
+            for (auto& i : children)
+            {
+                if (i.lock().get() == p_child.lock().get())
+                    return;
+            }
         }
-        if (activated)
         {
-            p_child.lock()->Activate();
+            std::unique_lock<std::shared_mutex> lock(children_mutex);
+            children.push_back(p_child);
         }
-        children.push_back(p_child);
         auto child = p_child.lock();
         if (!child->parent.expired())
             child->parent.lock()->RemoveChild(child.get());
         child->SetSubspaceMatrixDirty();
         child->parent = shared_from_this();
+        if (activated)
+        {
+            p_child.lock()->Activate();
+        }
     }
 
     std::shared_ptr<Component> Component::GetChild(const std::string& p_child_name)
     {
+        std::shared_lock<std::shared_mutex> lock(children_mutex);
         for (auto& i : children)
         {
             auto shared = i.lock();
@@ -107,6 +121,7 @@ namespace CrossEngine
 
     void Component::SetChildrenSubspaceMatrixDirty()
     {
+        std::shared_lock<std::shared_mutex> lock(children_mutex);
         for (auto& child : children)
         {
             child.lock()->SetSubspaceMatrixDirty();
@@ -133,6 +148,7 @@ namespace CrossEngine
 
     void Component::SetChildrenSubspaceMatrixInverseDirty()
     {
+        std::shared_lock<std::shared_mutex> lock(children_mutex);
         for (auto& child : children)
         {
             child.lock()->SetSubspaceMatrixDirty();
@@ -148,6 +164,7 @@ namespace CrossEngine
     {
         if (!visible)
             return;
+        std::shared_lock<std::shared_mutex> lock(children_mutex);
         for (auto& child : children)
         {
             if (child.expired())
