@@ -27,6 +27,9 @@ namespace CrossEngine
 
         bool activated = false;
         mutable std::mutex activation_mutex;
+
+        std::vector<Window*> exclude_draw;
+        std::shared_mutex exclude_draw_mutex;
     protected:
         
         virtual void SetSubspaceMatrixDirty();
@@ -149,6 +152,21 @@ namespace CrossEngine
          * @param p_visible The visibility of the component.
          */
         FORCE_INLINE void SetVisible(bool p_visible) { visible = p_visible; }
+
+        /**
+         * @brief Exclude the context from drawing this component.
+         * 
+         * @param p_context The context to be excluded.
+         */
+        void ExcludeDraw(Window* p_context);
+
+        /**
+         * @brief Include back a context that was previously excluded to
+         * draw this component.
+         * 
+         * @param p_context The context to be included.
+         */
+        void IncludeDraw(Window* p_context);
 
         /**
          * @brief Draw the component.

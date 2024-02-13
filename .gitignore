@@ -5,4 +5,5 @@ test_resource
 test_resource/*.jpg
 test_resource/*.png
 test_resource/*.tif
+test_resource/*.obj
 src/user

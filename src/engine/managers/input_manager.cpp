@@ -73,13 +73,13 @@ namespace CrossEngine
 
     void InputManager::UpdateInput(const Window* p_context)
     {
-        std::unique_lock lock(key_state_mutex);
-        for (auto iter = context_map[p_context].begin(); iter != context_map[p_context].end(); ++iter)
+        std::shared_lock lock(key_state_mutex);
+        for (auto& i : context_map[p_context])
         {
-            if (iter->second == InputState::JustPressed)
-                iter->second = InputState::Pressed;
-            else if (iter->second == InputState::JustReleased)
-                iter->second = InputState::Released;
+            if (i.second == InputState::JustPressed)
+                i.second = InputState::Pressed;
+            else if (i.second == InputState::JustReleased)
+                i.second = InputState::Released;
         }
     }
 
