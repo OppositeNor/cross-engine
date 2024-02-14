@@ -6,6 +6,7 @@
 
 namespace CrossEngine
 {
+    using Math::EulerRotOrder;
     class Window;
 
     /**
