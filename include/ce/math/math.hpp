@@ -28,11 +28,13 @@ namespace CrossEngine::Math
     template<typename T, int N>
     inline static const Vector<T, N> ZERO = Vector<T, N>();
 
-    template <typename Tm, size_t M, size_t N, typename Ts>
+    template<typename T>
+    concept MathType = std::is_base_of<MathTypeBase, std::remove_reference_t<T>>::value;
+    template<typename T>
+    concept NMathType = !std::is_base_of<MathTypeBase, std::remove_reference_t<T>>::value;
+
+    template <typename Tm, size_t M, size_t N, NMathType Ts>
     auto operator*(const Matrix<Tm, M, N>& p_mat, Ts&& p_scaler)
-        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
-            std::remove_reference_t<Ts>>::value, 
-            Matrix<decltype(std::declval<Tm>() * std::declval<Ts>()), M, N>>
     {
         using result_val_type = decltype(std::declval<Tm>() * std::declval<Ts>());
         constexpr size_t SIZE = M * N;
@@ -42,11 +44,8 @@ namespace CrossEngine::Math
         return result;
     }
 
-    template <typename Tm, size_t M, size_t N, typename Ts>
+    template <typename Tm, size_t M, size_t N, NMathType Ts>
     auto operator*(Ts&& p_scaler, const Matrix<Tm, M, N>& p_mat)
-        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
-            std::remove_reference_t<Ts>>::value, 
-            Matrix<decltype(std::declval<Ts>() * std::declval<Tm>()), M, N>>
     {
         using result_val_type = decltype(std::declval<Ts>() * std::declval<Tm>());
         constexpr size_t SIZE = M * N;
@@ -56,11 +55,8 @@ namespace CrossEngine::Math
         return result;
     }
 
-    template <typename Tm, size_t M, size_t N, typename Ts>
+    template <typename Tm, size_t M, size_t N, NMathType Ts>
     auto operator/(const Matrix<Tm, M, N>& p_mat, Ts&& p_scaler)
-        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
-            std::remove_reference_t<Ts>>::value, 
-            Matrix<decltype(std::declval<Tm>() / std::declval<Ts>()), M, N>>
     {
         using result_val_type = decltype(std::declval<Tm>() / std::declval<Ts>());
         constexpr size_t SIZE = M * N;
@@ -120,11 +116,8 @@ namespace CrossEngine::Math
         return result;
     }
 
-    template <typename Tv, size_t N, typename Ts>
+    template <typename Tv, size_t N, NMathType Ts>
     auto operator*(const Vector<Tv, N>& p_vec, Ts&& p_scaler)
-        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
-            std::remove_reference_t<Ts>>::value, 
-            Vector<decltype(std::declval<Tv>() * std::declval<Ts>()), N>>
     {
         auto result = Vector<decltype(std::declval<Tv>() * std::declval<Ts>()), N>();
         for (size_t i = 0; i < N; ++i)
@@ -132,11 +125,8 @@ namespace CrossEngine::Math
         return result;
     }
 
-    template <typename Tv, size_t N, typename Ts>
+    template <typename Tv, size_t N, NMathType Ts>
     auto operator*(Ts&& p_scaler, const Vector<Tv, N>& p_vec)
-        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
-            std::remove_reference_t<Ts>>::value, 
-            Vector<decltype(std::declval<Ts>() * std::declval<Tv>()), N>>
     {
         auto result = Vector<decltype(std::declval<Ts>() * std::declval<Tv>()), N>();
         for (size_t i = 0; i < N; ++i)
@@ -144,11 +134,8 @@ namespace CrossEngine::Math
         return result;
     }
 
-    template <typename Tv, size_t N, typename Ts>
+    template <typename Tv, size_t N, NMathType Ts>
     auto operator/(const Vector<Tv, N>& p_vec, Ts&& p_scaler)
-        -> std::enable_if_t<!std::is_base_of<MathTypeBase, 
-            std::remove_reference_t<Ts>>::value, 
-            Vector<decltype(std::declval<Tv>() / std::declval<Ts>()), N>>
     {
         auto result = Vector<decltype(std::declval<Tv>() / std::declval<Ts>()), N>();
         for (size_t i = 0; i < N; ++i)
