@@ -28,11 +28,6 @@ namespace CrossEngine::Math
     template<typename T, int N>
     inline static const Vector<T, N> ZERO = Vector<T, N>();
 
-    template<typename T>
-    concept MathType = std::is_base_of<MathTypeBase, std::remove_reference_t<T>>::value;
-    template<typename T>
-    concept NMathType = !std::is_base_of<MathTypeBase, std::remove_reference_t<T>>::value;
-
     template <typename Tm, size_t M, size_t N, NMathType Ts>
     auto operator*(const Matrix<Tm, M, N>& p_mat, Ts&& p_scaler)
     {

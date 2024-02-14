@@ -179,20 +179,16 @@ namespace CrossEngine::Math
             return *this;
         }
 
-        template <typename T1>
+        template <NMathType T1>
         FORCE_INLINE auto operator*=(T1&& p_scaler)
-            -> std::enable_if_t<!std::is_base_of_v<MathTypeBase, std::remove_reference_t<T1>>, 
-                decltype(std::declval<T>() * std::declval<T1>(), *this)>
         {
             for (size_t i = 0; i < SIZE; ++i)
                 data[i] *= std::forward<T1>(p_scaler);
             return *this;
         }
 
-        template <typename T1>
+        template <NMathType T1>
         FORCE_INLINE auto operator /=(T1&& p_scaler)
-            -> std::enable_if_t<!std::is_base_of_v<MathTypeBase, std::remove_reference_t<T1>>, 
-                decltype(std::declval<T>() / std::declval<T1>(), *this)>
         {
             for (size_t i = 0; i < SIZE; ++i)
                 data[i] /= std::forward<T1>(p_scaler);

@@ -27,6 +27,7 @@ endif()
 
 add_subdirectory(src/engine)
 add_subdirectory(src/user)
+add_subdirectory(src/test)
 
 add_subdirectory(shaders)
 add_subdirectory(textures)
@@ -61,11 +62,24 @@ add_executable(Application
     ${CE_USER_SOURCES}
     ${CE_SOURCES}
 )
+    
+add_executable(Test
+    ${CE_TEST_SOURCES}
+    ${CE_SOURCES}
+)
 
 add_custom_command(TARGET Application POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     $<TARGET_FILE:glfw3dll> $<TARGET_FILE_DIR:Application>
 )
 
+add_custom_command(TARGET Application POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:glfw3dll> $<TARGET_FILE_DIR:Test>
+)
+
 target_link_libraries(Application PUBLIC
+    ${libs})
+    
+target_link_libraries(Test PUBLIC
     ${libs})

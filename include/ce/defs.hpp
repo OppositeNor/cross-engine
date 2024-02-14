@@ -22,11 +22,6 @@ namespace CrossEngine
     using ubyte_t = unsigned char;
     using int32_t = int;
 
-    template <typename dT1, typename dT2, typename = void>
-    inline constexpr bool has_times = false;
-    template <typename dT1, typename dT2>
-    inline constexpr bool has_times<dT1, dT2, std::void_t<decltype(std::declval<dT1>() * std::declval<dT2>())>> = true;
-
 enum class EulerRotOrder
 {
     PRY = 1,
