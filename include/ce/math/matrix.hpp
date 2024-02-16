@@ -2,9 +2,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <cmath>
-#include "ce/defs.hpp"
 #include "ce/math/math_type_base.hpp"
-#include "ce/math/vector.hpp"
 
 namespace CrossEngine::Math
 {

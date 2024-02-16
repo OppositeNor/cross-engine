@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+
+#include "ce/defs.hpp"
+
 namespace CrossEngine::Math
 {
 

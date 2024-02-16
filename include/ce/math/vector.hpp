@@ -1,10 +1,8 @@
 #pragma once
 #include <stdexcept>
-#include <iostream>
 #include <sstream>
 #include <cmath>
 #include "ce/math/math_type_base.hpp"
-#include "ce/defs.hpp"
 
 namespace CrossEngine::Math
 {
