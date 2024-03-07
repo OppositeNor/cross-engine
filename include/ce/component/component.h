@@ -39,6 +39,12 @@ namespace CrossEngine
 
         void Activate();
         bool IsActivated() const;
+
+        /**
+         * @brief Draw the component.
+         * The parent function must be called when overriding this function.
+         */
+        virtual void Draw(Window* p_context) {}
     public:
         Component(const std::string& p_component_name = "component");
         Component(const Component& p_other);
@@ -170,9 +176,10 @@ namespace CrossEngine
         void IncludeDraw(Window* p_context);
 
         /**
-         * @brief Draw the component.
-         * The parent function must be called when overriding this function.
+         * @brief Register the component to be drawn.
+         * 
+         * @param p_context The context to be drawn.
          */
-        virtual void Draw(Window* p_context);
+        virtual void RegisterDraw(Window* p_context);
     };
 }

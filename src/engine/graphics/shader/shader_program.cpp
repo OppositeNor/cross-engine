@@ -62,7 +62,7 @@ namespace CrossEngine
             int location = glGetUniformLocation(program_id, p_name.c_str());
             if (location == -1)
                 return;
-            glUniformMatrix4fv(location, 1, GL_FALSE, p_mat4.Transpose().GetRaw());
+            glUniformMatrix4fv(location, 1, GL_TRUE, p_mat4.GetRaw());
         }
     }
 

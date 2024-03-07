@@ -4,6 +4,7 @@
 #include "ce/graphics/graphics.h"
 #include "ce/texture/static_texture.h"
 #include "ce/graphics/window.h"
+#include "ce/graphics/renderer/renderer.h"
 
 namespace CrossEngine
 {
@@ -26,12 +27,12 @@ namespace CrossEngine
     void PBRMaterial::SetUniform(Window* p_context) const
     {
         albedo->BindTexture(p_context, GetUniformName() + ".albedo");
-        p_context->GetShaderProgram()->SetUniform("scaler_albedo", scaler_albedo);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform("scaler_albedo", scaler_albedo);
         normal->BindTexture(p_context, GetUniformName() + ".normal");
         metallic->BindTexture(p_context, GetUniformName() + ".metallic");
-        p_context->GetShaderProgram()->SetUniform("scaler_metallic", scaler_metallic);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform("scaler_metallic", scaler_metallic);
         roughness->BindTexture(p_context, GetUniformName() + ".roughness");
-        p_context->GetShaderProgram()->SetUniform("scaler_roughness", scaler_roughness);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform("scaler_roughness", scaler_roughness);
         ao->BindTexture(p_context, GetUniformName() + ".ao");
 
     }

@@ -20,6 +20,13 @@ namespace CrossEngine
         void SetupSkybox(unsigned int p_vao, unsigned int p_vbo, unsigned int p_texture_id);
 
         std::vector<std::string> faces;
+    protected:
+
+        /**
+         * @brief Draw the skybox.
+         * 
+         */
+        virtual void Draw(Window* p_context) override;
     public:
 
         /**
@@ -57,10 +64,6 @@ namespace CrossEngine
          */
         FORCE_INLINE const std::map<Window*, unsigned int>& GetTextureCubeIDs() const noexcept { return texture_cube_ids; }
 
-        /**
-         * @brief Draw the skybox.
-         * 
-         */
-        virtual void Draw(Window* p_context) override;
+        virtual void RegisterDraw(Window* p_context) override;
     };
 }

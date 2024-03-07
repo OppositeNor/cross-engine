@@ -1,4 +1,5 @@
 #include "ce/component/parallel_light.h"
+#include "ce/graphics/renderer/renderer.h"
 #include "ce/graphics/window.h"
 
 namespace CrossEngine
@@ -30,10 +31,10 @@ namespace CrossEngine
     {
         std::stringstream ss;
         ss << UniformName() << "[" << p_index << "]";
-        p_context->GetShaderProgram()->SetUniform(ss.str() + ".direction", direction);
-        p_context->GetShaderProgram()->SetUniform(ss.str() + ".color", color);
-        p_context->GetShaderProgram()->SetUniform(ss.str() + ".ambient", ambient);
-        p_context->GetShaderProgram()->SetUniform(ss.str() + ".intensity", intensity);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform(ss.str() + ".direction", direction);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform(ss.str() + ".color", color);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform(ss.str() + ".ambient", ambient);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform(ss.str() + ".intensity", intensity);
     }
 
     void ParallelLight::Draw(Window* p_context)

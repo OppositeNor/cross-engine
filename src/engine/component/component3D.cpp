@@ -138,6 +138,16 @@ namespace CrossEngine
         return GetSubspaceMatrix() * Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
+    Math::Vec4 Component3D::GetGlobalDirection() const
+    {
+        return GetSubspaceMatrix() * Math::FRONT<4>;
+    }
+
+    Math::Vec4 Component3D::GetGlobalDirectionNormalized() const
+    {
+        return (GetSubspaceMatrix() * Math::FRONT<4>).Normalize();
+    }
+
     void Component3D::SetGlobalPosition(const Math::Vec4& p_position)
     {
         if (GetParent().expired())

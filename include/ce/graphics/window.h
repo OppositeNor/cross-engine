@@ -20,6 +20,7 @@ namespace CrossEngine
     class Camera;
     class Skybox;
     class ATexture;
+    class Renderer;
     class Window : public IEventListener
     {
     private:
@@ -42,6 +43,10 @@ namespace CrossEngine
         mutable size_t point_light_count = 0;
         mutable size_t parallel_light_count = 0;
 
+        Renderer* current_renderer = nullptr;
+        Renderer* main_renderer;
+        Renderer* skybox_renderer;
+
     protected:
         void* glfw_context = nullptr;
         static std::map<void*, Window*> context_window_finder;
@@ -58,8 +63,6 @@ namespace CrossEngine
         std::unique_ptr<std::thread> window_thread;
         bool is_closed = false;
         bool should_close = false;
-        ShaderProgram* shader_program = nullptr;
-        ShaderProgram* skybox_shader_program = nullptr;
         Skybox* skybox = nullptr;
 
         unsigned int vao = 0;
@@ -167,6 +170,13 @@ namespace CrossEngine
          * @param p_camera The camera that is being used.
          */
         FORCE_INLINE void SetUsingCamera(std::shared_ptr<Camera> p_camera) { using_camera = p_camera; }
+
+        /**
+         * @brief Get the projection matrix.
+         * 
+         * @return const Math::Mat4& The projection matrix.
+         */
+        FORCE_INLINE Math::Mat4& ProjMatrix() { return proj_matrix; }
 
         /**
          * @brief Get the projection matrix.
@@ -310,32 +320,18 @@ namespace CrossEngine
         virtual void Draw();
 
         /**
-         * @brief Get the shader program.
+         * @brief Get the current renderer.
          * 
-         * @return ShaderProgram* The shader program.
+         * @return Renderer* The current renderer.
          */
-        FORCE_INLINE ShaderProgram* GetShaderProgram() { return shader_program; }
+        FORCE_INLINE Renderer* GetRenderer() { return current_renderer; }
 
         /**
-         * @brief Get the shader program.
+         * @brief Get the current renderer.
          * 
-         * @return const ShaderProgram* The shader program.
+         * @return const Renderer* The current renderer.
          */
-        FORCE_INLINE const ShaderProgram* GetShaderProgram() const { return shader_program; }
-
-        /**
-         * @brief Get the skybox shader program.
-         * 
-         * @return ShaderProgram* The skybox shader program.
-         */
-        FORCE_INLINE ShaderProgram* GetSkyboxShaderProgram() { return skybox_shader_program; }
-
-        /**
-         * @brief Get the skybox shader program.
-         * 
-         * @return const ShaderProgram* The skybox shader program.
-         */
-        FORCE_INLINE const ShaderProgram* GetSkyboxShaderProgram() const { return skybox_shader_program; }
+        FORCE_INLINE const Renderer* GetRenderer() const { return current_renderer; }
 
         /**
          * @brief Called when an event is dispatched.

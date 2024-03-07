@@ -22,4 +22,5 @@ namespace CrossEngine
     using ubyte_t = unsigned char;
     using int32_t = int;
 
+    using real_t = float;
 }

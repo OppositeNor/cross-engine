@@ -2,6 +2,11 @@
 #include "ce/resource/resource.h"
 #include "ce/graphics/graphics.h"
 #include "glad/glad.h"
+#include "ce/graphics/window.h"
+#include "ce/component/camera.h"
+#include "ce/graphics/renderer/renderer.h"
+
+#include <algorithm>
 
 namespace CrossEngine
 {
@@ -84,6 +89,17 @@ namespace CrossEngine
             std::lock_guard<std::mutex> lock(triangles_mutex);
             if (triangles_dirty)
             {
+                if (material->ShouldPrioritize())
+                {
+                    std::sort(triangles.begin(), triangles.end(), [p_context](const Triangle* p_a, const Triangle* p_b)
+                    {
+                        auto camera_pos = p_context->GetUsingCamera()->GetGlobalPosition();
+                        auto camera_dir = p_context->GetUsingCamera()->GetGlobalDirection();
+                        return p_a->GetDepthTo(camera_pos, camera_dir) < p_b->GetDepthTo(camera_pos, camera_dir);
+                    });
+                    material->SetShouldPrioritize(false);
+                
+                }
                 UpdateVAO(triangles, GetVAO(p_context), GetVBO(p_context));
                 triangles_dirty = false;
             }

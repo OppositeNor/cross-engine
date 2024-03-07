@@ -2,6 +2,7 @@
 #include "ce/graphics/window.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/graphics.h"
+#include "ce/graphics/renderer/renderer.h"
 #include "ce/game/game.h"
 
 #include <glad/glad.h>
@@ -166,7 +167,7 @@ namespace CrossEngine
         }
         
         glDepthMask(GL_FALSE);
-        p_context->GetSkyboxShaderProgram()->SetUniform("model", GetSubspaceMatrix());
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
         {
             std::shared_lock<std::shared_mutex> lock(context_resource_mutex);
             glBindVertexArray(vaos[p_context]);
@@ -174,5 +175,11 @@ namespace CrossEngine
         }
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthMask(GL_TRUE);
+    }
+
+    void Skybox::RegisterDraw(Window* p_context)
+    {
+        Component3D::RegisterDraw(p_context);
+        p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, 0));
     }
 }

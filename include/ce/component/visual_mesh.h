@@ -15,6 +15,12 @@ namespace CrossEngine
         void UpdateVAO(const std::vector<Triangle*>& p_triangles, unsigned int p_vao, unsigned int p_vbo);
 
         std::shared_ptr<AMaterial> material;
+
+        /**
+         * @brief Draw the mesh.
+         * 
+         */
+        virtual void Draw(Window* p_context) override;
     public:
         VisualMesh(const std::string& p_component_name = "visual mesh");
         ~VisualMesh();
@@ -23,7 +29,6 @@ namespace CrossEngine
             : Component3D(p_other) {};
 
         VisualMesh(VisualMesh&& p_other) noexcept;
-        
 
         /**
          * @brief Get the material of this component.
@@ -45,6 +50,10 @@ namespace CrossEngine
          * @param p_material The material to be set to.
          */
         FORCE_INLINE void SetMaterial(std::shared_ptr<AMaterial> p_material) { material = p_material; } 
+
+        virtual void RegisterDraw(Window* p_context) override;
+
+        virtual float GetPriority() const { return 0.0f; }
 
         /**
          * @brief Return the vao corresponding to the context
@@ -87,12 +96,6 @@ namespace CrossEngine
          * @param p_file The file to load the triangles from.
          */
         virtual void LoadTrisWithNormal(const std::string& p_file) = 0;
-
-        /**
-         * @brief Draw the mesh.
-         * 
-         */
-        virtual void Draw(Window* p_context) override;
 
         virtual const std::vector<Triangle*>& GetTriangles() = 0;
     };

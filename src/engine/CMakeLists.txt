@@ -8,6 +8,7 @@ add_subdirectory(materials)
 add_subdirectory(math)
 add_subdirectory(resource)
 add_subdirectory(texture)
+add_subdirectory(utils)
 
 set(CE_SOURCES
     ${CE_SOURCES}

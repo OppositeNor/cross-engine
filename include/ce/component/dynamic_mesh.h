@@ -15,7 +15,13 @@ namespace CrossEngine
         std::mutex triangles_mutex;
 
         void SetTrianglesDirty(bool p_dirty);
-
+    protected:
+        
+        /**
+         * @brief Draw the mesh.
+         * 
+         */
+        virtual void Draw(Window* p_context) override;
     public:
 
         /**
@@ -106,11 +112,5 @@ namespace CrossEngine
          * @param p_file The file to load the triangles from.
          */
         virtual void LoadTrisWithNormal(const std::string& p_file) override;
-        
-        /**
-         * @brief Draw the mesh.
-         * 
-         */
-        virtual void Draw(Window* p_context) override;
     };
 }

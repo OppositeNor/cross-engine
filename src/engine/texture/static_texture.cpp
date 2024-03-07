@@ -1,6 +1,7 @@
 #include "ce/texture/static_texture.h"
 #include "ce/resource/resource.h"
 #include "ce/graphics/window.h"
+#include "ce/graphics/renderer/renderer.h"
 #include "ce/game/game.h"
 
 namespace CrossEngine
@@ -61,6 +62,6 @@ namespace CrossEngine
             Graphics::ConfigTexture(texture, config);
             texture_ids[p_context] = texture;
         }
-        p_context->GetShaderProgram()->SetSampler2DUniform(p_uniform_name, texture_ids[p_context]);
+        p_context->GetRenderer()->GetShaderProgram()->SetSampler2DUniform(p_uniform_name, texture_ids[p_context]);
     }
 }

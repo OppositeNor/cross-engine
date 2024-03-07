@@ -1,5 +1,6 @@
 #include "ce/component/visual_mesh.h"
 #include "ce/graphics/window.h"
+#include "ce/graphics/renderer/renderer.h"
 #include "ce/geometry/triangle.h"
 #include "ce/resource/resource.h"
 #include "ce/texture/texture.h"
@@ -13,6 +14,7 @@ namespace CrossEngine
     VisualMesh::VisualMesh(const std::string& p_component_name)
         : Component3D(p_component_name)
     {
+        material = Graphics::GetDefaultMaterial();
     }
 
     VisualMesh::~VisualMesh()
@@ -35,6 +37,7 @@ namespace CrossEngine
     {
         vaos = std::move(p_other.vaos);
         vbos = std::move(p_other.vbos);
+        material = p_other.material;
     }
 
     unsigned int VisualMesh::GetVAO(Window* p_context) const
@@ -47,6 +50,12 @@ namespace CrossEngine
     {
         std::shared_lock<std::shared_mutex> context_resource_mutex;
         return vbos.at(p_context);
+    }
+
+    void VisualMesh::RegisterDraw(Window* p_context)
+    {
+        Component3D::RegisterDraw(p_context);
+        p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, GetPriority()));
     }
 
     void VisualMesh::Draw(Window* p_context)
@@ -86,11 +95,8 @@ namespace CrossEngine
             glBindVertexArray(vaos[p_context]);
         }
         
-        p_context->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
-        if (material)
-            material->SetUniform(p_context);
-        else
-            Graphics::GetDefaultMaterial()->SetUniform(p_context);
+        p_context->GetRenderer()->GetShaderProgram()->SetUniform("model", GetSubspaceMatrix());
+        material->SetUniform(p_context);
         
         glDrawArrays(GL_TRIANGLES, 0, GetVertexCount());
     }

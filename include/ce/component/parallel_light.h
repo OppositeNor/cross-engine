@@ -16,6 +16,14 @@ namespace CrossEngine
         Math::Vec4 color;
         Math::Vec4 ambient;
         float intensity;
+    
+    protected:
+
+        /**
+         * @brief Draw the light.
+         * 
+         */
+        virtual void Draw(Window* p_context) override;
         
     public:
         ParallelLight(const std::string& p_component_name = "parallel light");
@@ -92,12 +100,6 @@ namespace CrossEngine
          * 
          */
         virtual void SetUniform(Window* p_context, size_t p_index) override;
-
-        /**
-         * @brief Draw the light.
-         * 
-         */
-        virtual void Draw(Window* p_context) override;
 
     };
 }

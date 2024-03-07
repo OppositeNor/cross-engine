@@ -1,5 +1,6 @@
 #include "ce/graphics/window.h"
 #include "ce/graphics/graphics.h"
+#include "ce/graphics/renderer/renderer.h"
 #include "ce/resource/resource.h"
 #include "ce/managers/input_manager.h"
 #include "ce/managers/event_manager.h"
@@ -160,12 +161,15 @@ namespace CrossEngine
         glfwSetCursorPosCallback((GLFWwindow*)(glfw_context), (GLFWcursorposfun)(OnMouseMove));
         glfwSetMouseButtonCallback((GLFWwindow*)(glfw_context), (GLFWmousebuttonfun)(OnMouseButton));
         
-        shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/vertex.glsl", 
+        auto shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/vertex.glsl", 
                                         Resource::GetExeDirectory() + "/shaders/fragment.glsl");
         shader_program->Compile();
-        skybox_shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/skybox_vertex.glsl", 
+        main_renderer = new Renderer(std::move(shader_program));
+
+        auto skybox_shader_program = new ShaderProgram(Resource::GetExeDirectory() + "/shaders/skybox_vertex.glsl", 
                                                 Resource::GetExeDirectory() + "/shaders/skybox_fragment.glsl");
         skybox_shader_program->Compile();
+        skybox_renderer = new Renderer(std::move(skybox_shader_program));
 
         float aspect_ratio = (float)window_size[0] / (float)window_size[1];
         proj_matrix = Math::ProjPersp(
@@ -203,10 +207,8 @@ namespace CrossEngine
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 Process(delta);
                 Draw();
-                shader_program->Refresh();
-                auto error = glGetError();
-                if (error != GL_NO_ERROR)
-                    throw std::runtime_error("OpenGL error: " + std::to_string(error));
+                main_renderer->Refresh();
+                skybox_renderer->Refresh();
                 Game::GetInstance()->UpdateInput(this);
                 UpdateThreadResource();
                 point_light_count = 0;
@@ -216,13 +218,15 @@ namespace CrossEngine
             Game::GetInstance()->SetContextUnAvailable(this);
             OnClose();
             Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
-            delete shader_program;
-            delete skybox_shader_program;
             ClearResource();
+            delete main_renderer;
+            delete skybox_renderer;
             Graphics::DestroyGLFWContex(glfw_context);
             is_closed = true;
         }
         catch (const std::exception& e){
+            delete main_renderer;
+            delete skybox_renderer;
             std::cerr << "Application throwed an error: " << e.what() << std::endl;
             throw std::runtime_error("Application throwed an error: " + std::string(e.what()));
         }
@@ -262,30 +266,44 @@ namespace CrossEngine
     {
         if (skybox != nullptr)
         {
-            skybox_shader_program->Use();
-            skybox_shader_program->SetUniform("proj", proj_matrix);
+            current_renderer = skybox_renderer;
+            current_renderer->AddRenderTask(Task([this]()
+            {
+                current_renderer->GetShaderProgram()->SetUniform("proj", proj_matrix);
+                if (using_camera == nullptr)
+                    current_renderer->GetShaderProgram()->SetUniform("view", Math::Mat4());
+                else
+                    current_renderer->GetShaderProgram()->SetUniform("view", using_camera->GetViewMatrix());
+                // int error = glGetError();
+                // if (error != GL_NO_ERROR)
+                //     throw std::runtime_error("Test Point: " + std::to_string(error));
+            }, -1));
+            
+            skybox->RegisterDraw(this);
+            current_renderer->Render();
+        }
+
+        current_renderer = main_renderer;
+        current_renderer->AddRenderTask(Task([this]()
+        {
+            current_renderer->GetShaderProgram()->SetUniform("proj", proj_matrix);
             if (using_camera == nullptr)
-                skybox_shader_program->SetUniform("view", Math::Mat4());
+            {
+                current_renderer->GetShaderProgram()->SetUniform("view", Math::Mat4());
+                current_renderer->GetShaderProgram()->SetUniform("camera_position", Math::Vec4());
+            }
             else
-                skybox_shader_program->SetUniform("view", using_camera->GetViewMatrix());
-            skybox->Draw(this);
-        }
-        shader_program->Use();
-        shader_program->SetUniform("proj", proj_matrix);
-        if (using_camera == nullptr)
-        {
-            shader_program->SetUniform("view", Math::Mat4());
-            shader_program->SetUniform("camera_position", Math::Vec4());
-        }
-        else
-        {
-            shader_program->SetUniform("view", using_camera->GetViewMatrix());
-            shader_program->SetUniform("camera_position", using_camera->GetGlobalPosition());
-        }
-        if (skybox != nullptr)
-            shader_program->SetSamplerCubeUniform("skybox", skybox->GetTextureCubeIDs()[this]);
-        Game::GetInstance()->GetBaseComponent()->Draw(this);
-        GetShaderProgram()->SetUniform("point_light_count", GetPointLightCount());
-        GetShaderProgram()->SetUniform("parallel_light_count", GetParallelLightCount());
+            {
+                current_renderer->GetShaderProgram()->SetUniform("view", using_camera->GetViewMatrix());
+                current_renderer->GetShaderProgram()->SetUniform("camera_position", using_camera->GetGlobalPosition());
+            }
+            if (skybox != nullptr)
+                current_renderer->GetShaderProgram()->SetSamplerCubeUniform("skybox", skybox->GetTextureCubeIDs()[this]);
+        }, -1));
+        
+        Game::GetInstance()->GetBaseComponent()->RegisterDraw(this);
+        current_renderer->Render();
+        current_renderer->GetShaderProgram()->SetUniform("point_light_count", GetPointLightCount());
+        current_renderer->GetShaderProgram()->SetUniform("parallel_light_count", GetParallelLightCount());
     }
 }

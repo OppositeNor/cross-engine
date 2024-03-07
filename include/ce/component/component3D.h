@@ -133,6 +133,20 @@ namespace CrossEngine
         Math::Vec4 GetGlobalPosition() const;
 
         /**
+         * @brief Get the global direction of this component.
+         * @note The returned vector is not normalized. If you want the normalized vector, use GetGlobalDirectionNormalized.
+         * @return Math::Vec4 The global direction of this component.
+         */
+        Math::Vec4 GetGlobalDirection() const;
+
+        /**
+         * @brief Get the normalized global direction of this component.
+         * @note The returned vector is normalized. If you want the unnormalized vector, use GetGlobalDirection.
+         * @return Math::Vec4 The global direction of this component.
+         */
+        Math::Vec4 GetGlobalDirectionNormalized() const;
+
+        /**
          * @brief Set the position of this component.
          * 
          * @param p_position The new position of this component.

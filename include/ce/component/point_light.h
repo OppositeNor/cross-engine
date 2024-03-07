@@ -20,6 +20,12 @@ namespace CrossEngine
         float max_light_render_distance;
         float max_light_render_distance_sq;
 
+        /**
+         * @brief Draw the light.
+         * 
+         */
+        virtual void Draw(Window* p_context) override;
+
     public:
 
         /**
@@ -90,11 +96,5 @@ namespace CrossEngine
          * 
          */
         virtual void SetUniform(Window* p_context, size_t p_index) override;
-
-        /**
-         * @brief Draw the light.
-         * 
-         */
-        virtual void Draw(Window* p_context) override;
     };
 }

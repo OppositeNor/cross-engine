@@ -5,6 +5,8 @@
 
 namespace CrossEngine::Math
 {
+    constexpr double PI = 3.14159265358979323846;
+
     struct MatrixTag{};
 
     template<int N>
@@ -203,9 +205,9 @@ namespace CrossEngine::Math
      * @param p_x The x displacement.
      * @param p_y The y displacement.
      * @param p_z The z displacement.
-     * @return Matrix<float, 4, 4> The transform matrix.
+     * @return Matrix<real_t, 4, 4> The transform matrix.
      */
-    FORCE_INLINE Mat4 Trans(float p_x, float p_y, float p_z) noexcept
+    FORCE_INLINE Mat4 Trans(real_t p_x, real_t p_y, real_t p_z) noexcept
     {
         return Mat4({
             1.0, 0.0, 0.0, p_x,
@@ -219,7 +221,7 @@ namespace CrossEngine::Math
      * @brief Get the translate matrix.
      * 
      * @param p_transform The transformation displacement.
-     * @return Matrix<float, 4, 4> The transform matrix.
+     * @return Matrix<real_t, 4, 4> The transform matrix.
      */
     FORCE_INLINE Mat4 Trans(const Vec4& p_transform) noexcept
     {
@@ -230,7 +232,7 @@ namespace CrossEngine::Math
      * @brief Get the translate matrix.
      * 
      * @param p_transform The transformation displacement.
-     * @return Matrix<float, 4, 4> The transform matrix.
+     * @return Matrix<real_t, 4, 4> The transform matrix.
      */
     FORCE_INLINE Mat4 Trans(const Vec3& p_transform) noexcept
     {
@@ -243,9 +245,9 @@ namespace CrossEngine::Math
      * @param p_x The scale of x.
      * @param p_y The scale of y.
      * @param p_z The scale of z.
-     * @return Matrix<float, 4, 4> The scale matrix.
+     * @return Matrix<real_t, 4, 4> The scale matrix.
      */
-    FORCE_INLINE Mat4 Scale(float p_x, float p_y, float p_z) noexcept
+    FORCE_INLINE Mat4 Scale(real_t p_x, real_t p_y, real_t p_z) noexcept
     {
         return Mat4({
             p_x, 0.0, 0.0, 0.0,
@@ -259,7 +261,7 @@ namespace CrossEngine::Math
      * @brief Get the scale matrix.
      * 
      * @param p_scale The scale of x, y, z.
-     * @return Matrix<float, 4, 4> The scale matrix.
+     * @return Matrix<real_t, 4, 4> The scale matrix.
      */
     FORCE_INLINE Mat4 Scale(const Vec4& p_scale) noexcept
     {
@@ -270,7 +272,7 @@ namespace CrossEngine::Math
      * @brief Get the scale matrix.
      * 
      * @param p_scale The scale of x, y, z.
-     * @return Matrix<float, 4, 4> The scale matrix.
+     * @return Matrix<real_t, 4, 4> The scale matrix.
      */
     FORCE_INLINE Mat4 Scale(const Vec3& p_scale) noexcept
     {
@@ -281,9 +283,9 @@ namespace CrossEngine::Math
      * @brief Get the pitch rotation matrix.
      * 
      * @param p_angle The angle of rotation.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 Pitch(float p_angle) noexcept
+    FORCE_INLINE Mat4 Pitch(real_t p_angle) noexcept
     {
         return Mat4({
             1.0, 0.0, 0.0, 0.0,
@@ -297,9 +299,9 @@ namespace CrossEngine::Math
      * @brief Get the roll rotation matrix.
      * 
      * @param p_angle The angle of rotation.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 Roll(float p_angle) noexcept
+    FORCE_INLINE Mat4 Roll(real_t p_angle) noexcept
     {
         return Mat4({
             std::cos(p_angle), std::sin(p_angle), 0.0, 0.0,
@@ -313,9 +315,9 @@ namespace CrossEngine::Math
      * @brief Get the yaw rotation matrix.
      * 
      * @param p_angle The angle of rotation.
-     * @return Matrix<float, 4, 4> The rotation matrix. 
+     * @return Matrix<real_t, 4, 4> The rotation matrix. 
      */
-    FORCE_INLINE Mat4 Yaw(float p_angle) noexcept
+    FORCE_INLINE Mat4 Yaw(real_t p_angle) noexcept
     {
         return Mat4({
             std::cos(p_angle), 0.0, -std::sin(p_angle), 0.0,
@@ -331,9 +333,9 @@ namespace CrossEngine::Math
      * @param p_pitch The pitch angle.
      * @param p_roll The roll angle.
      * @param p_yaw The yaw angle.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 RotEularPRY(float p_pitch, float p_roll, float p_yaw) noexcept
+    FORCE_INLINE Mat4 RotEularPRY(real_t p_pitch, real_t p_roll, real_t p_yaw) noexcept
     {
         return Yaw(p_yaw) * Roll(p_roll) * Pitch(p_pitch);
     }
@@ -342,7 +344,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of pitch, roll, yaw.
      * 
      * @param p_rot The rotation angles, ordered by pitch, roll, yaw.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularPRY(const Vec4& p_rot) noexcept
     {
@@ -353,7 +355,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of pitch, roll, yaw.
      * 
      * @param p_rot The rotation angles, ordered by pitch, roll, yaw.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularPRY(const Vec3& p_rot) noexcept
     {
@@ -366,9 +368,9 @@ namespace CrossEngine::Math
      * @param p_pitch The pitch angle.
      * @param p_roll The roll angle.
      * @param p_yaw The yaw angle.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 RotEularPYR(float p_pitch, float p_roll, float p_yaw) noexcept
+    FORCE_INLINE Mat4 RotEularPYR(real_t p_pitch, real_t p_roll, real_t p_yaw) noexcept
     {
         return Roll(p_roll) * Yaw(p_yaw) * Pitch(p_pitch);
     }
@@ -377,7 +379,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of pitch, yaw, roll.
      * 
      * @param p_rot The rotation angles, ordered by pitch, yaw, roll.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularPYR(const Vec4& p_rot) noexcept
     {
@@ -388,7 +390,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of pitch, yaw, roll.
      * 
      * @param p_rot The rotation angles, ordered by pitch, yaw, roll.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularPYR(const Vec3& p_rot) noexcept
     {
@@ -401,9 +403,9 @@ namespace CrossEngine::Math
      * @param p_pitch The pitch angle.
      * @param p_roll The roll angle.
      * @param p_yaw The yaw angle.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 RotEularRPY(float p_pitch, float p_roll, float p_yaw) noexcept
+    FORCE_INLINE Mat4 RotEularRPY(real_t p_pitch, real_t p_roll, real_t p_yaw) noexcept
     {
         return Roll(p_roll) * Pitch(p_pitch) * Yaw(p_yaw);
     }
@@ -412,7 +414,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of roll, pitch, yaw.
      * 
      * @param p_rot The rotation angles, ordered by roll, pitch, yaw.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularRPY(const Vec4& p_rot) noexcept
     {
@@ -423,7 +425,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of roll, pitch, yaw.
      * 
      * @param p_rot The rotation angles, ordered by roll, pitch, yaw.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularRPY(const Vec3& p_rot) noexcept
     {
@@ -436,9 +438,9 @@ namespace CrossEngine::Math
      * @param p_pitch The pitch angle.
      * @param p_roll The roll angle.
      * @param p_yaw The yaw angle.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 RotEularRYP(float p_pitch, float p_roll, float p_yaw) noexcept
+    FORCE_INLINE Mat4 RotEularRYP(real_t p_pitch, real_t p_roll, real_t p_yaw) noexcept
     {
         return Pitch(p_pitch) * Yaw(p_yaw) * Roll(p_roll);
     }
@@ -447,7 +449,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of roll, yaw, pitch.
      * 
      * @param p_rot The rotation angles, ordered by roll, yaw, pitch.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularRYP(const Vec4& p_rot) noexcept
     {
@@ -458,7 +460,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of roll, yaw, pitch.
      * 
      * @param p_rot The rotation angles, ordered by roll, yaw, pitch.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularRYP(const Vec3& p_rot) noexcept
     {
@@ -471,9 +473,9 @@ namespace CrossEngine::Math
      * @param p_pitch The pitch angle.
      * @param p_roll The roll angle.
      * @param p_yaw The yaw angle.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 RotEularYPR(float p_pitch, float p_roll, float p_yaw) noexcept
+    FORCE_INLINE Mat4 RotEularYPR(real_t p_pitch, real_t p_roll, real_t p_yaw) noexcept
     {
         return Roll(p_roll) * Pitch(p_pitch) * Yaw(p_yaw);
     }
@@ -482,7 +484,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of yaw, pitch, roll.
      * 
      * @param p_rot The rotation angles, ordered by yaw, pitch, roll.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularYPR(const Vec4& p_rot) noexcept
     {
@@ -493,7 +495,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of yaw, pitch, roll.
      * 
      * @param p_rot The rotation angles, ordered by yaw, pitch, roll.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularYPR(const Vec3& p_rot) noexcept
     {
@@ -506,9 +508,9 @@ namespace CrossEngine::Math
      * @param p_pitch The pitch angle.
      * @param p_roll The roll angle.
      * @param p_yaw The yaw angle.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 RotEularYRP(float p_pitch, float p_roll, float p_yaw) noexcept
+    FORCE_INLINE Mat4 RotEularYRP(real_t p_pitch, real_t p_roll, real_t p_yaw) noexcept
     {
         return Pitch(p_pitch) * Roll(p_roll) * Yaw(p_yaw);
     }
@@ -517,7 +519,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of yaw, roll, pitch.
      * 
      * @param p_rot The rotation angles, ordered by yaw, roll, pitch.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularYRP(const Vec4& p_rot) noexcept
     {
@@ -528,7 +530,7 @@ namespace CrossEngine::Math
      * @brief Get the rotation matrix with the order of yaw, roll, pitch.
      * 
      * @param p_rot The rotation angles, ordered by yaw, roll, pitch.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEularYRP(const Vec3& p_rot) noexcept
     {
@@ -542,9 +544,9 @@ namespace CrossEngine::Math
      * @param p_roll The roll angle.
      * @param p_yaw The yaw angle.
      * @param p_order The order of the eular rotation.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
-    FORCE_INLINE Mat4 RotEular(float p_pitch, float p_roll, float p_yaw, EulerRotOrder p_order)
+    FORCE_INLINE Mat4 RotEular(real_t p_pitch, real_t p_roll, real_t p_yaw, EulerRotOrder p_order)
     {
         switch (p_order)
         {
@@ -570,7 +572,7 @@ namespace CrossEngine::Math
      * 
      * @param p_rot The rotation angles.
      * @param p_order The order of the eular rotation.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEular(const Vec4& p_rot, EulerRotOrder p_order)
     {
@@ -598,7 +600,7 @@ namespace CrossEngine::Math
      * 
      * @param p_rot The rotation angles.
      * @param p_order The order of the eular rotation.
-     * @return Matrix<float, 4, 4> The rotation matrix.
+     * @return Matrix<real_t, 4, 4> The rotation matrix.
      */
     FORCE_INLINE Mat4 RotEular(const Vec3& p_rot, EulerRotOrder p_order)
     {
@@ -626,7 +628,7 @@ namespace CrossEngine::Math
      * 
      * @param p_quat The quaternion values. The first three elements should be the 
      * imaginary vector, and the last value should be the real space.
-     * @return Matrix<float, 4, 4> The rotation matrix. 
+     * @return Matrix<real_t, 4, 4> The rotation matrix. 
      */
     FORCE_INLINE Mat4 RotQuaternion(Vec4 p_quat) noexcept
     {
@@ -651,7 +653,7 @@ namespace CrossEngine::Math
      * @param p_translation The translation of the transform.
      * @param p_rotation The quaternion rotation of the transform.
      * @param p_scale The scale of the transform.
-     * @return Matrix<float, 4, 4> The model matrix.
+     * @return Matrix<real_t, 4, 4> The model matrix.
      */
     FORCE_INLINE Mat4 Model(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale) noexcept
     {
@@ -664,7 +666,7 @@ namespace CrossEngine::Math
      * @param p_translation The translation of the transform.
      * @param p_rotation The Eular rotation of the transform.
      * @param p_scale The scale of the transform.
-     * @return Matrix<float, 4, 4> The model matrix.
+     * @return Matrix<real_t, 4, 4> The model matrix.
      */
     FORCE_INLINE Mat4 Model(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale,EulerRotOrder p_order)
     {
@@ -678,7 +680,7 @@ namespace CrossEngine::Math
      * @param p_rotation The Eular rotation of the transform.
      * @param p_scale The scale of the transform.
      * @param p_order The order of the eular rotation.
-     * @return Matrix<float, 4, 4> The model matrix.
+     * @return Matrix<real_t, 4, 4> The model matrix.
      */
     FORCE_INLINE Mat4 Model(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale, EulerRotOrder p_order)
     {
@@ -691,7 +693,7 @@ namespace CrossEngine::Math
      * @param p_translation The translation of the transform.
      * @param p_scale The scale of the transform.
      * @param p_rotation The quaternion rotation of the transform.
-     * @return Matrix<float, 4, 4> The model matrix.
+     * @return Matrix<real_t, 4, 4> The model matrix.
      */
     FORCE_INLINE Mat4 ModelInv(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale) noexcept
     {
@@ -706,7 +708,7 @@ namespace CrossEngine::Math
      * @param p_rotation The Euler rotation of the transform.
      * @param p_scale The scale of the transform.
      * @param p_order The order of the eular rotation.
-     * @return Matrix<float, 4, 4> The model matrix.
+     * @return Matrix<real_t, 4, 4> The model matrix.
      */
     FORCE_INLINE Mat4 ModelInv(const Vec4& p_translation, const Vec4& p_rotation, const Vec4& p_scale, EulerRotOrder p_order)
     {
@@ -720,7 +722,7 @@ namespace CrossEngine::Math
      * @param p_rotation The Euler rotation of the transform.
      * @param p_scale The scale of the transform.
      * @param p_order The order of the eular rotation.
-     * @return Matrix<float, 4, 4> The model matrix.
+     * @return Matrix<real_t, 4, 4> The model matrix.
      */
     FORCE_INLINE Mat4 ModelInv(const Vec3& p_translation, const Vec3& p_rotation, const Vec3& p_scale, EulerRotOrder p_order)
     {
@@ -732,7 +734,7 @@ namespace CrossEngine::Math
      * 
      * @param p_translation The translation of the transform.
      * @param p_rotation The rotation of the transform, ordered by pitch, roll, yaw.
-     * @return Matrix<float, 4, 4> The view matrix.
+     * @return Matrix<real_t, 4, 4> The view matrix.
      */
     FORCE_INLINE Mat4 View(const Vec4& p_translation, const Vec4& p_rotation) noexcept
     {
@@ -741,24 +743,24 @@ namespace CrossEngine::Math
     }
 
     FORCE_INLINE Mat4 ProjOrtho(
-            float p_right, 
-            float p_left, 
-            float p_top, 
-            float p_bottom,
-            float p_near,
-            float p_far)
+            real_t p_right, 
+            real_t p_left, 
+            real_t p_top, 
+            real_t p_bottom,
+            real_t p_near,
+            real_t p_far)
     {
         return Scale(2 / (p_right - p_left), 2 / (p_top - p_bottom), 2 / (p_far - p_near))
             * Trans(-(p_right + p_left) / 2, -(p_top + p_bottom) / 2, -(p_near + p_far) / 2);
     }
 
     FORCE_INLINE Mat4 ProjPersp(
-            float p_right, 
-            float p_left, 
-            float p_top, 
-            float p_bottom,
-            float p_near,
-            float p_far)
+            real_t p_right, 
+            real_t p_left, 
+            real_t p_top, 
+            real_t p_bottom,
+            real_t p_near,
+            real_t p_far)
     {
         return ProjOrtho(p_right, p_left, p_top, p_bottom, p_near, p_far) * 
             Mat4({p_near, 0, 0, 0,
@@ -984,5 +986,4 @@ namespace CrossEngine::Math
         return perp + parallel;
     }
 
-    constexpr double PI = 3.14159265358979323846;
 }

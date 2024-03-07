@@ -10,6 +10,14 @@ namespace CrossEngine
     class ALight : public Component3D
     {
         bool cast_shadow = true;
+    protected:
+
+        /**
+         * @brief Draw the light.
+         * 
+         */
+        virtual void Draw(Window* p_context) override;
+        
     public:
         ALight(const std::string& p_component_name = "light");
         virtual ~ALight();
@@ -43,9 +51,9 @@ namespace CrossEngine
         virtual void SetUniform(Window* p_context, size_t p_index) = 0;
 
         /**
-         * @brief Draw the light.
+         * @brief Register the draw of the light.
          * 
          */
-        virtual void Draw(Window* p_context) override;
+        virtual void RegisterDraw(Window* p_context) override;
     };
 }

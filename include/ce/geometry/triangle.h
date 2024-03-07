@@ -104,5 +104,13 @@ namespace CrossEngine
          * @return Math::Vec4 The tangent of the vertex.
          */
         Math::Vec4 GetTangent() const;
+
+        /**
+         * @brief Get the depth to a point.
+         * 
+         * @param p_point The point to get the depth to.
+         * @return float The depth to the point.
+         */
+        float GetDepthTo(const Math::Vec4& p_point, Math::Vec4 p_point_dir) const;
     };
 }

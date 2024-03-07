@@ -1,6 +1,6 @@
 #include "ce/component/component.h"
 #include "ce/graphics/window.h"
-
+#include "ce/graphics/renderer/renderer.h"
 
 namespace CrossEngine
 {
@@ -179,11 +179,10 @@ namespace CrossEngine
         }
     }
 
-    void Component::Draw(Window* p_context)
+    void Component::RegisterDraw(Window* p_context)
     {
         if (!visible)
             return;
-        
         {
             std::shared_lock lock(exclude_draw_mutex);
             for (auto i : exclude_draw)
@@ -192,13 +191,12 @@ namespace CrossEngine
                     return;
             }
         }
-
         std::shared_lock lock(children_mutex);
         for (auto& child : children)
         {
             if (child.expired())
                 continue;
-            child.lock()->Draw(p_context);
+            child.lock()->RegisterDraw(p_context);
         }
     }
 }

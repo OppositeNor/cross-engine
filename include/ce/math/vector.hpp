@@ -252,9 +252,9 @@ namespace CrossEngine::Math
             return result.Normalize();
         }
 
-        FORCE_INLINE const float* GetRaw() const { return (float*)data; }
+        FORCE_INLINE const T* GetRaw() const { return data; }
 
-        FORCE_INLINE float* GetRaw() { return (float*)data; }
+        FORCE_INLINE T* GetRaw() { return data; }
 
         template <typename T1>
         FORCE_INLINE auto operator+(const Vector<T1, N>& p_other) const
@@ -349,16 +349,10 @@ namespace CrossEngine::Math
     };
 
     template <size_t N>
-    using Vecf = Vector<float, N>;
-    using Vec2f = Vecf<2>;
-    using Vec3f = Vecf<3>;
-    using Vec4f = Vecf<4>;
-
-    template <size_t N>
-    using Vec = Vecf<N>;
-    using Vec2 = Vecf<2>;
-    using Vec3 = Vecf<3>;
-    using Vec4 = Vecf<4>;
+    using Vec = Vector<real_t, N>;
+    using Vec2 = Vec<2>;
+    using Vec3 = Vec<3>;
+    using Vec4 = Vec<4>;
 
     template <size_t N>
     using Veci = Vector<int, N>;
@@ -377,7 +371,7 @@ namespace CrossEngine::Math
         return Vec4(0, 0, 0, 1);
     }
 
-    FORCE_INLINE Vec4 Pos(float p_x, float p_y, float p_z)
+    FORCE_INLINE Vec4 Pos(real_t p_x, real_t p_y, real_t p_z)
     {
         return Vec4(p_x, p_y, p_z, 1);
     }

@@ -27,8 +27,6 @@ namespace CrossEngine::Math
         static constexpr size_t N = tN;
         static constexpr size_t SIZE = M * N;
 
-        static float global_buffer[SIZE];
-
         Matrix()
         {
             static_assert(M > 0 && N > 0, "The matrix dimension cannot be zero.");
@@ -239,7 +237,7 @@ namespace CrossEngine::Math
 
 
     template <size_t N>
-    using Mat = Matrix<float, N, N>;
+    using Mat = Matrix<real_t, N, N>;
     using Mat3 = Mat<3>;
     using Mat4 = Mat<4>;
 }

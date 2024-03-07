@@ -174,7 +174,7 @@ namespace CrossEngine
         MovePToNextSpace(&p, data.get() + file_size);
         ++p;
         
-        Math::Vec4f temp = Math::Pos();
+        Math::Vec4 temp = Math::Pos();
         p_result.reserve(tri_count);
         for (size_t i = 0; i < tri_count; ++i)
         {
@@ -282,8 +282,8 @@ namespace CrossEngine
         MovePToNextSpace(&p, data.get() + file_size);
         ++p;
         
-        Math::Vec4f temp_pos = Math::Pos();
-        Math::Vec4f temp_normal =Math::Vec4f();
+        Math::Vec4 temp_pos = Math::Pos();
+        Math::Vec4 temp_normal = Math::Vec4();
         p_result.reserve(tri_count);
         for (size_t i = 0; i < tri_count; ++i)
         {
