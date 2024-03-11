@@ -64,7 +64,6 @@ namespace CrossEngine
 
     void VisualMesh::Draw(Window* p_context)
     {
-        Component::Draw(p_context);
         if (!IsVisible())
             return;
         

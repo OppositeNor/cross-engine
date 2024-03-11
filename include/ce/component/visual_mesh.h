@@ -20,7 +20,7 @@ namespace CrossEngine
          * @brief Draw the mesh.
          * 
          */
-        virtual void Draw(Window* p_context) override;
+        virtual void Draw(Window* p_context);
     public:
         VisualMesh(const std::string& p_component_name = "visual mesh");
         ~VisualMesh();

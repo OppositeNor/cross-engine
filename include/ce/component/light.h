@@ -16,7 +16,7 @@ namespace CrossEngine
          * @brief Draw the light.
          * 
          */
-        virtual void Draw(Window* p_context) override;
+        virtual void Draw(Window* p_context);
         
     public:
         ALight(const std::string& p_component_name = "light");

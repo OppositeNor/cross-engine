@@ -16,9 +16,7 @@ namespace CrossEngine
     }
 
     void ALight::Draw(Window* p_context)
-    {
-        Component::Draw(p_context);
-    }
+    {}
 
     bool ALight::RegisterDraw(Window* p_context)
     {

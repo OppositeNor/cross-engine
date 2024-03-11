@@ -26,7 +26,7 @@ namespace CrossEngine
          * @brief Draw the skybox.
          * 
          */
-        virtual void Draw(Window* p_context) override;
+        virtual void Draw(Window* p_context);
     public:
 
         /**
