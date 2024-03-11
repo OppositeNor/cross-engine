@@ -4,7 +4,8 @@
 
 namespace CrossEngine
 {
-    AMaterial::AMaterial()
+    AMaterial::AMaterial(bool p_should_prioritize)
+        : should_prioritize(p_should_prioritize)
     {
     }
 

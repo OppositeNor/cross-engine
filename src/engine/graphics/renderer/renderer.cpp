@@ -40,7 +40,7 @@ namespace CrossEngine
 
     void Renderer::Render()
     {
-        std::sort(render_tasks.begin(), render_tasks.end());
+        std::sort(render_tasks.begin(), render_tasks.end(), [](const Task& a, const Task& b) { return a > b; });
         shader_program->Use();
         for (auto& task : render_tasks)
         {

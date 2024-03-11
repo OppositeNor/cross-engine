@@ -18,14 +18,14 @@ namespace CrossEngine
         std::shared_ptr<ATexture> roughness;
         std::shared_ptr<ATexture> ao;
         
-        bool should_prioritize = false;
+        const bool should_prioritize;
     public:
         /**
          * @brief Constructor of AMaterial.
          * 
-         * @param p_context The context of the material.
+         * @param p_should_prioritize Should prioritize.
          */
-        AMaterial();
+        AMaterial(bool p_should_prioritize = true);
 
         /**
          * @brief Destructor of AMaterial.
@@ -33,25 +33,19 @@ namespace CrossEngine
         virtual ~AMaterial();
 
         /**
+         * @brief Should the material be prioritized.
+         * 
+         * @return true The material should be prioritized.
+         * @return false The material should not be prioritized.
+         */
+        FORCE_INLINE bool ShouldPrioritize() const noexcept { return should_prioritize; }
+
+        /**
          * @brief Get the name of the uniform.
          * 
          * @return std::string The name of the uniform. 
          */
         FORCE_INLINE std::string GetUniformName() const noexcept { return "material"; };
-
-        /**
-         * @brief Set if this mesh should prioritize.
-         * 
-         * @param p_should_prioritize If this mesh should prioritize.
-         */
-        FORCE_INLINE bool ShouldPrioritize() const noexcept { return should_prioritize; }
-        
-        /**
-         * @brief Set if this mesh should prioritize.
-         * 
-         * @param p_should_prioritize If this mesh should prioritize.
-         */
-        FORCE_INLINE void SetShouldPrioritize(bool p_should_prioritize) noexcept { should_prioritize = p_should_prioritize; }
 
         /**
          * @brief Set the uniform of the material.

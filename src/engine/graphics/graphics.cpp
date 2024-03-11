@@ -31,7 +31,7 @@ namespace CrossEngine
                 default_roughness = std::make_shared<StaticTexture>();
                 default_ao = std::make_shared<StaticTexture>();
 
-                default_albedo->LoadTexture(Resource::GetExeDirectory() + "/textures/default.png");
+                default_albedo->LoadTexture(Resource::GetExeDirectory() + "/textures/default_transparent.png");
                 default_normal->LoadTexture(Resource::GetExeDirectory() + "/textures/default_normal.png");
                 default_metallic->LoadTexture(WHITE_IMAGE, 2, 2, 1);
                 default_roughness->LoadTexture(WHITE_IMAGE, 2, 2, 1);

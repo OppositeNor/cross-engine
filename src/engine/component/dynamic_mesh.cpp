@@ -57,6 +57,20 @@ namespace CrossEngine
     {
     }
 
+    float DynamicMesh::GetPriority(Window* p_context) const
+    {
+        if (material->ShouldPrioritize())
+        {
+            std::lock_guard<std::mutex> lock(triangles_mutex);
+            auto to_camera = p_context->GetUsingCamera()->GetGlobalPosition() - GetSubspaceMatrix() * triangles[0]->GetCenter();
+            return to_camera.LengthSquared();
+        }
+        else
+        {
+            return VisualMesh::GetPriority(p_context);
+        }
+    }
+
     void DynamicMesh::LoadTriangles(std::vector<Triangle*>&& p_triangles)
     {
         for (auto i : triangles)
@@ -84,22 +98,24 @@ namespace CrossEngine
     void DynamicMesh::Draw(Window* p_context)
     {
         VisualMesh::Draw(p_context);
+        if (material->ShouldPrioritize())
+        {
+            std::lock_guard<std::mutex> lock(triangles_mutex);
+            std::sort(triangles.begin(), triangles.end(), [this, p_context](const Triangle* p_a, const Triangle* p_b)
+            {
+                auto a_to_camera = p_context->GetUsingCamera()->GetGlobalPosition() - GetSubspaceMatrix() * p_a->GetCenter();
+                auto b_to_camera = p_context->GetUsingCamera()->GetGlobalPosition() - GetSubspaceMatrix() * p_b->GetCenter();
+                return a_to_camera.LengthSquared() > b_to_camera.LengthSquared();
+            });
+            UpdateVAO(triangles, GetVAO(p_context), GetVBO(p_context));
+            triangles_dirty = false;
+            return;
+        }
         if (triangles_dirty)
         {
             std::lock_guard<std::mutex> lock(triangles_mutex);
             if (triangles_dirty)
             {
-                if (material->ShouldPrioritize())
-                {
-                    std::sort(triangles.begin(), triangles.end(), [p_context](const Triangle* p_a, const Triangle* p_b)
-                    {
-                        auto camera_pos = p_context->GetUsingCamera()->GetGlobalPosition();
-                        auto camera_dir = p_context->GetUsingCamera()->GetGlobalDirection();
-                        return p_a->GetDepthTo(camera_pos, camera_dir) < p_b->GetDepthTo(camera_pos, camera_dir);
-                    });
-                    material->SetShouldPrioritize(false);
-                
-                }
                 UpdateVAO(triangles, GetVAO(p_context), GetVBO(p_context));
                 triangles_dirty = false;
             }

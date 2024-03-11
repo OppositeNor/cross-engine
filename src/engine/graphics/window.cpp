@@ -155,6 +155,8 @@ namespace CrossEngine
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CW);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         SetClearColor(Math::Vec4(0.2f, 0.2f, 0.2f, 1.0f));
 
         glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));
@@ -274,9 +276,6 @@ namespace CrossEngine
                     current_renderer->GetShaderProgram()->SetUniform("view", Math::Mat4());
                 else
                     current_renderer->GetShaderProgram()->SetUniform("view", using_camera->GetViewMatrix());
-                // int error = glGetError();
-                // if (error != GL_NO_ERROR)
-                //     throw std::runtime_error("Test Point: " + std::to_string(error));
             }, -1));
             
             skybox->RegisterDraw(this);

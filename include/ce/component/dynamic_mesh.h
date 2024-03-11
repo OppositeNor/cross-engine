@@ -12,7 +12,7 @@ namespace CrossEngine
     private:
         std::vector<Triangle*> triangles;
         bool triangles_dirty = true;
-        std::mutex triangles_mutex;
+        mutable std::mutex triangles_mutex;
 
         void SetTrianglesDirty(bool p_dirty);
     protected:
@@ -63,6 +63,8 @@ namespace CrossEngine
          * @note When overriding this method, make sure to call the base method.
          */
         virtual void Update(float p_delta) override;
+
+        virtual float GetPriority(Window* p_context) const override;
 
         /**
          * @brief Get the triangles of this mesh.

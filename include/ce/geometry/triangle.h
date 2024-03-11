@@ -106,11 +106,10 @@ namespace CrossEngine
         Math::Vec4 GetTangent() const;
 
         /**
-         * @brief Get the depth to a point.
+         * @brief Get the center of the triangle.
          * 
-         * @param p_point The point to get the depth to.
-         * @return float The depth to the point.
+         * @return Math::Vec4 The center of the triangle.
          */
-        float GetDepthTo(const Math::Vec4& p_point, Math::Vec4 p_point_dir) const;
+        Math::Vec4 GetCenter() const;
     };
 }

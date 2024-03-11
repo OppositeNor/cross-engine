@@ -98,9 +98,8 @@ namespace CrossEngine
         return result.Normalize();
     }
 
-    float Triangle::GetDepthTo(const Math::Vec4& p_point, Math::Vec4 p_point_dir) const
+    Math::Vec4 Triangle::GetCenter() const
     {
-        auto point_to_vertex = vertices[0]->GetPosition() - p_point;
-        return point_to_vertex.Dot(p_point_dir.Normalize());
+        return (vertices[0]->GetPosition() + vertices[1]->GetPosition() + vertices[2]->GetPosition()) / 3.0f;
     }
 }

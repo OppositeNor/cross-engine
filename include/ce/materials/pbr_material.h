@@ -10,7 +10,6 @@ namespace CrossEngine
         Math::Vec4 scaler_albedo;
         float scaler_roughness;
         float scaler_metallic;
-
     public:
         /**
          * @brief Construct a new PBRMaterial object.
@@ -23,7 +22,7 @@ namespace CrossEngine
          * @param p_albedo Albedo.
          * @param p_roughness Roughness.
          * @param p_metallic Metallic.
-         * @param p_ao Ambient occlusion.
+         * @param p_should_prioritize Should prioritize.
          */
         PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic);
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "ce/defs.hpp"
 #include <functional>
+#include <iostream>
 
 namespace CrossEngine
 {

@@ -53,7 +53,7 @@ namespace CrossEngine
 
         virtual void RegisterDraw(Window* p_context) override;
 
-        virtual float GetPriority() const { return 0.0f; }
+        virtual float GetPriority(Window* p_context) const { return 0.0f; }
 
         /**
          * @brief Return the vao corresponding to the context

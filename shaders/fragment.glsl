@@ -90,7 +90,7 @@ void main()
     }
     temp_color *= ao;
 
-    temp_color[3] = 1.0;
+    temp_color[3] = albedo[3];
     FragColor = temp_color;
 }
 

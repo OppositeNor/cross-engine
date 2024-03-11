@@ -55,7 +55,7 @@ namespace CrossEngine
     void VisualMesh::RegisterDraw(Window* p_context)
     {
         Component3D::RegisterDraw(p_context);
-        p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, GetPriority()));
+        p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, GetPriority(p_context)));
     }
 
     void VisualMesh::Draw(Window* p_context)
