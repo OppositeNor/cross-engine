@@ -179,16 +179,16 @@ namespace CrossEngine
         }
     }
 
-    void Component::RegisterDraw(Window* p_context)
+    bool Component::RegisterDraw(Window* p_context)
     {
         if (!visible)
-            return;
+            return false;
         {
             std::shared_lock lock(exclude_draw_mutex);
             for (auto i : exclude_draw)
             {
                 if (i == p_context)
-                    return;
+                    return false;
             }
         }
         std::shared_lock lock(children_mutex);
@@ -198,5 +198,6 @@ namespace CrossEngine
                 continue;
             child.lock()->RegisterDraw(p_context);
         }
+        return true;
     }
 }

@@ -8,13 +8,13 @@
 
 namespace CrossEngine
 {
-    PBRMaterial::PBRMaterial()
-        : PBRMaterial(Math::Vec4(1.0, 1.0, 1.0, 1.0), 0.2, 0.2)
+    PBRMaterial::PBRMaterial(bool p_should_prioritize)
+        : PBRMaterial(Math::Vec4(1.0, 1.0, 1.0, 1.0), 0.2, 0.2, p_should_prioritize)
     {
     }
 
-    PBRMaterial::PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic)
-        : scaler_albedo(p_albedo), scaler_roughness(p_roughness), scaler_metallic(p_metallic), AMaterial()
+    PBRMaterial::PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic, bool p_should_prioritize)
+        : scaler_albedo(p_albedo), scaler_roughness(p_roughness), scaler_metallic(p_metallic), AMaterial(p_should_prioritize)
     {
         albedo = Graphics::GetDefaultAlbedo();
         normal = Graphics::GetDefaultNormal();

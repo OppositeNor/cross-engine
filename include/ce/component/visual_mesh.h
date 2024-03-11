@@ -51,8 +51,19 @@ namespace CrossEngine
          */
         FORCE_INLINE void SetMaterial(std::shared_ptr<AMaterial> p_material) { material = p_material; } 
 
-        virtual void RegisterDraw(Window* p_context) override;
+        /**
+         * @brief Register the current mesh to the draw list.
+         * 
+         * @param p_context The context to register the mesh to.
+         */
+        virtual bool RegisterDraw(Window* p_context) override;
 
+        /**
+         * @brief Get the priority of drawing this mesh
+         * 
+         * @param p_context The context to get the priority for.
+         * @return float The priority of drawing this mesh
+         */
         virtual float GetPriority(Window* p_context) const { return 0.0f; }
 
         /**

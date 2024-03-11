@@ -52,10 +52,14 @@ namespace CrossEngine
         return vbos.at(p_context);
     }
 
-    void VisualMesh::RegisterDraw(Window* p_context)
+    bool VisualMesh::RegisterDraw(Window* p_context)
     {
-        Component3D::RegisterDraw(p_context);
-        p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, GetPriority(p_context)));
+        if (Component3D::RegisterDraw(p_context))
+        {
+            p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, GetPriority(p_context)));
+            return true;
+        }
+        return false;
     }
 
     void VisualMesh::Draw(Window* p_context)

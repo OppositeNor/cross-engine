@@ -14,7 +14,7 @@ namespace CrossEngine
         /**
          * @brief Construct a new PBRMaterial object.
          */
-        PBRMaterial();
+        explicit PBRMaterial(bool p_should_prioritize = false);
 
         /**
          * @brief Construct a new PBRMaterial object.
@@ -24,7 +24,7 @@ namespace CrossEngine
          * @param p_metallic Metallic.
          * @param p_should_prioritize Should prioritize.
          */
-        PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic);
+        PBRMaterial(const Math::Vec4& p_albedo, float p_roughness, float p_metallic, bool p_should_prioritize = false);
 
         /**
          * @brief Get the albedo of the material.

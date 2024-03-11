@@ -20,9 +20,13 @@ namespace CrossEngine
         Component::Draw(p_context);
     }
 
-    void ALight::RegisterDraw(Window* p_context)
+    bool ALight::RegisterDraw(Window* p_context)
     {
-        Component3D::RegisterDraw(p_context);
-        p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, 0));
+        if (Component3D::RegisterDraw(p_context))
+        {
+            p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, 0));
+            return true;
+        }
+        return false;
     }
 }

@@ -177,9 +177,13 @@ namespace CrossEngine
         glDepthMask(GL_TRUE);
     }
 
-    void Skybox::RegisterDraw(Window* p_context)
+    bool Skybox::RegisterDraw(Window* p_context)
     {
-        Component3D::RegisterDraw(p_context);
-        p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, 0));
+        if (Component3D::RegisterDraw(p_context))
+        {
+            p_context->GetRenderer()->AddRenderTask(Task([this, p_context](){Draw(p_context);}, 0));
+            return true;
+        }
+        return false;
     }
 }

@@ -101,10 +101,12 @@ namespace CrossEngine
         if (material->ShouldPrioritize())
         {
             std::lock_guard<std::mutex> lock(triangles_mutex);
-            std::sort(triangles.begin(), triangles.end(), [this, p_context](const Triangle* p_a, const Triangle* p_b)
+            Math::Vec4 camera_pos = p_context->GetUsingCamera()->GetGlobalPosition();
+            auto subspace_matrix = GetSubspaceMatrix();
+            std::sort(triangles.begin(), triangles.end(), [this, &camera_pos, &subspace_matrix](const Triangle* p_a, const Triangle* p_b)
             {
-                auto a_to_camera = p_context->GetUsingCamera()->GetGlobalPosition() - GetSubspaceMatrix() * p_a->GetCenter();
-                auto b_to_camera = p_context->GetUsingCamera()->GetGlobalPosition() - GetSubspaceMatrix() * p_b->GetCenter();
+                auto a_to_camera = camera_pos - subspace_matrix * p_a->GetCenter();
+                auto b_to_camera = camera_pos - subspace_matrix * p_b->GetCenter();
                 return a_to_camera.LengthSquared() > b_to_camera.LengthSquared();
             });
             UpdateVAO(triangles, GetVAO(p_context), GetVBO(p_context));

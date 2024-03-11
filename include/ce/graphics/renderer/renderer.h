@@ -10,6 +10,7 @@ namespace CrossEngine
     {
     private:
         std::vector<Task> render_tasks;
+        std::vector<Task> unprioritized_render_tasks;
         std::unique_ptr<ShaderProgram> shader_program;
     public:
         Renderer(ShaderProgram*&& p_shader_program) noexcept;
@@ -29,13 +30,6 @@ namespace CrossEngine
          * @param p_task The render task to add.
          */
         void AddRenderTask(const Task& p_task);
-
-        /**
-         * @brief Remove a render task from the renderer.
-         * 
-         * @param p_task The render task to remove.
-         */
-        void RemoveRenderTask(const Task& p_task);
 
         /**
          * @brief Refresh the renderer.

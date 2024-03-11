@@ -64,6 +64,6 @@ namespace CrossEngine
          */
         FORCE_INLINE const std::map<Window*, unsigned int>& GetTextureCubeIDs() const noexcept { return texture_cube_ids; }
 
-        virtual void RegisterDraw(Window* p_context) override;
+        virtual bool RegisterDraw(Window* p_context) override;
     };
 }

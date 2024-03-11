@@ -37,7 +37,7 @@ namespace CrossEngine
                 default_roughness->LoadTexture(WHITE_IMAGE, 2, 2, 1);
                 default_ao->LoadTexture(WHITE_IMAGE, 2, 2, 1);
                 
-                default_material = std::shared_ptr<AMaterial>(new PBRMaterial());
+                default_material = std::shared_ptr<AMaterial>(new PBRMaterial(true));
             
                 if (!glfwInit())
                     throw std::runtime_error("Failed to initialize GLFW.");

@@ -54,6 +54,6 @@ namespace CrossEngine
          * @brief Register the draw of the light.
          * 
          */
-        virtual void RegisterDraw(Window* p_context) override;
+        virtual bool RegisterDraw(Window* p_context) override;
     };
 }

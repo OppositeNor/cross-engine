@@ -17,31 +17,25 @@ namespace CrossEngine
 
     void Renderer::AddRenderTask(const Task& p_task)
     {
-        render_tasks.push_back(p_task);
-    }
-
-    void Renderer::RemoveRenderTask(const Task& p_task)
-    {
-        for (auto it = render_tasks.begin(); it != render_tasks.end(); ++it)
-        {
-            if (it->task.target_type() == p_task.task.target_type())
-            {
-                render_tasks.erase(it);
-                break;
-            }
-        }
+        if (p_task.priority == 0)
+            unprioritized_render_tasks.push_back(p_task);
+        else
+            render_tasks.push_back(p_task);
     }
 
     void Renderer::Refresh()
     {
         shader_program->Refresh();
         render_tasks.clear();
+        unprioritized_render_tasks.clear();
     }
 
     void Renderer::Render()
     {
-        std::sort(render_tasks.begin(), render_tasks.end(), [](const Task& a, const Task& b) { return a > b; });
         shader_program->Use();
+        for (auto& task : unprioritized_render_tasks)
+            task.task();
+        std::sort(render_tasks.begin(), render_tasks.end(), [](const Task& a, const Task& b) { return a > b; });
         for (auto& task : render_tasks)
         {
             task.task();

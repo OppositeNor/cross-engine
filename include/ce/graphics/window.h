@@ -44,8 +44,8 @@ namespace CrossEngine
         mutable size_t parallel_light_count = 0;
 
         Renderer* current_renderer = nullptr;
-        Renderer* main_renderer;
-        Renderer* skybox_renderer;
+        Renderer* main_renderer = nullptr;
+        Renderer* skybox_renderer = nullptr;
 
     protected:
         void* glfw_context = nullptr;

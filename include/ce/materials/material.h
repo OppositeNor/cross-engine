@@ -25,7 +25,7 @@ namespace CrossEngine
          * 
          * @param p_should_prioritize Should prioritize.
          */
-        AMaterial(bool p_should_prioritize = true);
+        explicit AMaterial(bool p_should_prioritize = false);
 
         /**
          * @brief Destructor of AMaterial.

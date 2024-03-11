@@ -180,6 +180,6 @@ namespace CrossEngine
          * 
          * @param p_context The context to be drawn.
          */
-        virtual void RegisterDraw(Window* p_context);
+        virtual bool RegisterDraw(Window* p_context);
     };
 }
