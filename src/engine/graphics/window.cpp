@@ -152,11 +152,10 @@ namespace CrossEngine
         hwnd = glfwGetWin32Window((GLFWwindow*)(glfw_context));
     #endif
         glViewport(0, 0, window_size[0], window_size[1]);
-        glEnable(GL_DEPTH_TEST);
-        // glEnable(GL_CULL_FACE);
-        // glFrontFace(GL_CW);
+        glFrontFace(GL_CW);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_DEPTH_TEST);
         SetClearColor(Math::Vec4(0.2f, 0.2f, 0.2f, 1.0f));
 
         glfwSetKeyCallback((GLFWwindow*)(glfw_context), (GLFWkeyfun)(OnKey));

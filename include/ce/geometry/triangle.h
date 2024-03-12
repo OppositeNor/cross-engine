@@ -111,5 +111,31 @@ namespace CrossEngine
          * @return Math::Vec4 The center of the triangle.
          */
         Math::Vec4 GetCenter() const;
+        
+        /**
+         * @brief Get the closest vertex to a point.
+         * 
+         * @param p_point The point to get the closest vertex to.
+         * @return Math::Vec4 The closest vertex to the point.
+         */
+        const Vertex* GetClosest(const Math::Mat4& p_subspace_matrix, const Math::Vec4& p_point) const;
+
+        /**
+         * @brief Get the closest global position to a point.
+         * 
+         * @param p_point The point to get the closest position to.
+         * @return Math::Vec4 The closest position to the point.
+         */
+        Math::Vec4 GetClosestPosition(const Math::Mat4& p_subspace_matrix, const Math::Vec4& p_point) const;
+        
+        /**
+         * @brief Get the least depth to a point according to a direction.
+         * 
+         * @param p_subspace_matrix The subspace matrix.
+         * @param p_point The point of interest.
+         * @param p_dir The direction.
+         * @return float The least depth.
+         */
+        float GetLeastDepth(const Math::Mat4& p_subspace_matrix, const Math::Vec4& p_point, Math::Vec4 p_dir) const;
     };
 }

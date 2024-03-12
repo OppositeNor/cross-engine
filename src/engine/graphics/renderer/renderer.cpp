@@ -32,10 +32,13 @@ namespace CrossEngine
 
     void Renderer::Render()
     {
+        glEnable(GL_CULL_FACE);
         shader_program->Use();
         for (auto& task : unprioritized_render_tasks)
             task.task();
-        std::sort(render_tasks.begin(), render_tasks.end(), [](const Task& a, const Task& b) { return a > b; });
+        glDisable(GL_CULL_FACE);
+        std::sort(render_tasks.begin(), render_tasks.end(),
+            [](const Task& a, const Task& b) { return a > b; });
         for (auto& task : render_tasks)
         {
             task.task();

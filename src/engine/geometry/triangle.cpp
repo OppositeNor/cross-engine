@@ -102,4 +102,51 @@ namespace CrossEngine
     {
         return (vertices[0]->GetPosition() + vertices[1]->GetPosition() + vertices[2]->GetPosition()) / 3.0f;
     }
+
+    const Vertex* Triangle::GetClosest(const Math::Mat4& p_subspace_matrix, const Math::Vec4& p_point) const
+    {
+        const Vertex* result = vertices[0];
+        float min_dist = (p_subspace_matrix * vertices[0]->GetPosition() - p_point).LengthSquared();
+        for (size_t i = 1; i < 3; ++i)
+        {
+            float dist = (p_subspace_matrix * vertices[i]->GetPosition() - p_point).LengthSquared();
+            if (dist < min_dist)
+            {
+                min_dist = dist;
+                result = vertices[i];
+            }
+        }
+        return result;
+    }
+
+    Math::Vec4 Triangle::GetClosestPosition(const Math::Mat4& p_subspace_matrix, const Math::Vec4& p_point) const
+    {
+        Math::Vec4 result = p_subspace_matrix * vertices[0]->GetPosition();
+        float min_dist = (result - p_point).LengthSquared();
+        for (size_t i = 1; i < 3; ++i)
+        {
+            auto global_position = p_subspace_matrix * vertices[i]->GetPosition();
+            float dist = (global_position - p_point).LengthSquared();
+            if (dist < min_dist)
+            {
+                min_dist = dist;
+                result = global_position;
+            }
+        }
+        return result;
+    }
+
+    float Triangle::GetLeastDepth(const Math::Mat4& p_subspace_matrix, const Math::Vec4& p_point, Math::Vec4 p_dir) const
+    {
+        auto global_position = p_subspace_matrix * vertices[0]->GetPosition();
+        float min_depth = (global_position - p_point).Dot(p_dir.Normalize());
+        for (size_t i = 1; i < 3; ++i)
+        {
+            global_position = p_subspace_matrix * vertices[i]->GetPosition();
+            float depth = (global_position - p_point).Dot(p_dir);
+            if (depth < min_depth)
+                min_depth = depth;
+        }
+        return min_depth;
+    }
 }
