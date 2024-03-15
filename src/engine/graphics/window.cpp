@@ -218,7 +218,7 @@ namespace CrossEngine
             }
             Game::GetInstance()->SetContextUnAvailable(this);
             OnClose();
-            Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowCloseEvent>(this));
+            Game::GetInstance()->RegisterEvent(std::make_shared<OnWindowCloseEvent>(this));
             ClearResource();
             delete main_renderer;
             delete skybox_renderer;
@@ -242,25 +242,25 @@ namespace CrossEngine
     void Window::WindowFocused(void* p_glfw_context, int p_focused)
     {
         Window* window = context_window_finder[p_glfw_context];
-        Game::GetInstance()->DispatchEvent(std::make_shared<OnWindowFocusEvent>(window, p_focused));
+        Game::GetInstance()->RegisterEvent(std::make_shared<OnWindowFocusEvent>(window, p_focused));
     }
 
     void Window::OnKey(void* p_glfw_context, int p_key, int p_scancode, int p_action, int p_mods)
     {
         Window* window = context_window_finder[p_glfw_context];
-        Game::GetInstance()->DispatchEvent(std::make_shared<OnKeyEvent>(window, p_key, p_scancode, p_action, p_mods));
+        Game::GetInstance()->RegisterEvent(std::make_shared<OnKeyEvent>(window, p_key, p_scancode, p_action, p_mods));
     }
 
     void Window::OnMouseButton(void* p_glfw_context, int p_key, int p_action, int p_mods)
     {
         Window* window = context_window_finder[p_glfw_context];
-        Game::GetInstance()->DispatchEvent(std::make_shared<OnKeyEvent>(window, p_key, 0, p_action, p_mods));
+        Game::GetInstance()->RegisterEvent(std::make_shared<OnKeyEvent>(window, p_key, 0, p_action, p_mods));
     }
 
     void Window::OnMouseMove(void* p_glfw_context, double p_x, double p_y)
     {
         Window* window = context_window_finder[p_glfw_context];
-        Game::GetInstance()->DispatchEvent(std::make_shared<OnMouseMoveEvent>(window, Math::Vector<double, 2>(p_x, p_y)));
+        Game::GetInstance()->RegisterEvent(std::make_shared<OnMouseMoveEvent>(window, Math::Vector<double, 2>(p_x, p_y)));
     }
 
     void Window::Draw()

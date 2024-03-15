@@ -91,9 +91,9 @@ namespace CrossEngine
         input_manager->UpdateInput(p_context);
     }
 
-    void Game::DispatchEvent(std::shared_ptr<AEvent> p_event)
+    void Game::RegisterEvent(std::shared_ptr<AEvent> p_event)
     {
-        event_manager->DispatchEvent(p_event);
+        event_manager->RegisterEvent(p_event);
     }
 
     void Game::Run()
@@ -103,6 +103,7 @@ namespace CrossEngine
         while (!main_window->IsClosed())
         {
             frame_start = (float)glfwGetTime();
+            event_manager->DispatchEvents();
             Process(delta);
             base_component->Update(delta);
             Graphics::Update();

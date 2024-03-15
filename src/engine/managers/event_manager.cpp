@@ -33,10 +33,15 @@ namespace CrossEngine
         }
     }
 
-    void EventManager::DispatchEvent(std::shared_ptr<AEvent> p_event)
+    void EventManager::RegisterEvent(std::shared_ptr<AEvent> p_event)
     {
-        static std::future<void> handle;
-        handle = std::async(std::launch::async, &EventManager::FEventDispatch, this, p_event);
+        std::lock_guard lock(events_mutex);
+        events.push_back(p_event);
+    }
+
+    void EventManager::DispatchEvents()
+    {
+        auto future = std::async(std::launch::async, &EventManager::FEventsDispatch, this);
     }
 
     void EventManager::UpdateEventListeners()
@@ -50,15 +55,17 @@ namespace CrossEngine
         }
     }
 
-    void EventManager::FEventDispatch(std::shared_ptr<AEvent> p_event)
+    void EventManager::FEventsDispatch()
     {
         std::shared_lock<std::shared_mutex> lock(event_listeners_mutex);
+        std::shared_lock<std::shared_mutex> lock2(events_mutex);
         for (auto& event_listener : event_listeners)
         {
             if (event_listener.expired())
                 continue;
-            event_listener.lock()->OnEvent(p_event);
+            for (auto& event : events)
+                event_listener.lock()->OnEvent(event);
         }
-        UpdateEventListeners();
+        events.clear();
     }
 }

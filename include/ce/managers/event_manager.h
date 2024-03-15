@@ -11,12 +11,14 @@ namespace CrossEngine
     {
     private:
         std::vector<std::weak_ptr<IEventListener>> event_listeners;
-        
         std::shared_mutex event_listeners_mutex;
+
+        std::vector<std::shared_ptr<AEvent>> events;
+        std::shared_mutex events_mutex;
 
         void UpdateEventListeners();
 
-        void FEventDispatch(std::shared_ptr<AEvent> p_event);
+        void FEventsDispatch();
 
     public:
         /**
@@ -45,10 +47,16 @@ namespace CrossEngine
         void RemoveEventListener(std::weak_ptr<IEventListener> p_event_listener);
 
         /**
-         * @brief Dispatch an event.
+         * @brief Register a event to the event system.
          * 
-         * @param p_event The event to be dispatched.
+         * @param p_event The event to be registered.
          */
-        void DispatchEvent(std::shared_ptr<AEvent> p_event);
+        void RegisterEvent(std::shared_ptr<AEvent> p_event);
+
+        /**
+         * @brief Dispatch the events to the event listeners.
+         * 
+         */
+        void DispatchEvents();
     };
 }

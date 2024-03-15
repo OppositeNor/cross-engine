@@ -153,11 +153,11 @@ namespace CrossEngine
         void UpdateInput(Window* p_context);
 
         /**
-         * @brief Dispatch an event.
+         * @brief Register an event.
          * 
-         * @param p_event The event to be dispatched.
+         * @param p_event The event to be registered.
          */
-        void DispatchEvent(std::shared_ptr<AEvent> p_event);
+        void RegisterEvent(std::shared_ptr<AEvent> p_event);
 
         /**
          * @brief Run the game.
